@@ -77,6 +77,12 @@ public class DocsInformationController {
 		return ResponseEntity.ok(docsInformationService.showDocsModifiedAtDesc(pageable));
 	}
 
+	@GetMapping("/find/modifiedR")
+	public ResponseEntity<List<DocsNameAndEnrollResponseDto>> showDocsModifiedTimeAsc(
+			@PageableDefault(size = 12) Pageable pageable) {
+		return ResponseEntity.ok(docsInformationService.showDocsModifiedAtAsc(pageable));
+	}
+
 	@GetMapping("/find/version/{title}/different/{version}")
 	public ResponseEntity<VersionDocsDiffResponseDto> showVersionDocsDiff(@PathVariable String title,
 		@PathVariable Long version) {
