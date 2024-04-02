@@ -42,10 +42,10 @@ public class DocsUpdateService {
 		Docs foundDocs = findDocsByTitle(title);
 		validate(authId, foundDocs);
 
-		//TODO merge 왜 빨리 됐냐 ㄷㄷ
-		// if (foundDocs.getStatus() == Status.CONFLICTED) {
-		// 	throw new DocsConflictedException();
-		// }
+		if (foundDocs.getStatus() == Status.CONFLICTED) {
+			throw new DocsConflictedException();
+		}
+
 		VersionDocs savedVersionDocs = saveVersionDocs(docsUpdateRequestDto, foundDocs.getId(),
 			foundDocs.getLastVersion());
 		Docs docs;
