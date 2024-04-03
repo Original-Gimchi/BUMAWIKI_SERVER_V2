@@ -1,17 +1,16 @@
 package com.project.bumawiki.domain.coin.controller.dto;
 
-import com.project.bumawiki.domain.coin.domain.Trade;
 import com.project.bumawiki.domain.coin.domain.TradeWithoutTradeStatusAndCoinAccountId;
-import com.project.bumawiki.domain.coin.domain.type.TradeStatus;
+import jakarta.validation.constraints.Positive;
 
 public record TradeRequest(
-	Long coinPrice,
-	Long coinCount
+        @Positive Long coinPrice,
+        @Positive Long coinCount
 ) {
-	public TradeWithoutTradeStatusAndCoinAccountId toEntity() {
-		return new TradeWithoutTradeStatusAndCoinAccountId(
-			coinPrice,
-			coinCount
-		);
-	}
+    public TradeWithoutTradeStatusAndCoinAccountId toEntity() {
+        return new TradeWithoutTradeStatusAndCoinAccountId(
+                coinPrice,
+                coinCount
+        );
+    }
 }
