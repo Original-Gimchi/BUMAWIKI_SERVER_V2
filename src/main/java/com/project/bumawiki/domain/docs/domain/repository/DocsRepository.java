@@ -25,6 +25,9 @@ public interface DocsRepository extends JpaRepository<Docs, Long>, CustomDocsRep
     @Query("select d from Docs d order by d.lastModifiedAt desc")
     Page<Docs> findByLastModifiedAt(Pageable pageable);
 
+    @Query("select d from Docs d order by d.lastModifiedAt asc")
+    Page<Docs> findByLastModifiedAtAsc(Pageable pageable);
+
     @Query("select d from Docs d order by d.lastModifiedAt desc")
     List<Docs> findByLastModifiedAtAll();
 }

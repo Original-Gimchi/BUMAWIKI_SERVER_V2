@@ -102,6 +102,13 @@ public class DocsInformationService {
                 .collect(Collectors.toList());
     }
 
+    public List<DocsNameAndEnrollResponseDto> showDocsModifiedAtAsc(Pageable pageable) {
+        return docsRepository.findByLastModifiedAtAsc(pageable)
+                .stream()
+                .map(DocsNameAndEnrollResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     public List<DocsNameAndEnrollResponseDto> showDocsModifiedAtDescAll() {
         return docsRepository.findByLastModifiedAtAll()
                 .stream()
