@@ -13,6 +13,8 @@ plugins {
     id 'org.sonarqube' version "5.0.0.4638"
     //SonarCloud test coverage
     id "jacoco"
+    //CheckStyle
+    id "checkstyle"
 }
 
 group = 'com.project'
@@ -73,12 +75,12 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-
 //querydsl 추가
 def querydslDir = "$buildDir/generated/querydsl"
 tasks.withType(JavaCompile).configureEach {
     options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
 }
+
 sourceSets {
     main.java.srcDirs += [querydslDir]
 }
@@ -89,6 +91,7 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 }
+
 
 clean {
     delete file(querydslDir)
@@ -118,4 +121,20 @@ jar {
     enabled = false
 }
 
+//checkstyle
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        xml.required = false
+        html.required = true
+    }
+}
+
+checkstyle {
+    maxWarnings = 0
+    configFile = file("checkstyle/naver-checkstyle-rules.xml")
+    configProperties = ["suppressionFile": "checkstyle/naver-checkstyle-suppressions.xml"]
+}
 
