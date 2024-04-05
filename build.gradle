@@ -110,6 +110,7 @@ sonarqube {
         property "sonar.projectKey", "Team-INSERT_BUMAWIKI_SERVER_V2"
         property "sonar.organization", "team-insert"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.java.checkstyle.reportPaths", "build/reports/checkstyle/main.xml"
     }
 }
 //sonarCloud testCoverage
@@ -129,7 +130,7 @@ compileTestJava.options.encoding = 'UTF-8'
 
 tasks.withType(Checkstyle).configureEach {
     reports {
-        xml.required = false
+        xml.required = true
         html.required = true
     }
 }
