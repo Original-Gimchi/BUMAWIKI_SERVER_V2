@@ -12,6 +12,7 @@ public record RankingResponse(
 	String username
 ) {
 	public RankingResponse(CoinAccount coinAccount, Long nowPrice, User user) {
-		this(coinAccount.getId(), coinAccount.getCoin(), coinAccount.getMoney(), (coinAccount.getMoney() + coinAccount.getCoin() * nowPrice), user.getId(), user.getName());
+		this(coinAccount.getId(), coinAccount.getCoin(), coinAccount.getMoney(),
+			(coinAccount.getMoney() + coinAccount.getCoin() * nowPrice), user.getId(), user.getName());
 	}
 }

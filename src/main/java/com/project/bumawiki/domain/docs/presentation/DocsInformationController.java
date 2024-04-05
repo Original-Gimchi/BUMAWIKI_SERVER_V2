@@ -79,7 +79,7 @@ public class DocsInformationController {
 
 	@GetMapping("/find/modifiedR")
 	public ResponseEntity<List<DocsNameAndEnrollResponseDto>> showDocsModifiedTimeAsc(
-			@PageableDefault(size = 12) Pageable pageable) {
+		@PageableDefault(size = 12) Pageable pageable) {
 		return ResponseEntity.ok(docsInformationService.showDocsModifiedAtAsc(pageable));
 	}
 

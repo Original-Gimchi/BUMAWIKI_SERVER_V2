@@ -1,6 +1,5 @@
 package com.project.bumawiki.domain.coin.controller;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -24,6 +23,7 @@ import com.project.bumawiki.domain.coin.controller.dto.TradeResponse;
 import com.project.bumawiki.domain.coin.service.CoinService;
 import com.project.bumawiki.global.util.SecurityUtil;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,7 +35,7 @@ public class CoinController {
 	@PostMapping
 	public CoinAccountResponse createCoinAccount() {
 		return CoinAccountResponse.from(
-				coinService.createCoinAccount(SecurityUtil.getCurrentUserWithLogin())
+			coinService.createCoinAccount(SecurityUtil.getCurrentUserWithLogin())
 		);
 	}
 
@@ -54,7 +54,7 @@ public class CoinController {
 	}
 
 	@PostMapping("/sell")
-	public TradeResponse sellCoin(@Valid  @RequestBody TradeRequest tradeRequest) {
+	public TradeResponse sellCoin(@Valid @RequestBody TradeRequest tradeRequest) {
 		return TradeResponse.from(
 			coinService.sellCoin(tradeRequest.toEntity(), SecurityUtil.getCurrentUserWithLogin())
 		);

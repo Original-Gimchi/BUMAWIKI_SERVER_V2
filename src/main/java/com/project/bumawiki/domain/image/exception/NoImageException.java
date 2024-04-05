@@ -5,9 +5,9 @@ import com.project.bumawiki.global.error.exception.ErrorCode;
 
 public class NoImageException extends BumawikiException {
 
-    public static final NoImageException EXCEPTION = new NoImageException(ErrorCode.NO_IMAGE);
+	public static final NoImageException EXCEPTION = new NoImageException(ErrorCode.NO_IMAGE);
 
-    public NoImageException(ErrorCode errorCode) {
-        super(errorCode);
-    }
+	public NoImageException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }

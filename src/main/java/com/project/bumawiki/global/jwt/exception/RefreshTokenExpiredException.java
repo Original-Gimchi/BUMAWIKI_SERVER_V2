@@ -5,9 +5,10 @@ import com.project.bumawiki.global.error.exception.ErrorCode;
 
 public class RefreshTokenExpiredException extends BumawikiException {
 
-    public final static RefreshTokenExpiredException EXCEPTION = new RefreshTokenExpiredException(ErrorCode.REFRESH_TOKEN_EXPIRED);
+	public static final RefreshTokenExpiredException EXCEPTION = new RefreshTokenExpiredException(
+		ErrorCode.REFRESH_TOKEN_EXPIRED);
 
-    public RefreshTokenExpiredException(ErrorCode errorCode) {
-        super(errorCode);
-    }
+	public RefreshTokenExpiredException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }
