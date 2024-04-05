@@ -15,6 +15,8 @@ plugins {
     id "jacoco"
     //CheckStyle
     id "checkstyle"
+    //git hooks
+    id "com.star-zero.gradle.githook" version "1.2.1"
 }
 
 group = 'com.project'
@@ -137,4 +139,15 @@ checkstyle {
     configFile = file("checkstyle/naver-checkstyle-rules.xml")
     configProperties = ["suppressionFile": "checkstyle/naver-checkstyle-suppressions.xml"]
 }
+checkstyleMain.source = fileTree('src/main/java')
 
+githook {
+    failOnMissingHooksDir = false
+    createHooksDirIfNotExist = true
+    hooks {
+        "pre-commit" {
+            task = "check"
+            shell = "echo 1"
+        }
+    }
+}
