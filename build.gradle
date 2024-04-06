@@ -107,10 +107,73 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
     }
 }
+
+jacoco {
+    toolVersion = '0.8.12'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+
+    finalizedBy jacocoTestReport
+}
+
 //sonarCloud testCoverage
 jacocoTestReport {
+    dependsOn test
     reports {
+        html.required = true
         xml.required = true
+    }
+
+    def QDomains = []
+
+    for (qPattern in '**/QA'..'**/QZ') {
+        QDomains.add(qPattern + '*')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            "com.project.bumawiki.BumawikiApplication",
+                            "**.*Config*",
+                            "**.*Exception*",
+                            "**.*Dto*"
+                    ] + QDomains)
+                })
+        )
+    }
+
+    finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+    def QDomains = []
+
+    for (qPattern in '*.QA'..'*.QZ') {
+        QDomains.add(qPattern + '*')
+    }
+
+    violationRules {
+        rule {
+            enabled = true
+
+            element = 'CLASS'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            excludes = [
+                    "com.project.bumawiki.BumawikiApplication",
+                    "**.*Config*",
+                    "**.*Exception*",
+                    "**.*Dto*"
+            ] + QDomains
+        }
     }
 }
 //plain jar 비활성화
