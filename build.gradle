@@ -22,6 +22,7 @@ plugins {
 
 group = 'com.project'
 version = '0.0.1-SNAPSHOT'
+//noinspection GroovyUnusedAssignment
 sourceCompatibility = '17'
 
 repositories {
@@ -79,7 +80,7 @@ tasks.named('test') {
 }
 
 //querydsl 추가
-def querydslDir = "$buildDir/generated/querydsl"
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
 tasks.withType(JavaCompile).configureEach {
     options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
 }
