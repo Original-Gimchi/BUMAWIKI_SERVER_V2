@@ -17,6 +17,7 @@ plugins {
     id "checkstyle"
     //git hooks
     id "com.star-zero.gradle.githook" version "1.2.1"
+    id "it.nicolasfarabegoli.conventional-commits" version "3.1.3"
 }
 
 group = 'com.project'
@@ -148,7 +149,6 @@ githook {
     hooks {
         "pre-commit" {
             task = "check"
-            shell = "echo 1"
         }
     }
 }
