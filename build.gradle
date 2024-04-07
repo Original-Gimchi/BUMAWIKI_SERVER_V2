@@ -148,34 +148,6 @@ jacocoTestReport {
     finalizedBy jacocoTestCoverageVerification
 }
 
-//jacocoTestCoverageVerification {
-//    def QDomains = []
-//
-//    for (qPattern in '*.QA'..'*.QZ') {
-//        QDomains.add(qPattern + '*')
-//    }
-//
-//    violationRules {
-//        rule {
-//            enabled = true
-//
-//            element = 'CLASS'
-//
-//            limit {
-//                counter = 'LINE'
-//                value = 'COVEREDRATIO'
-//                minimum = 0.80
-//            }
-//
-//            excludes = [
-//                    "com.project.bumawiki.BumawikiApplication",
-//                    "**.*Config*",
-//                    "**.*Exception*",
-//                    "**.*Dto*"
-//            ] + QDomains
-//        }
-//    }
-//}
 //plain jar 비활성화
 jar {
     enabled = false
