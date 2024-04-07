@@ -6,10 +6,10 @@ import lombok.Getter;
 
 @Getter
 public final class VersionDocsResponseDto {
-	private int index;
 	private final LocalDateTime thisVersionCreatedAt;
 	private final Long userId;
 	private final String nickName;
+	private int index;
 
 	public VersionDocsResponseDto(LocalDateTime thisVersionCreatedAt, Long userId, String nickName) {
 		this.thisVersionCreatedAt = thisVersionCreatedAt;

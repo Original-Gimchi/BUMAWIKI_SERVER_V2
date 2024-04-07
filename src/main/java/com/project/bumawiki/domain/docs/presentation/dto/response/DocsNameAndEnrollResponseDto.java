@@ -13,13 +13,13 @@ import lombok.Getter;
 @Getter
 public class DocsNameAndEnrollResponseDto {
 
-	private Long id;
-	private String title;
-	private int enroll;
-	private String simpleContents;
-	private DocsType docsType;
-	private LocalDateTime lastModifiedAt;
-	private String thumbnail;
+	private final Long id;
+	private final String title;
+	private final int enroll;
+	private final String simpleContents;
+	private final DocsType docsType;
+	private final LocalDateTime lastModifiedAt;
+	private final String thumbnail;
 
 	public DocsNameAndEnrollResponseDto(Docs docs) {
 		this.id = docs.getId();

@@ -73,7 +73,7 @@ public class DocsUpdateService {
 	}
 
 	@Transactional
-	public Long DocsTypeUpdate(final DocsTypeUpdateDto docsTypeUpdateDto) {
+	public Long docsTypeUpdate(final DocsTypeUpdateDto docsTypeUpdateDto) {
 		Docs docs = docsRepository.findById(docsTypeUpdateDto.getId())
 			.orElseThrow(() -> NoUpdatableDocsException.EXCEPTION);
 
@@ -131,8 +131,9 @@ public class DocsUpdateService {
 
 	private void updateReadOnlyDocs(DocsType docsType) {
 
-		if (docsType.equals(DocsType.READONLY))
+		if (docsType.equals(DocsType.READONLY)) {
 			throw NoUpdatableDocsException.EXCEPTION;
+		}
 	}
 
 	private Docs setVersionDocsToDocs(VersionDocs versionDocs) {

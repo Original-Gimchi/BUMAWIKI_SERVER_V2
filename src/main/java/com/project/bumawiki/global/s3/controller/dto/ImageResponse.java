@@ -1,7 +1,5 @@
 package com.project.bumawiki.global.s3.controller.dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Getter;
 
 @Getter

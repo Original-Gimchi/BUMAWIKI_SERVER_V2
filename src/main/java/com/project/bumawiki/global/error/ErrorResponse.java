@@ -6,15 +6,23 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ErrorResponse {
-    private int status;
-    private String code;
-    private String message;
+	private final String errorLogsFormat = """
+		{
+			"status": "%s",
+			"code": "%s",
+			"message": "%s"
+		}
+		""";
 
-    public String toString() {
-        return "{" +
-                "\n\t\"status\": " + status + "," +
-                "\n\t\"code\": \" " + code + "\"," +
-                "\n\t\"message\": \" " + message + "\"" +
-                "\n}";
-    }
+	private int status;
+	private String code;
+	private String message;
+
+	public String toString() {
+		return errorLogsFormat.formatted(
+			status,
+			code,
+			message
+		);
+	}
 }

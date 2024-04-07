@@ -6,13 +6,13 @@ import lombok.Getter;
 
 @Getter
 public class SimpleUserDto {
-	private Long id;
+	private final Long id;
 
-	private String email;
+	private final String email;
 
-	private String nickName;
+	private final String nickName;
 
-	private String name;
+	private final String name;
 
 	public SimpleUserDto(User user) {
 		this.id = user.getId();

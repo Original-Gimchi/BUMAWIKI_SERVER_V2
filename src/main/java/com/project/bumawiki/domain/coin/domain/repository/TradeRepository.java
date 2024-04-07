@@ -9,5 +9,6 @@ import com.project.bumawiki.domain.coin.domain.type.TradeStatus;
 
 public interface TradeRepository extends JpaRepository<Trade, Long> {
 	List<Trade> findAllByCoinAccountIdOrderByTradedTimeDesc(Long coinAccountId);
+
 	List<Trade> findAllByTradeStatus(TradeStatus tradeStatus);
 }

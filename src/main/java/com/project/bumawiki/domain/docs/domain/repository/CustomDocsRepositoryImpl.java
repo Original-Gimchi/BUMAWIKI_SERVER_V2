@@ -3,7 +3,7 @@ package com.project.bumawiki.domain.docs.domain.repository;
 import static com.project.bumawiki.domain.contribute.domain.QContribute.*;
 import static com.project.bumawiki.domain.docs.domain.QDocs.*;
 import static com.project.bumawiki.domain.docs.domain.QVersionDocs.*;
-import static com.project.bumawiki.domain.thumbsUp.domain.QThumbsUp.*;
+import static com.project.bumawiki.domain.thumbsup.domain.QThumbsUp.*;
 import static com.project.bumawiki.domain.user.domain.QUser.*;
 import static com.querydsl.core.types.Projections.*;
 

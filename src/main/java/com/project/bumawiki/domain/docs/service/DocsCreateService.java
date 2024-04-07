@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.project.bumawiki.domain.contribute.domain.Contribute;
 import com.project.bumawiki.domain.contribute.service.ContributeService;
@@ -29,6 +28,17 @@ public class DocsCreateService {
 	private final ContributeService contributeService;
 	private final DocsRepositoryMapper docsRepositoryMapper;
 
+	private static void setVersionDocs(final Docs docs, final VersionDocs savedVersionDocs,
+		final Contribute contribute) {
+		List<VersionDocs> versionDocs = new ArrayList<>();
+
+		versionDocs.add(savedVersionDocs);
+
+		savedVersionDocs.updateContributor(contribute);
+
+		docs.setVersionDocs(versionDocs);
+	}
+
 	@Transactional
 	public Long execute(final DocsCreateRequestDto docsCreateRequestDto) throws IOException {
 
@@ -42,25 +52,6 @@ public class DocsCreateService {
 		setVersionDocs(docs, savedVersionDocs, contribute);
 
 		return docs.getId();
-	}
-
-	private static void setVersionDocs(final Docs docs, final VersionDocs savedVersionDocs,
-		final Contribute contribute) {
-		List<VersionDocs> versionDocs = new ArrayList<>();
-
-		versionDocs.add(savedVersionDocs);
-
-		savedVersionDocs.updateContributor(contribute);
-
-		docs.setVersionDocs(versionDocs);
-	}
-
-	private void setImageUrl(final DocsCreateRequestDto docsCreateRequestDto, final MultipartFile[] files) throws
-		IOException {
-		if (files != null) {
-			ArrayList<String> FileUrl = imageService.GetFileUrl(files, docsCreateRequestDto.getTitle());
-			setImageUrlInContents(docsCreateRequestDto, FileUrl);
-		}
 	}
 
 	/**
