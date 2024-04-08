@@ -25,8 +25,10 @@ spring:
       org:
         hibernate:
           SQL: debug
-      com.zaxxer.hikari.HikariConfig: DEBUG
-      com.zaxxer.hikari: TRACE
+        springframework: DEBUG
+    com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari: TRACE
+
 
   jpa:
     database: mysql
@@ -45,7 +47,7 @@ spring:
 decorator:
   datasource:
     p6spy:
-      enable-logging: false
+      enable-logging: true
 
 auth:
   jwt:
