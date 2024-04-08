@@ -115,12 +115,47 @@ sonarqube {
         property "sonar.java.checkstyle.reportPaths", "build/reports/checkstyle/main.xml"
     }
 }
+
+jacoco {
+    toolVersion = '0.8.12'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+
+    finalizedBy jacocoTestReport
+}
+
 //sonarCloud testCoverage
 jacocoTestReport {
+    dependsOn test
     reports {
+        html.required = true
         xml.required = true
     }
+
+    def QDomains = []
+
+    for (qPattern in '**/QA'..'**/QZ') {
+        QDomains.add(qPattern + '*')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            "com.project.bumawiki.BumawikiApplication",
+                            "**.*Config*",
+                            "**.*Exception*",
+                            "**.*Dto*"
+                    ] + QDomains)
+                })
+        )
+    }
+
+    finalizedBy jacocoTestCoverageVerification
 }
+
 //plain jar 비활성화
 jar {
     enabled = false
