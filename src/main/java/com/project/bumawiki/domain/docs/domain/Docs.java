@@ -10,10 +10,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 import com.project.bumawiki.domain.contribute.domain.Contribute;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.domain.type.Status;
-import com.project.bumawiki.domain.thumbsUp.domain.ThumbsUp;
-import com.project.bumawiki.domain.thumbsUp.exception.AlreadyThumbsUpexception;
-import com.project.bumawiki.domain.thumbsUp.exception.YouDontThumbsUpThisDocs;
-import com.project.bumawiki.domain.thumbsUp.presentation.dto.ThumbsUpResponseDto;
+import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
+import com.project.bumawiki.domain.thumbsup.exception.AlreadyThumbsUpException;
+import com.project.bumawiki.domain.thumbsup.exception.YouDontThumbsUpThisDocs;
+import com.project.bumawiki.domain.thumbsup.presentation.dto.ThumbsUpResponseDto;
 import com.project.bumawiki.domain.user.domain.User;
 
 import jakarta.persistence.CascadeType;
@@ -39,31 +39,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Docs {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "docs_id")
-	private Long id;
-
-	@Column(length = 32, unique = true)
-	private String title;
-
-	@Column(length = 8)
-	private int enroll;
-
-	@Enumerated(EnumType.STRING)
-	private DocsType docsType;
-
-	@LastModifiedDate
-	private LocalDateTime lastModifiedAt;
-
-	@Builder.Default
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<VersionDocs> docsVersion = new ArrayList<>();
-
-	@Builder.Default
-	@OneToMany(mappedBy = "docs", cascade = CascadeType.ALL)
-	private List<Contribute> contributor = new ArrayList<>();
-
 	@OneToMany(
 		mappedBy = "docs",
 		fetch = FetchType.LAZY,
@@ -71,6 +46,27 @@ public class Docs {
 		orphanRemoval = true)
 	@Builder.Default
 	private final List<ThumbsUp> thumbsUps = new ArrayList<>();
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "docs_id")
+	private Long id;
+	@Column(length = 32, unique = true)
+	private String title;
+	@Column(length = 8)
+	private int enroll;
+	@Enumerated(EnumType.STRING)
+	private DocsType docsType;
+	@LastModifiedDate
+	private LocalDateTime lastModifiedAt;
+	@Builder.Default
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<VersionDocs> docsVersion = new ArrayList<>();
+	@Builder.Default
+	@OneToMany(mappedBy = "docs", cascade = CascadeType.ALL)
+	private List<Contribute> contributor = new ArrayList<>();
+	private int lastVersion;
+	@Enumerated(EnumType.STRING)
+	private Status status;
 
 	public void cancelThumbsUp(ThumbsUp thumbsUp) {
 		boolean removed = thumbsUps
@@ -93,7 +89,7 @@ public class Docs {
 			.anyMatch(iterThumbsUp -> iterThumbsUp.equals(thumbsUp));
 
 		if (anyMatch) {
-			throw AlreadyThumbsUpexception.EXCEPTION;
+			throw AlreadyThumbsUpException.EXCEPTION;
 		}
 		this.thumbsUps.add(thumbsUp);
 	}
@@ -104,11 +100,6 @@ public class Docs {
 			.map(ThumbsUp::getDto)
 			.collect(Collectors.toList());
 	}
-
-	private int lastVersion;
-
-	@Enumerated(EnumType.STRING)
-	private Status status;
 
 	public void updateDocsType(DocsType docsType) {
 		this.docsType = docsType;

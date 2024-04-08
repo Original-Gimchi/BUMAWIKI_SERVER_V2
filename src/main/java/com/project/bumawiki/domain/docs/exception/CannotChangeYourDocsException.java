@@ -5,9 +5,10 @@ import com.project.bumawiki.global.error.exception.ErrorCode;
 
 public class CannotChangeYourDocsException extends BumawikiException {
 
-    public final static CannotChangeYourDocsException EXCEPTION = new CannotChangeYourDocsException(ErrorCode.CANNOT_CHANGE_YOUR_DOCS);
+	public static final CannotChangeYourDocsException EXCEPTION = new CannotChangeYourDocsException(
+		ErrorCode.CANNOT_CHANGE_YOUR_DOCS);
 
-    public CannotChangeYourDocsException(ErrorCode errorCode) {
-        super(errorCode);
-    }
+	public CannotChangeYourDocsException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }

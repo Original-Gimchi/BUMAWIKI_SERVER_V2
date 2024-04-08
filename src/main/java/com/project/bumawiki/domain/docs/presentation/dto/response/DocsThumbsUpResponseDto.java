@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DocsThumbsUpResponseDto {
 
-    @JsonProperty
-    private final int thumbsUpsCount;
+	@JsonProperty
+	private final int thumbsUpsCount;
 
-    public DocsThumbsUpResponseDto(int thumbsUpsCount) {
-        this.thumbsUpsCount = thumbsUpsCount;
-    }
+	public DocsThumbsUpResponseDto(int thumbsUpsCount) {
+		this.thumbsUpsCount = thumbsUpsCount;
+	}
 }

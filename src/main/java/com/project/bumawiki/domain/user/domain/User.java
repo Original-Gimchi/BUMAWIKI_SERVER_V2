@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.project.bumawiki.domain.contribute.domain.Contribute;
-import com.project.bumawiki.domain.thumbsUp.domain.ThumbsUp;
-import com.project.bumawiki.domain.thumbsUp.exception.AlreadyThumbsUpexception;
-import com.project.bumawiki.domain.thumbsUp.exception.YouDontThumbsUpThisDocs;
-import com.project.bumawiki.domain.thumbsUp.presentation.dto.ThumbsUpResponseDto;
+import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
+import com.project.bumawiki.domain.thumbsup.exception.AlreadyThumbsUpException;
+import com.project.bumawiki.domain.thumbsup.exception.YouDontThumbsUpThisDocs;
+import com.project.bumawiki.domain.thumbsup.presentation.dto.ThumbsUpResponseDto;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 
 import jakarta.persistence.CascadeType;
@@ -34,31 +34,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_id")
-	private Long id;
-
-	@Column(unique = true, length = 32)
-	private String email;
-
-	@Column(length = 16)
-	private String name;
-
-	@Column(length = 8)
-	private Integer enroll;
-
-	@Column(length = 20)
-	private String nickName;
-
-	@Enumerated(EnumType.STRING)
-	@Column(length = 16)
-	private Authority authority;
-
-	@Builder.Default
-	@OneToMany(mappedBy = "contributor", cascade = CascadeType.ALL)
-	private List<Contribute> contributeDocs = new ArrayList<>();
-
 	@OneToMany(
 		mappedBy = "user",
 		fetch = FetchType.LAZY,
@@ -66,6 +41,24 @@ public class User {
 		orphanRemoval = true)
 	@Builder.Default
 	private final List<ThumbsUp> thumbsUps = new ArrayList<>();
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "user_id")
+	private Long id;
+	@Column(unique = true, length = 32)
+	private String email;
+	@Column(length = 16)
+	private String name;
+	@Column(length = 8)
+	private Integer enroll;
+	@Column(length = 20)
+	private String nickName;
+	@Enumerated(EnumType.STRING)
+	@Column(length = 16)
+	private Authority authority;
+	@Builder.Default
+	@OneToMany(mappedBy = "contributor", cascade = CascadeType.ALL)
+	private List<Contribute> contributeDocs = new ArrayList<>();
 
 	public void cancelThumbsUp(ThumbsUp thumbsUp) {
 		boolean removed = thumbsUps
@@ -82,7 +75,7 @@ public class User {
 			.anyMatch(iterThumbsUp -> iterThumbsUp.equals(thumbsUp));
 
 		if (anyMatch) {
-			throw AlreadyThumbsUpexception.EXCEPTION;
+			throw AlreadyThumbsUpException.EXCEPTION;
 		}
 		this.thumbsUps.add(thumbsUp);
 	}
