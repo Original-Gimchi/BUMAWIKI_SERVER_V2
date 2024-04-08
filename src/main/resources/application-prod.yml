@@ -34,7 +34,7 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: none
-    open-in-view: false
+  #    open-in-view: false
 
   servlet:
     multipart:
