@@ -5,13 +5,18 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 
 import com.project.bumawiki.domain.contribute.domain.Contribute;
+import com.project.bumawiki.domain.user.domain.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -22,32 +27,29 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@IdClass(VersionDocsPk.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class VersionDocs {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "version_docs_id")
-	private Long id;
+	private int version;
 
-	@NotNull
-	private Long docsId;
+	@Id
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "docs_id")
+	private Docs docs;
 
-	@Column(columnDefinition = "TEXT")
-	@NotNull
+	@Column(columnDefinition = "TEXT", nullable = false)
 	private String contents;
 
 	@CreatedDate
 	private LocalDateTime thisVersionCreatedAt;
 
-	@OneToOne(mappedBy = "versionDocs", cascade = CascadeType.ALL)
-	private Contribute contributor;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "user_id")
+	private User contributor;
 
-	private int version;
 
-	public void updateContributor(Contribute contribute) {
-		this.contributor = contribute;
-	}
 }

@@ -41,10 +41,11 @@ public class User {
 		orphanRemoval = true)
 	@Builder.Default
 	private final List<ThumbsUp> thumbsUps = new ArrayList<>();
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_id")
 	private Long id;
+
 	@Column(unique = true, length = 32)
 	private String email;
 	@Column(length = 16)

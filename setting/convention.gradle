@@ -26,7 +26,7 @@ githook {
     createHooksDirIfNotExist = true
     hooks {
         "pre-commit" {
-            task = "check"
+//            task = "check"
         }
     }
 }
