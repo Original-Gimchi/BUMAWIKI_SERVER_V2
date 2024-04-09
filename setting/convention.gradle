@@ -1,0 +1,32 @@
+ext {
+    defaultEncoding = "UTF-8"
+}
+
+//checkstyle
+compileJava.options.encoding = defaultEncoding
+compileTestJava.options.encoding = defaultEncoding
+checkstyleMain.source = fileTree('src/main/java')
+checkstyleTest.source = fileTree('src/test/java')
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+checkstyle {
+    maxWarnings = 0
+    configFile = file("checkstyle/naver-checkstyle-rules.xml")
+    configProperties = ["suppressionFile": "checkstyle/naver-checkstyle-suppressions.xml"]
+}
+
+
+githook {
+    failOnMissingHooksDir = false
+    createHooksDirIfNotExist = true
+    hooks {
+        "pre-commit" {
+            task = "check"
+        }
+    }
+}
