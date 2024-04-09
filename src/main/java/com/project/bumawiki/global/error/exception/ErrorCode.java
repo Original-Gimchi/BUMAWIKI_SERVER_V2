@@ -19,7 +19,7 @@ public enum ErrorCode {
 	DOCS_IS_NOT_CONFLICTED(400, "DOCS-400-1", "문서가 충돌나지 않았습니다."),
 	DOCS_CONFLICTED(400, "DOCS-400-2", "문서가 충돌 상태이기 때문에 수정할 수 없습니다."),
 	NO_UPDATABLE_DOCS(403, "DOCS-403-1", "없데이트 하려고 하는 문서가 없습니다."),
-	POST_TITLE_ALREADY_EXIST(403, "DOCS-403-1", "같은 제목의 문서가 이미 존재합니다."),
+	DOCS_TITLE_ALREADY_EXIST(403, "DOCS-403-1", "같은 제목의 문서가 이미 존재합니다."),
 	CANNOT_CHANGE_YOUR_DOCS(403, "DOCS-403-2", "본인의 문서는 수정할 수 없습니다."),
 	DOCS_NOT_FOUND(404, "DOCS-404-2", "문서를 조회할 수 없습니다."),
 	DOCS_TYPE_NOT_FOUND(404, "DOCS-404-3", "문서 타입이 존재하지 않습니다."),

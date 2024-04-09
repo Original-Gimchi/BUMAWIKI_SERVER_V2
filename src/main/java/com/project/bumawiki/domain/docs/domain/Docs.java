@@ -13,8 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,7 +29,7 @@ public class Docs {
 	private String title;
 
 	@Column
-	private int enroll;
+	private Integer enroll;
 
 	@Enumerated(EnumType.STRING)
 	private DocsType docsType;
@@ -41,11 +39,11 @@ public class Docs {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-	public Docs(String title, int enroll, DocsType docsType, Status status) {
+	public Docs(String title, int enroll, DocsType docsType) {
 		this.title = title;
 		this.enroll = enroll;
 		this.docsType = docsType;
-		this.status = status;
+		this.status = Status.GOOD;
 	}
 
 	public void updateDocsType(DocsType docsType) {
