@@ -3,19 +3,17 @@ package com.project.bumawiki.domain.docs.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
+import com.project.bumawiki.domain.docs.implementation.DocsDeleter;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class DocsDeleteService {
-	private final DocsRepository docsRepository;
+	private final DocsDeleter docsDeleter;
 
-	public Long execute(Long id) {
-		docsRepository.deleteById(id);
-
-		return id;
+	public void execute(Long id) {
+		docsDeleter.delete(id);
 	}
 }
