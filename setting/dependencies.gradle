@@ -1,0 +1,38 @@
+dependencies {
+    //default SpringBoot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    //DB Connect And Logging
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    //lombok
+    implementation 'org.projectlombok:lombok:1.18.22'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    //test
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+    //bsm-oauth-java
+    implementation 'com.github.leehj050211:bsm-oauth-java:1.0.0'
+    //string diff
+    implementation 'org.bitbucket.cowwoc:diff-match-patch:1.2'
+
+    //aws s3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.638'
+
+    // swagger-ui
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+}

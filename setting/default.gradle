@@ -1,0 +1,15 @@
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+//spring6부터 추가된 경고문구 해결
+configurations.configureEach {
+    exclude group: 'commons-logging', module: 'commons-logging'
+}
+
+//plain jar 비활성화
+jar {
+    enabled = false
+}
