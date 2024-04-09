@@ -14,7 +14,6 @@ import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.domain.type.Status;
 import com.project.bumawiki.domain.docs.exception.CannotChangeYourDocsException;
-import com.project.bumawiki.domain.docs.exception.DocsConflictedException;
 import com.project.bumawiki.domain.docs.exception.NoUpdatableDocsException;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTitleUpdateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTypeUpdateDto;
@@ -42,9 +41,9 @@ public class DocsUpdateService {
 		Docs foundDocs = findDocsByTitle(title);
 		validate(authId, foundDocs);
 
-		if (foundDocs.getStatus() == Status.CONFLICTED) {
-			throw new DocsConflictedException();
-		}
+		// if (foundDocs.getStatus() == Status.CONFLICTED) {
+		// 	throw new DocsConflictedException();
+		// }
 
 		VersionDocs savedVersionDocs = saveVersionDocs(docsUpdateRequestDto, foundDocs.getId(),
 			foundDocs.getLastVersion());

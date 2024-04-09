@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-	@SuppressWarnings("checkstyle:RegexpSinglelineJava")
 	private static final String errorLogsFormat = """
 		{
 			"status": "%s",

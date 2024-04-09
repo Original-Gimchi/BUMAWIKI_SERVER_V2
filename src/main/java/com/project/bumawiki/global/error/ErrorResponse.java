@@ -1,12 +1,15 @@
 package com.project.bumawiki.global.error;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public class ErrorResponse {
-	private final String errorLogsFormat = """
+	@JsonIgnore
+	private static final String errorLogsFormat = """
 		{
 			"status": "%s",
 			"code": "%s",
