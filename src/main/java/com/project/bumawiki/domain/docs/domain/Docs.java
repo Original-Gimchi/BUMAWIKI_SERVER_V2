@@ -20,8 +20,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Docs {
 
@@ -42,6 +40,13 @@ public class Docs {
 
 	@Enumerated(EnumType.STRING)
 	private Status status;
+
+	public Docs(String title, int enroll, DocsType docsType, Status status) {
+		this.title = title;
+		this.enroll = enroll;
+		this.docsType = docsType;
+		this.status = status;
+	}
 
 	public void updateDocsType(DocsType docsType) {
 		this.docsType = docsType;
