@@ -3,11 +3,9 @@ package com.project.bumawiki.domain.docs.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.bumawiki.domain.docs.domain.Docs;
-import com.project.bumawiki.domain.docs.domain.repository.DocsRepositoryMapper;
-import com.project.bumawiki.domain.user.UserFacade;
+import com.project.bumawiki.domain.docs.implementation.DocsValidator;
+import com.project.bumawiki.domain.thumbsup.implementation.ThumbsUpReader;
 import com.project.bumawiki.domain.user.domain.User;
-import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,14 +13,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class DocsCheckYouLikeThisService {
-	private final DocsRepositoryMapper docsRepositoryMapper;
-	private final UserFacade userFacade;
+	private final ThumbsUpReader thumbsUpReader;
+	private final DocsValidator docsValidator;
 
-	public boolean checkUserLikeThisDocs(final Long docsId) {
-		User currentUser = userFacade.getCurrentUser();
-		Docs docs = docsRepositoryMapper.findById(docsId, ErrorCode.DOCS_NOT_FOUND);
-		User foundUser = userFacade.getUserByEmail(currentUser.getEmail());
-
-		return docs.doesUserLike(foundUser);
+	public boolean checkUserLikeThisDocs(Long docsId, User currentUser) {
+		docsValidator.checkDocsExist(docsId);
+		return thumbsUpReader.checkDocsLike(docsId, currentUser);
 	}
 }

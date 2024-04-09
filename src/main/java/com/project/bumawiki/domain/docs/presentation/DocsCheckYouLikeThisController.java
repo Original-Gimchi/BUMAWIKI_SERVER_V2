@@ -1,23 +1,28 @@
 package com.project.bumawiki.domain.docs.presentation;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.bumawiki.domain.docs.service.DocsCheckYouLikeThisService;
+import com.project.bumawiki.global.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/docs/like")
 public class DocsCheckYouLikeThisController {
 	private final DocsCheckYouLikeThisService docsCheckYouLikeThisService;
 
 	@GetMapping("/{docsId}")
-	public ResponseEntity<Boolean> checkYouLikeThis(@PathVariable Long docsId) {
-		return ResponseEntity.ok(docsCheckYouLikeThisService.checkUserLikeThisDocs(docsId));
+	@ResponseStatus(HttpStatus.OK)
+	public Boolean checkYouLikeThis(@PathVariable Long docsId) {
+		return docsCheckYouLikeThisService.checkUserLikeThisDocs(
+			docsId, SecurityUtil.getCurrentUserWithLogin()
+		);
 	}
 }

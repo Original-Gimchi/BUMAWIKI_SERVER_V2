@@ -15,15 +15,6 @@ import lombok.RequiredArgsConstructor;
 public class UserFacade {
 	private final UserRepository userRepository;
 
-	public User getCurrentUser() {
-		User currentUserWithLogin = SecurityUtil
-			.getCurrentUserOrNotLogin();
-
-		return userRepository
-			.findById(currentUserWithLogin.getId())
-			.orElseThrow(() -> UserNotLoginException.EXCEPTION);
-	}
-
 	public User getUserByEmail(String email) {
 		return userRepository.findByEmail(email)
 			.orElseThrow(() -> UserNotFoundException.EXCEPTION);
