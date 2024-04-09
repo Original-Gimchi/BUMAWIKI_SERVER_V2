@@ -21,14 +21,13 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class PriceScheduler {
+	private static final Long CHANGE_MONEY_RANGE = 200000L;
 	private final PriceRepository priceRepository;
 	private final TradeRepository tradeRepository;
 	private final CoinAccountRepository coinAccountRepository;
 
 	@Scheduled(fixedRate = 180000)
 	void changePrice() {
-		Long CHANGE_MONEY_RANGE = 200000L;
-
 		Price recentPrice = priceRepository.getRecentPrice();
 		Long max = recentPrice.getPrice() + CHANGE_MONEY_RANGE;
 		Long min = Math.max(recentPrice.getPrice() - CHANGE_MONEY_RANGE, 0L);

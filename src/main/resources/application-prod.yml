@@ -1,5 +1,4 @@
 spring:
-
   config:
     activate:
       on-profile: prod
@@ -9,6 +8,13 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 5000
+      validation-timeout: 2000
+      minimum-idle: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
   data:
     redis:
       port: 6379
@@ -22,7 +28,6 @@ spring:
 
   jpa:
     database: mysql
-
     database-platform: org.hibernate.dialect.MySQLDialect
     generate-ddl: true
     hibernate:

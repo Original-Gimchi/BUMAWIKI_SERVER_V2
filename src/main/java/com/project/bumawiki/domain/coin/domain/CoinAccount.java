@@ -58,13 +58,9 @@ public class CoinAccount {
 
 	public boolean wasRewardedToday() {
 		LocalDateTime today = LocalDateTime.now();
-		if (this.lastRewardedTime.getYear() == today.getYear() &&
-			this.lastRewardedTime.getMonth() == today.getMonth() &&
-			this.lastRewardedTime.getDayOfMonth() == today.getDayOfMonth()) {
-			return true;
-		}
-
-		return false;
+		return this.lastRewardedTime.getYear() == today.getYear()
+			&& this.lastRewardedTime.getMonth() == today.getMonth()
+			&& this.lastRewardedTime.getDayOfMonth() == today.getDayOfMonth();
 	}
 
 	public void updateLastRewardedTimeNow() {

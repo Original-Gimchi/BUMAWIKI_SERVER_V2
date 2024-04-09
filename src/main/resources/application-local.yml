@@ -1,5 +1,4 @@
 spring:
-
   config:
     activate:
       on-profile: local
@@ -9,9 +8,17 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-  redis:
-    port: 6379
-    host: localhost
+    hikari:
+      maximum-pool-size: 15
+      connection-timeout: 5000
+      validation-timeout: 2000
+      minimum-idle: 15
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  data:
+    redis:
+      port: 6379
+      host: localhost
 
   logging:
     level:
@@ -21,11 +28,10 @@ spring:
 
   jpa:
     database: mysql
-
     database-platform: org.hibernate.dialect.MySQLDialect
     generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 
   servlet:
     multipart:
@@ -50,9 +56,6 @@ bsm:
   client-id: ${BSM_CLIENT_ID}
   secret-key: ${BSM_SECRET_KEY}
   redirect-url: ${BSM_REDIRECT_URL}
-
-image:
-  path: ${SAVING_URL}
 
 #S3
 aws:

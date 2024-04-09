@@ -20,10 +20,10 @@ public class VersionResponseDto {
 		this.docsType = findDocs.getDocsType();
 		this.title = findDocs.getTitle();
 
-		int i = length - 1;
+		int index = length;
 		for (VersionDocsResponseDto docsResponseDto : versionDocsResponseDto) {
-			docsResponseDto.updateIndex(i);
-			i -= 1;
+			docsResponseDto.updateIndex(index);
+			index -= 1;
 		}
 	}
 }
