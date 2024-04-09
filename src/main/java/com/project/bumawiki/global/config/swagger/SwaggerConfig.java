@@ -22,7 +22,6 @@ public class SwaggerConfig {
         );
 
         return new OpenAPI()
-                .components(new Components())
                 .addSecurityItem(securityRequirement)
                 .components(components)
                 .info(apiInfo());
@@ -32,7 +31,6 @@ public class SwaggerConfig {
         return new Info()
                 .version("v2.0")
                 .title("Api Docs")
-                .summary("summary")
                 .description("부마위키 스웨거 API 문서");
     }
 }
