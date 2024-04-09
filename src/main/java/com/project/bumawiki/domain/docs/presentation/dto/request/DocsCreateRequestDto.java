@@ -1,26 +1,26 @@
 package com.project.bumawiki.domain.docs.presentation.dto.request;
 
+import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
 
-@Getter
-public class DocsCreateRequestDto {
-
+public record DocsCreateRequestDto(
 	@NotBlank
-	private String title;
-
+	String title,
 	@NotBlank
-	private int enroll;
-
+	Integer enroll,
 	@NotBlank
-	private String contents;
-
+	String contents,
 	@NotBlank
-	private DocsType docsType;
+	DocsType docsType
+) {
 
-	public void updateContent(String setContent) {
-		this.contents = setContent;
+	public Docs toEntity() {
+		return new Docs(
+			title,
+			enroll,
+			docsType
+		);
 	}
 }
