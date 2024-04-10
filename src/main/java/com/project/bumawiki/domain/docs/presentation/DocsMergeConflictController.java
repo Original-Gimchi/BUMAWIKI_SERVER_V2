@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.bumawiki.domain.docs.presentation.dto.DocsConflictSolveDto;
-import com.project.bumawiki.domain.docs.presentation.dto.MergeConflictDataResponse;
+import com.project.bumawiki.domain.docs.presentation.dto.request.DocsConflictSolveRequestDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
 import com.project.bumawiki.domain.docs.service.DocsMergeConflictService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,13 +24,13 @@ public class DocsMergeConflictController {
 
 	@GetMapping("/{title}")
 	@ResponseStatus(HttpStatus.OK)
-	public MergeConflictDataResponse getMergeConflictData(@PathVariable String title) {
+	public MergeConflictDataResponseDto getMergeConflictData(@PathVariable String title) {
 		return mergeConflictService.getMergeConflict(title);
 	}
 
 	@PutMapping("/{title}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void solveConflict(@PathVariable String title, @RequestBody DocsConflictSolveDto dto) {
+	public void solveConflict(@PathVariable String title, @RequestBody DocsConflictSolveRequestDto dto) {
 		mergeConflictService.solveConflict(title, dto);
 	}
 }

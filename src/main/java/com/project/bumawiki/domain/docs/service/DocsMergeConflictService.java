@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.type.Status;
-import com.project.bumawiki.domain.docs.presentation.dto.DocsConflictSolveDto;
-import com.project.bumawiki.domain.docs.presentation.dto.MergeConflictDataResponse;
+import com.project.bumawiki.domain.docs.presentation.dto.request.DocsConflictSolveRequestDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +31,7 @@ public class DocsMergeConflictService {
 	private final DocsUpdater docsUpdater;
 	private final DocsCreator docsCreator;
 
-	public MergeConflictDataResponse getMergeConflict(String title) {
+	public MergeConflictDataResponseDto getMergeConflict(String title) {
 		Docs docs = docsReader.findByTitle(title);
 
 		docsValidator.checkConflicted(docs);
@@ -47,7 +47,7 @@ public class DocsMergeConflictService {
 		LinkedList<DiffMatchPatch.Diff> diff1 = DocsUtil.getDiff(originalDocsContent, firstDocsContent);
 		LinkedList<DiffMatchPatch.Diff> diff2 = DocsUtil.getDiff(originalDocsContent, secondDocsContent);
 
-		return new MergeConflictDataResponse(
+		return new MergeConflictDataResponseDto(
 			firstDocsContent,
 			secondDocsContent,
 			originalDocsContent,
@@ -57,7 +57,7 @@ public class DocsMergeConflictService {
 	}
 
 
-	public void solveConflict(String title, DocsConflictSolveDto dto) {
+	public void solveConflict(String title, DocsConflictSolveRequestDto dto) {
 		Docs docs = docsReader.findByTitle(title);
 
 		docsValidator.checkConflicted(docs);

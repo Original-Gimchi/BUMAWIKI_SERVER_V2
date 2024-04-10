@@ -1,10 +1,10 @@
-package com.project.bumawiki.domain.docs.presentation.dto;
+package com.project.bumawiki.domain.docs.presentation.dto.response;
 
 import java.util.LinkedList;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
-public record MergeConflictDataResponse(
+public record MergeConflictDataResponseDto(
 	String firstDocsContent,
 	String secondDocsContent,
 	String originalDocsContent,
