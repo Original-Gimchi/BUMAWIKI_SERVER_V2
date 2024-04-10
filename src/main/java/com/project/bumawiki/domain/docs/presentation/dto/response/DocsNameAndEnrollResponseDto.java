@@ -6,7 +6,7 @@ import java.util.List;
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.service.DocsUtil;
+import com.project.bumawiki.domain.docs.util.DocsUtil;
 
 import lombok.Getter;
 
