@@ -1,10 +1,9 @@
 package com.project.bumawiki.domain.docs.presentation.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
 
-@Getter
-public class DocsTitleUpdateRequestDto {
+public record DocsTitleUpdateRequestDto(
 	@NotBlank
-	private String title;
+	String title
+) {
 }

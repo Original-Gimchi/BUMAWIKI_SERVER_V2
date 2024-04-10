@@ -18,4 +18,9 @@ public class DocsReader {
 		return docsRepository.findById(docsId)
 			.orElseThrow(() -> new BumawikiException(ErrorCode.DOCS_NOT_FOUND));
 	}
+
+	public Docs findByTitle(String title) {
+		return docsRepository.findByTitle(title)
+			.orElseThrow(() -> new BumawikiException(ErrorCode.DOCS_NOT_FOUND));
+	}
 }

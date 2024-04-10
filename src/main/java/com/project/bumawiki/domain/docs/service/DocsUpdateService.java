@@ -1,148 +1,56 @@
 package com.project.bumawiki.domain.docs.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.bumawiki.domain.contribute.domain.Contribute;
-import com.project.bumawiki.domain.contribute.service.ContributeService;
 import com.project.bumawiki.domain.docs.domain.Docs;
-import com.project.bumawiki.domain.docs.domain.VersionDocs;
-import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
-import com.project.bumawiki.domain.docs.domain.repository.DocsRepositoryMapper;
-import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.domain.type.Status;
-import com.project.bumawiki.domain.docs.exception.CannotChangeYourDocsException;
-import com.project.bumawiki.domain.docs.exception.NoUpdatableDocsException;
-import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTitleUpdateRequestDto;
-import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTypeUpdateDto;
-import com.project.bumawiki.domain.docs.presentation.dto.request.DocsUpdateRequestDto;
-import com.project.bumawiki.domain.user.UserFacade;
+import com.project.bumawiki.domain.docs.implementation.DocsReader;
+import com.project.bumawiki.domain.docs.implementation.DocsUpdater;
+import com.project.bumawiki.domain.docs.implementation.DocsValidator;
+import com.project.bumawiki.domain.docs.implementation.versiondocs.VersionDocsCreator;
+import com.project.bumawiki.domain.docs.implementation.versiondocs.VersionDocsValidator;
 import com.project.bumawiki.domain.user.domain.User;
-import com.project.bumawiki.domain.user.service.UserService;
-import com.project.bumawiki.global.annotation.ServiceWithTransactionalReadOnly;
+import com.project.bumawiki.global.annotation.Implementation;
 
 import lombok.RequiredArgsConstructor;
 
+@Transactional
+@Implementation
 @RequiredArgsConstructor
-@ServiceWithTransactionalReadOnly
 public class DocsUpdateService {
-	private final DocsRepositoryMapper docsRepositoryMapper;
-	private final DocsRepository docsRepository;
-	private final VersionDocsRepository versionDocsRepository;
-	private final ContributeService contributeService;
-	private final UserService userService;
-	private final UserFacade userFacade;
+	private final DocsReader docsReader;
+	private final DocsUpdater docsUpdater;
+	private final DocsValidator docsValidator;
+	private final VersionDocsCreator versionDocsCreator;
+	private final VersionDocsValidator versionDocsValidator;
 
-	@Transactional
-	public Long execute(String bearer, String title, DocsUpdateRequestDto docsUpdateRequestDto) {
-		String authId = userService.checkIsLoginUser(bearer);
-		Docs foundDocs = findDocsByTitle(title);
-		validate(authId, foundDocs);
+	public void execute(User user, String title, String contents, Integer updatingVersion) {
+		Docs docs = docsReader.findByTitle(title);
 
-		// if (foundDocs.getStatus() == Status.CONFLICTED) {
-		// 	throw new DocsConflictedException();
-		// }
+		docsValidator.checkUpdatableDocsType(docs.getDocsType());
+		docsValidator.checkUpdateOneSelf(user, docs);
+		docsValidator.checkConflicted(docs);
 
-		VersionDocs savedVersionDocs = saveVersionDocs(docsUpdateRequestDto, foundDocs.getId(),
-			foundDocs.getLastVersion());
-		Docs docs;
-
-		if (foundDocs.getLastVersion() != docsUpdateRequestDto.getUpdatingVersion()) {
-			docs = setVersionDocs(savedVersionDocs, Status.CONFLICTED);
-		} else {
-			docs = setVersionDocs(savedVersionDocs, Status.GOOD);
+		if (versionDocsValidator.isConflict(docs, updatingVersion)) {
+			docsUpdater.updateStatus(docs, Status.CONFLICTED);
 		}
 
-		setContribute(savedVersionDocs);
-
-		return docs.getId();
+		versionDocsCreator.create(docs, user, contents);
 	}
 
-	@Transactional
-	public Long titleUpdate(String title, DocsTitleUpdateRequestDto requestDto) {
+	public void titleUpdate(String title, String changedTitle) {
+		Docs docs = docsReader.findByTitle(title);
+		docsValidator.checkTitleAlreadyExist(docs);
 
-		docsRepositoryMapper.checkTitleAlreadyExist(requestDto.getTitle());
-
-		Docs docs = findDocsByTitle(title);
-		docs.updateTitle(requestDto.getTitle());
-
-		return docs.getId();
+		docsUpdater.updateTitle(docs, changedTitle);
 	}
 
-	@Transactional
-	public Long docsTypeUpdate(final DocsTypeUpdateDto docsTypeUpdateDto) {
-		Docs docs = docsRepository.findById(docsTypeUpdateDto.getId())
-			.orElseThrow(() -> NoUpdatableDocsException.EXCEPTION);
+	public void docsTypeUpdate(Long id, DocsType docsType) {
+		Docs docs = docsReader.findById(id);
 
-		docs.updateDocsType(docsTypeUpdateDto.getDocsType());
-		return docs.getId();
+		docsUpdater.updateType(docs, docsType);
 	}
 
-	private Docs setVersionDocs(VersionDocs savedVersionDocs, Status status) {
-		Docs docs = setVersionDocsToDocs(savedVersionDocs);
-		docs.updateStatus(status);
-		docs.setModifiedTime(savedVersionDocs.getThisVersionCreatedAt());
-		return docs;
-	}
-
-	private VersionDocs saveVersionDocs(DocsUpdateRequestDto docsUpdateRequestDto, Long docsId, int lastVersion) {
-		return versionDocsRepository.save(
-			VersionDocs.builder()
-				.docsId(docsId)
-				.thisVersionCreatedAt(LocalDateTime.now())
-				.contents(docsUpdateRequestDto.getContents())
-				.version(lastVersion + 1)
-				.build()
-		);
-	}
-
-	private void setContribute(VersionDocs savedVersionDocs) {
-		Contribute contribute = contributeService.updateContribute(savedVersionDocs);
-		savedVersionDocs.updateContributor(contribute);
-	}
-
-	private Docs findDocsByTitle(String title) {
-		return docsRepository.findByTitle(title)
-			.orElseThrow(() -> NoUpdatableDocsException.EXCEPTION);
-	}
-
-	private void validate(String authId, Docs foundDocs) {
-		updateDocsOneself(foundDocs.getTitle(), foundDocs.getEnroll(), authId, foundDocs.getDocsType());
-		updateReadOnlyDocs(foundDocs.getDocsType());
-	}
-
-	private void updateDocsOneself(String title, Integer enroll, String authId, DocsType docsType) {
-		User user = userFacade.getUserByEmail(authId);
-
-		if (docsType.equals(DocsType.STUDENT)) {
-			if (title.contains(user.getName()) && enroll.equals(user.getEnroll())) {
-				throw CannotChangeYourDocsException.EXCEPTION;
-			}
-			return;
-		}
-
-		if (title.contains(user.getName())) {
-			throw CannotChangeYourDocsException.EXCEPTION;
-		}
-	}
-
-	private void updateReadOnlyDocs(DocsType docsType) {
-
-		if (docsType.equals(DocsType.READONLY)) {
-			throw NoUpdatableDocsException.EXCEPTION;
-		}
-	}
-
-	private Docs setVersionDocsToDocs(VersionDocs versionDocs) {
-		Docs docs = docsRepository.findById(versionDocs.getDocsId())
-			.orElseThrow(() -> NoUpdatableDocsException.EXCEPTION);
-
-		docs.updateLatestVersion(versionDocs.getVersion());
-		docs.getDocsVersion().add(versionDocs);
-
-		return docs;
-	}
 }
 

@@ -50,7 +50,7 @@ public class Docs {
 		this.docsType = docsType;
 	}
 
-	public void setModifiedTime(LocalDateTime lastModifiedAt) {
+	public void updateModifiedAt(LocalDateTime lastModifiedAt) {
 		this.lastModifiedAt = lastModifiedAt;
 	}
 
