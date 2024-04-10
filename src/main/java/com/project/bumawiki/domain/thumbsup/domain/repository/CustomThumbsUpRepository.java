@@ -7,4 +7,6 @@ import com.project.bumawiki.domain.user.domain.User;
 
 public interface CustomThumbsUpRepository {
 	List<ThumbsUpResponseDto> getUserThumbsUp(User user);
+
+	Long countThumbsUpByTitle(String title);
 }

@@ -30,4 +30,14 @@ public class CustomThumbsUpRepositoryImpl implements CustomThumbsUpRepository {
 			.distinct()
 			.fetch();
 	}
+
+	@Override
+	public Long countThumbsUpByTitle(String title) {
+		return jpaQueryFactory
+			.select(thumbsUp.count())
+			.from(docs)
+			.join(docs, thumbsUp.docs)
+			.where(docs.title.eq(title))
+			.fetchOne();
+	}
 }
