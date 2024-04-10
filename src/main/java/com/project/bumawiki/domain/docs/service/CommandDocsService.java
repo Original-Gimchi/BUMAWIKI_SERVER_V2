@@ -1,31 +1,49 @@
 package com.project.bumawiki.domain.docs.service;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.domain.type.Status;
+import com.project.bumawiki.domain.docs.implementation.DocsCreator;
+import com.project.bumawiki.domain.docs.implementation.DocsDeleter;
 import com.project.bumawiki.domain.docs.implementation.DocsReader;
 import com.project.bumawiki.domain.docs.implementation.DocsUpdater;
 import com.project.bumawiki.domain.docs.implementation.DocsValidator;
 import com.project.bumawiki.domain.docs.implementation.versiondocs.VersionDocsCreator;
 import com.project.bumawiki.domain.docs.implementation.versiondocs.VersionDocsValidator;
+import com.project.bumawiki.domain.thumbsup.implementation.ThumbsUpDeleter;
 import com.project.bumawiki.domain.user.domain.User;
-import com.project.bumawiki.global.annotation.Implementation;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+@Service
 @Transactional
-@Implementation
 @RequiredArgsConstructor
-public class DocsUpdateService {
+public class CommandDocsService {
+	private final DocsCreator docsCreator;
 	private final DocsReader docsReader;
 	private final DocsUpdater docsUpdater;
+	private final DocsDeleter docsDeleter;
 	private final DocsValidator docsValidator;
+
 	private final VersionDocsCreator versionDocsCreator;
 	private final VersionDocsValidator versionDocsValidator;
 
-	public void execute(User user, String title, String contents, Integer updatingVersion) {
+	private final ThumbsUpDeleter thumbsUpDeleter;
+
+	public void create(Docs docs, User user, String contents) {
+		docsValidator.checkTitleAlreadyExist(docs);
+		docsCreator.create(docs, user, contents);
+	}
+
+	public void delete(Long id) {
+		docsDeleter.delete(id);
+		thumbsUpDeleter.deleteAllByDocsId(id);
+	}
+
+	public void update(User user, String title, String contents, Integer updatingVersion) {
 		Docs docs = docsReader.findByTitle(title);
 
 		docsValidator.checkUpdatableDocsType(docs.getDocsType());
@@ -51,6 +69,4 @@ public class DocsUpdateService {
 
 		docsUpdater.updateType(docs, docsType);
 	}
-
 }
-

@@ -1,7 +1,7 @@
 package com.project.bumawiki.domain.docs.presentation;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,45 +14,46 @@ import com.project.bumawiki.domain.docs.presentation.dto.request.DocsCreateReque
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTitleUpdateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTypeUpdateDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsUpdateRequestDto;
-import com.project.bumawiki.domain.docs.service.DocsCreateService;
-import com.project.bumawiki.domain.docs.service.DocsUpdateService;
+import com.project.bumawiki.domain.docs.service.CommandDocsService;
 import com.project.bumawiki.global.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
 
-@Validated
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/docs")
 @ResponseStatus(HttpStatus.NO_CONTENT)
-public class DocsCreateUpdateController {
+public class CommandDocsController {
+	private final CommandDocsService commandDocsService;
 
-	private final DocsUpdateService docsUpdateService;
-	private final DocsCreateService docsCreateService;
-
-	@PostMapping("/create")
+	@PostMapping
 	public void createDocs(@RequestBody DocsCreateRequestDto request) {
-		docsCreateService.execute(request.toEntity(), SecurityUtil.getCurrentUserWithLogin(), request.contents());
+		commandDocsService.create(request.toEntity(), SecurityUtil.getCurrentUserWithLogin(), request.contents());
 	}
 
-	@PutMapping("/update/{title}")
+	@PutMapping("/{title}")
 	public void updateDocs(@PathVariable String title,
 		@RequestBody DocsUpdateRequestDto request) {
-		docsUpdateService.execute(
+		commandDocsService.update(
 			SecurityUtil.getCurrentUserWithLogin(),
 			title,
 			request.contents(),
 			request.updatingVersion());
 	}
 
-	@PutMapping("/update/title/{title}")
+	@PutMapping("/{title}")
 	public void updateDocsTitle(@PathVariable String title,
 		@RequestBody DocsTitleUpdateRequestDto request) {
-		docsUpdateService.titleUpdate(title, request.title());
+		commandDocsService.titleUpdate(title, request.title());
 	}
 
-	@PutMapping("/update/docsType")
+	@PutMapping("/docsType")
 	public void updateDocsType(@RequestBody DocsTypeUpdateDto requestDto) {
-		docsUpdateService.docsTypeUpdate(requestDto.id(), requestDto.docsType());
+		commandDocsService.docsTypeUpdate(requestDto.id(), requestDto.docsType());
+	}
+
+	@DeleteMapping("{id}")
+	public void deleteDocs(@PathVariable Long id) {
+		commandDocsService.delete(id);
 	}
 }
