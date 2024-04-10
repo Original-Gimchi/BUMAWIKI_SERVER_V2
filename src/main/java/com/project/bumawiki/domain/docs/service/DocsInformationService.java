@@ -3,11 +3,8 @@ package com.project.bumawiki.domain.docs.service;
 import static org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
@@ -15,10 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.bumawiki.domain.contribute.domain.repository.ContributeRepository;
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
+import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.exception.DocsNotFoundException;
 import com.project.bumawiki.domain.docs.exception.VersionNotExistException;
@@ -27,7 +24,6 @@ import com.project.bumawiki.domain.docs.presentation.dto.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.VersionDocsSummaryDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
-import com.project.bumawiki.domain.docs.presentation.dto.response.DocsThumbsUpResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.user.domain.User;
@@ -39,39 +35,12 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class DocsInformationService {
 	private final DocsRepository docsRepository;
-	private final ContributeRepository contributeRepository;
+	private final VersionDocsRepository versionDocsRepository;
 
-	public List<DocsNameAndEnrollResponseDto> findByDocsType(final DocsType docsType) {
-		List<Docs> allStudent = docsRepository.findByDocsType(docsType);
-
-		return allStudent.stream()
-			.map(DocsNameAndEnrollResponseDto::new)
-			.collect(Collectors.toList());
-	}
-
-	public Map<Integer, List<DocsNameAndEnrollResponseDto>> findByDocsTypeOrderByEnroll(final DocsType docsType) {
-		List<Docs> allDocs = docsRepository.findByDocsType(docsType);
-
-		List<DocsNameAndEnrollResponseDto> docsList = allDocs.stream()
-			.map(DocsNameAndEnrollResponseDto::new)
-			.collect(Collectors.toList());
-
-		// TreeMap을 사용하여 enroll 값을 기준으로 정렬된 Map을 만듭니다.
-		Map<Integer, List<DocsNameAndEnrollResponseDto>> enrollMap = new TreeMap<>(Collections.reverseOrder());
-
-		// 기존의 리스트를 순회하면서 enroll 값을 기준으로 Map에 추가합니다.
-		for (DocsNameAndEnrollResponseDto doc : docsList) {
-			enrollMap.computeIfAbsent(doc.getEnroll(), k -> new ArrayList<>()).add(doc);
-		}
-
-		return enrollMap;
-	}
-
-	@Transactional(readOnly = true)
 	public List<DocsNameAndEnrollResponseDto> findAllByTitle(String title) {
 		List<Docs> docs = docsRepository.findAllByTitle(title);
 
-		if (docs.size() == 0) {
+		if (docs.isEmpty()) {
 			throw DocsNotFoundException.EXCEPTION;
 		}
 
@@ -80,12 +49,13 @@ public class DocsInformationService {
 			.collect(Collectors.toList());
 	}
 
-	@Transactional
 	public DocsResponseDto findDocs(String title) {
 		Docs docs = docsRepository.findByTitle(title)
 			.orElseThrow(() -> DocsNotFoundException.EXCEPTION);
 
-		List<User> contributors = contributeRepository.findUserAllByDocs(docs);
+		List<User> contributors = versionDocsRepository.findByDocs(docs)
+			.stream().map(VersionDocs::getContributor)
+			.toList();
 
 		return new DocsResponseDto(docs, contributors);
 	}
@@ -99,13 +69,6 @@ public class DocsInformationService {
 
 	public List<DocsNameAndEnrollResponseDto> showDocsModifiedAtDesc(Pageable pageable) {
 		return docsRepository.findByLastModifiedAt(pageable)
-			.stream()
-			.map(DocsNameAndEnrollResponseDto::new)
-			.collect(Collectors.toList());
-	}
-
-	public List<DocsNameAndEnrollResponseDto> showDocsModifiedAtAsc(Pageable pageable) {
-		return docsRepository.findByLastModifiedAtAsc(pageable)
 			.stream()
 			.map(DocsNameAndEnrollResponseDto::new)
 			.collect(Collectors.toList());
@@ -142,13 +105,9 @@ public class DocsInformationService {
 			new VersionDocsSummaryDto(versionDocs.get(version.intValue())), new ArrayList<>(diff));
 	}
 
-	@Transactional(readOnly = true)
-	public DocsThumbsUpResponseDto getDocsThumbsUpsCount(String title) {
-		Docs docs = docsRepository.findByTitle(title).orElseThrow(
-			() -> DocsNotFoundException.EXCEPTION
-		);
-
-		return new DocsThumbsUpResponseDto(docs.getThumbsUpsCount());
+	//Docs Type으로 조회
+	public List<Docs> findByDocsTypeOrderByEnroll(DocsType docsType) {
+		return docsRepository.findByDocsType(docsType);
 	}
 
 	public TeacherResponseDto getAllTeacher() {
@@ -165,4 +124,9 @@ public class DocsInformationService {
 			findByDocsType(DocsType.FREE_CLUB)
 		);
 	}
+
+	private List<Docs> findByDocsType(DocsType docsType) {
+		return docsRepository.findByDocsType(docsType);
+	}
+
 }

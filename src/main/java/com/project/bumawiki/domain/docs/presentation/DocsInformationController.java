@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.exception.DocsTypeNotFoundException;
 import com.project.bumawiki.domain.docs.presentation.dto.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.DocsTypeDto;
 import com.project.bumawiki.domain.docs.presentation.dto.TeacherResponseDto;
@@ -43,17 +42,10 @@ public class DocsInformationController {
 	}
 
 	@GetMapping("/{stringDocsType}")
-	public ResponseEntity<DocsTypeDto> findAllByDocsType(
+	public DocsTypeDto findAllByDocsType(
 		@PathVariable String stringDocsType) {
-
 		DocsType docsType = DocsType.valueOfLabel(stringDocsType);
-		if (docsType == null) {
-			System.out.println();
-			System.out.println("Not found Docs type : " + stringDocsType);
-			throw DocsTypeNotFoundException.EXCEPTION;
-		}
-
-		return ResponseEntity.ok(DocsTypeDto.from(docsInformationService.findByDocsTypeOrderByEnroll(docsType)));
+		return DocsTypeDto.from(docsInformationService.findByDocsTypeOrderByEnroll(docsType));
 	}
 
 	@GetMapping("/find/all/title/{title}")
@@ -75,12 +67,6 @@ public class DocsInformationController {
 	public ResponseEntity<List<DocsNameAndEnrollResponseDto>> showDocsModifiedTimeDesc(
 		@PageableDefault(size = 12) Pageable pageable) {
 		return ResponseEntity.ok(docsInformationService.showDocsModifiedAtDesc(pageable));
-	}
-
-	@GetMapping("/find/modifiedR")
-	public ResponseEntity<List<DocsNameAndEnrollResponseDto>> showDocsModifiedTimeAsc(
-		@PageableDefault(size = 12) Pageable pageable) {
-		return ResponseEntity.ok(docsInformationService.showDocsModifiedAtAsc(pageable));
 	}
 
 	@GetMapping("/find/version/{title}/different/{version}")

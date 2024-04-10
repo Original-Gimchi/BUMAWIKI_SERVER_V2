@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.project.bumawiki.domain.docs.exception.DocsTypeNotFoundException;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -26,7 +28,13 @@ public enum DocsType {
 
 	private final String name;
 
-	public static DocsType valueOfLabel(String docsType) {
-		return BY_LABEL.get(docsType);
+	public static DocsType valueOfLabel(String stringDocsType) {
+		DocsType docsType = BY_LABEL.get(stringDocsType);
+
+		if (docsType == null) {
+			throw DocsTypeNotFoundException.EXCEPTION;
+		}
+
+		return docsType;
 	}
 }
