@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.docs.service;
+package com.project.bumawiki.domain.thumbsup.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
