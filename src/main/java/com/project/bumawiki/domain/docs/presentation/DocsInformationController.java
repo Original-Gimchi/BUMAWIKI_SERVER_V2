@@ -64,9 +64,12 @@ public class DocsInformationController {
 	}
 
 	@GetMapping("/find/modified")
-	public ResponseEntity<List<DocsNameAndEnrollResponseDto>> showDocsModifiedTimeDesc(
+	public List<DocsNameAndEnrollResponseDto> showDocsModifiedTimeDesc(
 		@PageableDefault(size = 12) Pageable pageable) {
-		return ResponseEntity.ok(docsInformationService.showDocsModifiedAtDesc(pageable));
+		return docsInformationService.showDocsModifiedAtDesc(pageable)
+			.stream()
+			.map(DocsNameAndEnrollResponseDto::new)
+			.toList();
 	}
 
 	@GetMapping("/find/version/{title}/different/{version}")
@@ -76,8 +79,11 @@ public class DocsInformationController {
 	}
 
 	@GetMapping("/find/modified/all")
-	public ResponseEntity<List<DocsNameAndEnrollResponseDto>> showDocsModifiedTimeDescAll() {
-		return ResponseEntity.ok(docsInformationService.showDocsModifiedAtDescAll());
+	public List<DocsNameAndEnrollResponseDto> showDocsModifiedTimeDescAll() {
+		return docsInformationService.showDocsModifiedAtDescAll()
+			.stream()
+			.map(DocsNameAndEnrollResponseDto::new)
+			.toList();
 	}
 
 	@GetMapping("/thumbs/up/get/{title}")

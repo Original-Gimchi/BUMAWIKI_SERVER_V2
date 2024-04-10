@@ -50,8 +50,7 @@ public class DocsInformationService {
 	}
 
 	public DocsResponseDto findDocs(String title) {
-		Docs docs = docsRepository.findByTitle(title)
-			.orElseThrow(() -> DocsNotFoundException.EXCEPTION);
+		Docs docs = docsRepository.getByTitle(title);
 
 		List<User> contributors = versionDocsRepository.findByDocs(docs)
 			.stream().map(VersionDocs::getContributor)
@@ -61,30 +60,21 @@ public class DocsInformationService {
 	}
 
 	public VersionResponseDto findDocsVersion(String title) {
-		Docs docs = docsRepository.findByTitle(title)
-			.orElseThrow(() -> DocsNotFoundException.EXCEPTION);
+		Docs docs = docsRepository.getByTitle(title);
 
 		return docsRepository.getDocsVersion(docs);
 	}
 
-	public List<DocsNameAndEnrollResponseDto> showDocsModifiedAtDesc(Pageable pageable) {
-		return docsRepository.findByLastModifiedAt(pageable)
-			.stream()
-			.map(DocsNameAndEnrollResponseDto::new)
-			.collect(Collectors.toList());
+	public List<Docs> showDocsModifiedAtDesc(Pageable pageable) {
+		return docsRepository.findByLastModifiedAt(pageable);
 	}
 
-	public List<DocsNameAndEnrollResponseDto> showDocsModifiedAtDescAll() {
-		return docsRepository.findByLastModifiedAtAll()
-			.stream()
-			.map(DocsNameAndEnrollResponseDto::new)
-			.collect(Collectors.toList());
+	public List<Docs> showDocsModifiedAtDescAll() {
+		return docsRepository.findByLastModifiedAtAll();
 	}
 
 	public VersionDocsDiffResponseDto showVersionDocsDiff(String title, Long version) {
-		Docs docs = docsRepository.findByTitle(title).orElseThrow(
-			() -> DocsNotFoundException.EXCEPTION
-		);
+		Docs docs = docsRepository.getByTitle(title);
 		String baseDocs = "";
 		String versionedDocs;
 		List<VersionDocs> versionDocs = docs.getDocsVersion();
