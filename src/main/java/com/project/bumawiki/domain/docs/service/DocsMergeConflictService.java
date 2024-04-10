@@ -10,6 +10,7 @@ import com.project.bumawiki.domain.docs.implementation.DocsValidator;
 import com.project.bumawiki.domain.docs.implementation.VersionDocsReader;
 import com.project.bumawiki.domain.docs.implementation.versiondocs.VersionDocsCreator;
 
+import com.project.bumawiki.domain.docs.util.DocsUtil;
 import com.project.bumawiki.global.util.SecurityUtil;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
@@ -40,26 +41,23 @@ public class DocsMergeConflictService {
 		// 버전 최신순 3가지 조회가 전체에서 자르는지 3개만 가져오는지 확인이 필요합니다
 		List<VersionDocs> docsVersion = versionDocsReader.findTop3ByDocs(docs);
 
-		VersionDocs firstDocs = docsVersion.get(1);
-		VersionDocs secondDocs = docsVersion.get(2);
-		VersionDocs originalDocs = docsVersion.get(0);
+		String firstDocsContent = docsVersion.get(0).getContents();
+		String secondDocsContent = docsVersion.get(1).getContents();
+		String originalDocsContent = docsVersion.get(2).getContents();
 
 		//최신글의 겹치는 점과 지금 바꾸려는 글의 차이점을 조회
-		DiffMatchPatch dmp = new DiffMatchPatch();
-		LinkedList<DiffMatchPatch.Diff> diff1 = dmp.diffMain(originalDocs.getContents(), firstDocs.getContents());
-		dmp.diffCleanupSemantic(diff1);
-
-		LinkedList<DiffMatchPatch.Diff> diff2 = dmp.diffMain(originalDocs.getContents(), secondDocs.getContents());
-		dmp.diffCleanupSemantic(diff2);
+		LinkedList<DiffMatchPatch.Diff> diff1 = DocsUtil.getDiff(originalDocsContent, firstDocsContent);
+		LinkedList<DiffMatchPatch.Diff> diff2 = DocsUtil.getDiff(originalDocsContent, secondDocsContent);
 
 		return new MergeConflictDataResponse(
-			firstDocs.getContents(),
-			secondDocs.getContents(),
-			originalDocs.getContents(),
+			firstDocsContent,
+			secondDocsContent,
+			originalDocsContent,
 			diff1,
 			diff2
 		);
 	}
+
 
 	public void solveConflict(String title, DocsConflictSolveDto dto) {
 		Docs docs = docsReader.findByTitle(title);
