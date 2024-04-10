@@ -11,7 +11,7 @@ public record ContributeDocsResponseDto(
 	LocalDateTime createTime,
 	String title,
 	Integer version
-	) {
+) {
 	public ContributeDocsResponseDto(VersionDocs versionDocs) {
 		this(
 			versionDocs.getUser().getId(),
