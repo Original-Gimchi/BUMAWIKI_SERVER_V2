@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.docs.service;
+package com.project.bumawiki.domain.thumbsup.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,11 +12,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class DocsCheckYouLikeThisService {
+public class ThumbsUpCheckService {
 	private final ThumbsUpReader thumbsUpReader;
 	private final DocsValidator docsValidator;
 
-	public boolean checkUserLikeThisDocs(Long docsId, User currentUser) {
+	public boolean checkUserThumbsThisDocs(Long docsId, User currentUser) {
 		docsValidator.checkDocsExist(docsId);
 		return thumbsUpReader.checkDocsLike(docsId, currentUser);
 	}
