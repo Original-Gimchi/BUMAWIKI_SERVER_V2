@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.presentation.dto.VersionDocsSummaryDto;
 
-import lombok.Getter;
-
-@Getter
 public record VersionDocsDiffResponseDto(
 	String title,
 	DocsType docsType,

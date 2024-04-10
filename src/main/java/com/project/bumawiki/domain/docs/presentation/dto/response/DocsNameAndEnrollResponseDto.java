@@ -38,7 +38,7 @@ public class DocsNameAndEnrollResponseDto {
 	}
 
 	private String getContents(Docs docs) {
-		List<VersionDocs> docsVersion = docs.getDocsVersion();
+		List<VersionDocs> docsVersion = docs.getVersionDocs();
 		int currentDocsSize = docsVersion.size() - 1;
 		return docsVersion.get(currentDocsSize).getContents();
 	}

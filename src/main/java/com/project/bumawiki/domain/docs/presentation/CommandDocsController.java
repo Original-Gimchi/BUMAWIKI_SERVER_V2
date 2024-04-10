@@ -41,7 +41,7 @@ public class CommandDocsController {
 			request.updatingVersion());
 	}
 
-	@PutMapping("/{title}")
+	@PutMapping("/title/{title}")
 	public void updateDocsTitle(@PathVariable String title,
 		@RequestBody DocsTitleUpdateRequestDto request) {
 		commandDocsService.titleUpdate(title, request.title());

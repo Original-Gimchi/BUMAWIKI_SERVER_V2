@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class DocsCheckYouLikeThisService {
+public class ThumbsUpCheckService {
 	private final ThumbsUpReader thumbsUpReader;
 	private final DocsValidator docsValidator;
 

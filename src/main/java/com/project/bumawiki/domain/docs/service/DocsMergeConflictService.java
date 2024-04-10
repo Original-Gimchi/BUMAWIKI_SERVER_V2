@@ -3,12 +3,11 @@ package com.project.bumawiki.domain.docs.service;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.project.bumawiki.domain.docs.implementation.DocsCreator;
 import com.project.bumawiki.domain.docs.implementation.DocsReader;
 
 import com.project.bumawiki.domain.docs.implementation.DocsUpdater;
 import com.project.bumawiki.domain.docs.implementation.DocsValidator;
-import com.project.bumawiki.domain.docs.implementation.VersionDocsReader;
-import com.project.bumawiki.domain.docs.implementation.versiondocs.VersionDocsCreator;
 
 import com.project.bumawiki.domain.docs.util.DocsUtil;
 import com.project.bumawiki.global.util.SecurityUtil;
@@ -28,10 +27,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DocsMergeConflictService {
 	private final DocsReader docsReader;
-	private final VersionDocsReader versionDocsReader;
-	private final VersionDocsCreator versionDocsCreator;
 	private final DocsValidator docsValidator;
 	private final DocsUpdater docsUpdater;
+	private final DocsCreator docsCreator;
 
 	public MergeConflictDataResponse getMergeConflict(String title) {
 		Docs docs = docsReader.findByTitle(title);
@@ -39,7 +37,7 @@ public class DocsMergeConflictService {
 		docsValidator.checkConflicted(docs);
 
 		// 버전 최신순 3가지 조회가 전체에서 자르는지 3개만 가져오는지 확인이 필요합니다
-		List<VersionDocs> docsVersion = versionDocsReader.findTop3ByDocs(docs);
+		List<VersionDocs> docsVersion = docsReader.findTop3ByDocs(docs);
 
 		String firstDocsContent = docsVersion.get(0).getContents();
 		String secondDocsContent = docsVersion.get(1).getContents();
@@ -64,7 +62,7 @@ public class DocsMergeConflictService {
 
 		docsValidator.checkConflicted(docs);
 
-		versionDocsCreator.create(
+		docsCreator.create(
 			docs,
 			SecurityUtil.getCurrentUserWithLogin(),
 			dto.contents()

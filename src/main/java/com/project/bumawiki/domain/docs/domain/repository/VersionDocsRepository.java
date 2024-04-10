@@ -3,6 +3,7 @@ package com.project.bumawiki.domain.docs.domain.repository;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.bumawiki.domain.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 
@@ -19,4 +20,6 @@ public interface VersionDocsRepository extends JpaRepository<VersionDocs, Long> 
 	List<VersionDocs> findByDocs(Docs docs);
 
 	Optional<VersionDocs> findByDocsAndVersion(Docs docs, Integer version);
+
+    List<VersionDocs> findAllByUser(User user);
 }

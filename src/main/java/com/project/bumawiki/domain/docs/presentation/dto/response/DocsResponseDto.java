@@ -2,7 +2,6 @@ package com.project.bumawiki.domain.docs.presentation.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
@@ -29,10 +28,7 @@ public class DocsResponseDto {
 	private final int version;
 	private final String thumbnail;
 
-	public DocsResponseDto(Docs docs, List<User> contributors) {
-		int lastValueOfDocsVersion = docs.getDocsVersion().size() - 1;
-		VersionDocs versionDocs = docs.getDocsVersion().get(lastValueOfDocsVersion);
-
+	public DocsResponseDto(Docs docs, List<User> contributors, VersionDocs versionDocs) {
 		this.id = docs.getId();
 		this.title = docs.getTitle();
 		this.contents = versionDocs.getContents();
@@ -42,9 +38,9 @@ public class DocsResponseDto {
 		this.isDocsDetail = true;
 		this.contributors = contributors.stream()
 			.map(SimpleUserDto::new)
-			.collect(Collectors.toList());
+			.toList();
 		this.status = docs.getStatus();
-		this.version = docs.getLastVersion();
+		this.version = versionDocs.getVersion();
 		this.thumbnail = DocsUtil.getThumbnail(versionDocs.getContents());
 	}
 }

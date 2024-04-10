@@ -10,8 +10,6 @@ import com.project.bumawiki.domain.docs.implementation.DocsDeleter;
 import com.project.bumawiki.domain.docs.implementation.DocsReader;
 import com.project.bumawiki.domain.docs.implementation.DocsUpdater;
 import com.project.bumawiki.domain.docs.implementation.DocsValidator;
-import com.project.bumawiki.domain.docs.implementation.versiondocs.VersionDocsCreator;
-import com.project.bumawiki.domain.docs.implementation.versiondocs.VersionDocsValidator;
 import com.project.bumawiki.domain.thumbsup.implementation.ThumbsUpDeleter;
 import com.project.bumawiki.domain.user.domain.User;
 
@@ -27,9 +25,6 @@ public class CommandDocsService {
 	private final DocsUpdater docsUpdater;
 	private final DocsDeleter docsDeleter;
 	private final DocsValidator docsValidator;
-
-	private final VersionDocsCreator versionDocsCreator;
-	private final VersionDocsValidator versionDocsValidator;
 
 	private final ThumbsUpDeleter thumbsUpDeleter;
 
@@ -50,11 +45,11 @@ public class CommandDocsService {
 		docsValidator.checkUpdateOneSelf(user, docs);
 		docsValidator.checkGood(docs);
 
-		if (versionDocsValidator.isConflict(docs, updatingVersion)) {
+		if (docsValidator.isConflict(docs, updatingVersion)) {
 			docsUpdater.updateStatus(docs, Status.CONFLICTED);
 		}
 
-		versionDocsCreator.create(docs, user, contents);
+		docsCreator.createVersionDocs(docs, user, contents);
 	}
 
 	public void titleUpdate(String title, String changedTitle) {

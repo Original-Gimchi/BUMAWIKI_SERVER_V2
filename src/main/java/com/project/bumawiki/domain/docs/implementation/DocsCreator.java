@@ -14,10 +14,11 @@ import lombok.RequiredArgsConstructor;
 public class DocsCreator {
 	private final DocsRepository docsRepository;
 	private final VersionDocsRepository versionDocsRepository;
+	private final DocsUpdater docsUpdater;
+	private final DocsReader docsReader;
 
 	public void create(Docs docs, User user, String contents) {
 		docsRepository.save(docs);
-
 		versionDocsRepository.save(
 			new VersionDocs(
 				0,
@@ -26,5 +27,18 @@ public class DocsCreator {
 				user
 			)
 		);
+	}
+
+	public void createVersionDocs(Docs docs, User user, String contents) {
+		Integer lastVersion = docsReader.findLastVersion(docs).getVersion();
+		VersionDocs versionDocs = versionDocsRepository.save(
+			new VersionDocs(
+				lastVersion + 1,
+				docs,
+				contents,
+				user
+			)
+		);
+		docsUpdater.updateModifiedAt(docs, versionDocs.getCreatedAt());
 	}
 }

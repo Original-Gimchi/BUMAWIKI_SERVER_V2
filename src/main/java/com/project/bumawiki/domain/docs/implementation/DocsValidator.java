@@ -1,6 +1,7 @@
 package com.project.bumawiki.domain.docs.implementation;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
+import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.domain.type.Status;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DocsValidator {
 	private final DocsRepository docsRepository;
+	private final DocsReader docsReader;
 
 	public void checkTitleAlreadyExist(Docs docs) {
 		if (docsRepository.existsByTitle(docs.getTitle())) {
@@ -59,5 +61,10 @@ public class DocsValidator {
 		if (!docs.getStatus().equals(Status.CONFLICTED)) {
 			throw new BumawikiException(ErrorCode.DOCS_IS_NOT_CONFLICTED);
 		}
+	}
+
+	public boolean isConflict(Docs docs, Integer updatingVersion) {
+		VersionDocs lastVersionDocs = docsReader.findLastVersion(docs);
+		return !lastVersionDocs.getVersion().equals(updatingVersion);
 	}
 }

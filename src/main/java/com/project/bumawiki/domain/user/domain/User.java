@@ -2,9 +2,7 @@ package com.project.bumawiki.domain.user.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.project.bumawiki.domain.contribute.domain.Contribute;
 import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
 import com.project.bumawiki.domain.thumbsup.exception.AlreadyThumbsUpException;
 import com.project.bumawiki.domain.thumbsup.exception.YouDontThumbsUpThisDocs;
@@ -57,9 +55,6 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	@Column(length = 16)
 	private Authority authority;
-	@Builder.Default
-	@OneToMany(mappedBy = "contributor", cascade = CascadeType.ALL)
-	private List<Contribute> contributeDocs = new ArrayList<>();
 
 	public void cancelThumbsUp(ThumbsUp thumbsUp) {
 		boolean removed = thumbsUps
@@ -85,7 +80,7 @@ public class User {
 		return this.thumbsUps
 			.stream()
 			.map(ThumbsUp::getDto)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	public User update(BsmResourceResponse resource) {
@@ -98,9 +93,5 @@ public class User {
 
 	public void changeUserAuthority(Authority authority) {
 		this.authority = authority;
-	}
-
-	public void updateContributeDocs(List<Contribute> contribute) {
-		this.contributeDocs = contribute;
 	}
 }

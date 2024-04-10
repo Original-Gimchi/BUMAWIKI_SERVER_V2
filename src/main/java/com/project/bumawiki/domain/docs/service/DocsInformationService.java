@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.bumawiki.domain.docs.implementation.DocsReader;
+
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class DocsInformationService {
 	private final DocsRepository docsRepository;
 	private final VersionDocsRepository versionDocsRepository;
+	private final DocsReader docsReader;
 
 	public List<Docs> findAllByTitle(String title) {
 		List<Docs> docs = docsRepository.findAllByTitle(title);
@@ -53,7 +56,7 @@ public class DocsInformationService {
 			.map(VersionDocs::getUser)
 			.toList();
 
-		return new DocsResponseDto(docs, contributors);
+		return new DocsResponseDto(docs, contributors, docsReader.findLastVersion(docs));
 	}
 
 	public VersionResponseDto findDocsVersion(String title) {
@@ -117,4 +120,7 @@ public class DocsInformationService {
 		return docsRepository.findByDocsType(docsType);
 	}
 
+	public List<VersionDocs> findAllVersionDocsByUser(User user) {
+		return versionDocsRepository.findAllByUser(user);
+	}
 }

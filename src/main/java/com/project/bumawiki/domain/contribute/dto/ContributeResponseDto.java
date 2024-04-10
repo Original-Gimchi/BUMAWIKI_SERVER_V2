@@ -2,7 +2,7 @@ package com.project.bumawiki.domain.contribute.dto;
 
 import java.time.LocalDateTime;
 
-import com.project.bumawiki.domain.contribute.domain.Contribute;
+import com.project.bumawiki.domain.docs.domain.VersionDocs;
 
 import lombok.Getter;
 
@@ -14,14 +14,14 @@ public class ContributeResponseDto {
 	private final Long docsId;
 	private final LocalDateTime createTime;
 	private final String title;
-	private final Long versionDocsId;
+	private final Integer version;
 
-	public ContributeResponseDto(Contribute contribute) {
-		this.userId = contribute.getContributor().getId();
-		this.userNickName = contribute.getContributor().getNickName();
-		this.docsId = contribute.getDocs().getId();
-		this.createTime = contribute.getCreatedAt();
-		this.title = contribute.getDocs().getTitle();
-		this.versionDocsId = contribute.getVersionDocs().getId();
+	public ContributeResponseDto(VersionDocs versionDocs) {
+		this.userId = versionDocs.getUser().getId();
+		this.userNickName = versionDocs.getUser().getNickName();
+		this.docsId = versionDocs.getDocs().getId();
+		this.createTime = versionDocs.getCreatedAt();
+		this.title = versionDocs.getDocs().getTitle();
+		this.version = versionDocs.getVersion();
 	}
 }
