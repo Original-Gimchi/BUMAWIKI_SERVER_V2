@@ -29,8 +29,8 @@ import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class DocsInformationService {
 	private final DocsRepository docsRepository;
