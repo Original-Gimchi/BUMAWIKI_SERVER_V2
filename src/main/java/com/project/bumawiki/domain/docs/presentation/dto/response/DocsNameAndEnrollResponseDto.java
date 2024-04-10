@@ -8,36 +8,35 @@ import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.util.DocsUtil;
 
-import lombok.Getter;
-
-@Getter
-public class DocsNameAndEnrollResponseDto {
-
-	private final Long id;
-	private final String title;
-	private final int enroll;
-	private final String simpleContents;
-	private final DocsType docsType;
-	private final LocalDateTime lastModifiedAt;
-	private final String thumbnail;
+public record DocsNameAndEnrollResponseDto (
+	Long id,
+	String title,
+	int enroll,
+	String simpleContents,
+	DocsType docsType,
+	LocalDateTime lastModifiedAt,
+	String thumbnail
+) {
 
 	public DocsNameAndEnrollResponseDto(Docs docs) {
-		this.id = docs.getId();
-		this.title = docs.getTitle();
-		this.enroll = docs.getEnroll();
-		this.docsType = docs.getDocsType();
-		this.lastModifiedAt = docs.getLastModifiedAt();
-		this.simpleContents = getSimpleContents(docs);
-		this.thumbnail = DocsUtil.getThumbnail(getContents(docs));
+		this(
+			docs.getId(),
+			docs.getTitle(),
+			docs.getEnroll(),
+			getSimpleContents(docs),
+			docs.getDocsType(),
+			docs.getLastModifiedAt(),
+			DocsUtil.getThumbnail(getContents(docs))
+		);
 	}
 
-	private String getSimpleContents(Docs docs) {
+	private static String getSimpleContents(Docs docs) {
 		String contents = getContents(docs);
 		int endIndex = Math.min(contents.length(), 200);
 		return contents.substring(0, endIndex);
 	}
 
-	private String getContents(Docs docs) {
+	private static String getContents(Docs docs) {
 		List<VersionDocs> docsVersion = docs.getVersionDocs();
 		int currentDocsSize = docsVersion.size() - 1;
 		return docsVersion.get(currentDocsSize).getContents();
