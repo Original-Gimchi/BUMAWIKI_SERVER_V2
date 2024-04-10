@@ -1,5 +1,7 @@
 package com.project.bumawiki.domain.thumbsup.domain.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
@@ -11,4 +13,6 @@ public interface ThumbsUpRepository extends JpaRepository<ThumbsUp, Long> {
 	Boolean existsByDocs_IdAndUser(Long docsId, User user);
 
 	void deleteByDocsAndUser(Docs docs, User user);
+
+	List<ThumbsUp> findByDocs_Id(Long docsId);
 }

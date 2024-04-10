@@ -30,3 +30,7 @@ githook {
         }
     }
 }
+
+conventionalCommits {
+    ignoreCommitMessage = ".*(merge|Merge).*"
+}
