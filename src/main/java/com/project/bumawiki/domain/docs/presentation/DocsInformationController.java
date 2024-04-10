@@ -2,8 +2,6 @@ package com.project.bumawiki.domain.docs.presentation;
 
 import java.util.List;
 
-import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -16,10 +14,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.presentation.dto.response.DocsTypeResponseDto;
-import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.DocsTypeResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.docs.service.DocsInformationService;

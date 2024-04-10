@@ -1,5 +1,7 @@
 package com.project.bumawiki.domain.docs.implementation;
 
+import java.util.List;
+
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
@@ -9,8 +11,6 @@ import com.project.bumawiki.global.error.exception.BumawikiException;
 import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @Implementation
 @RequiredArgsConstructor

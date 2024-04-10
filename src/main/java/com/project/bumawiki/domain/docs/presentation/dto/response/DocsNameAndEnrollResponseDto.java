@@ -8,7 +8,7 @@ import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.util.DocsUtil;
 
-public record DocsNameAndEnrollResponseDto (
+public record DocsNameAndEnrollResponseDto(
 	Long id,
 	String title,
 	int enroll,

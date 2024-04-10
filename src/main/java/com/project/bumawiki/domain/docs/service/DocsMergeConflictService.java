@@ -3,23 +3,20 @@ package com.project.bumawiki.domain.docs.service;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.project.bumawiki.domain.docs.implementation.DocsCreator;
-import com.project.bumawiki.domain.docs.implementation.DocsReader;
-
-import com.project.bumawiki.domain.docs.implementation.DocsUpdater;
-import com.project.bumawiki.domain.docs.implementation.DocsValidator;
-
-import com.project.bumawiki.domain.docs.util.DocsUtil;
-import com.project.bumawiki.global.util.SecurityUtil;
-
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.springframework.stereotype.Service;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.type.Status;
+import com.project.bumawiki.domain.docs.implementation.DocsCreator;
+import com.project.bumawiki.domain.docs.implementation.DocsReader;
+import com.project.bumawiki.domain.docs.implementation.DocsUpdater;
+import com.project.bumawiki.domain.docs.implementation.DocsValidator;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsConflictSolveRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
+import com.project.bumawiki.domain.docs.util.DocsUtil;
+import com.project.bumawiki.global.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -55,7 +52,6 @@ public class DocsMergeConflictService {
 			diff2
 		);
 	}
-
 
 	public void solveConflict(String title, DocsConflictSolveRequestDto dto) {
 		Docs docs = docsReader.findByTitle(title);

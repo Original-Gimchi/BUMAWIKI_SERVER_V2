@@ -2,8 +2,8 @@ package com.project.bumawiki.domain.user.presentation.dto;
 
 import java.util.List;
 
-import com.project.bumawiki.domain.docs.presentation.dto.response.ContributeDocsResponseDto;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
+import com.project.bumawiki.domain.docs.presentation.dto.response.ContributeDocsResponseDto;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 

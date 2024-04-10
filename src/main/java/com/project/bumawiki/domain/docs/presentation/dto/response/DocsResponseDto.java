@@ -11,7 +11,7 @@ import com.project.bumawiki.domain.docs.util.DocsUtil;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.presentation.dto.SimpleUserDto;
 
-public record DocsResponseDto (
+public record DocsResponseDto(
 	Long id,
 	String title,
 	String contents,
@@ -35,8 +35,8 @@ public record DocsResponseDto (
 			docs.getEnroll(),
 			true,
 			contributors.stream()
-			.map(SimpleUserDto::new)
-			.toList(),
+				.map(SimpleUserDto::new)
+				.toList(),
 			docs.getStatus(),
 			versionDocs.getVersion(),
 			DocsUtil.getThumbnail(versionDocs.getContents())
