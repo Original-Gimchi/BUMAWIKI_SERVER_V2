@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.docs.service;
+package com.project.bumawiki.domain.docs.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

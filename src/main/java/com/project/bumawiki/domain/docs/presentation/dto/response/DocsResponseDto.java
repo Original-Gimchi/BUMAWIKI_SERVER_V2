@@ -8,7 +8,7 @@ import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.domain.type.Status;
-import com.project.bumawiki.domain.docs.service.DocsUtil;
+import com.project.bumawiki.domain.docs.util.DocsUtil;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.presentation.dto.SimpleUserDto;
 
