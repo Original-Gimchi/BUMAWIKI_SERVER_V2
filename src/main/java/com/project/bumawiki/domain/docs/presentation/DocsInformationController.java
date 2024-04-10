@@ -5,11 +5,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
@@ -25,8 +27,9 @@ import com.project.bumawiki.domain.docs.service.DocsInformationService;
 import lombok.RequiredArgsConstructor;
 
 @Validated
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
+@ResponseStatus(HttpStatus.OK)
 @RequestMapping("/api/docs")
 public class DocsInformationController {
 	private final DocsInformationService docsInformationService;
@@ -76,9 +79,9 @@ public class DocsInformationController {
 	}
 
 	@GetMapping("/find/version/{title}/different/{version}")
-	public ResponseEntity<VersionDocsDiffResponseDto> showVersionDocsDiff(@PathVariable String title,
-		@PathVariable Long version) {
-		return ResponseEntity.ok(docsInformationService.showVersionDocsDiff(title, version));
+	public VersionDocsDiffResponseDto showVersionDocsDiff(@PathVariable String title,
+		@PathVariable Integer version) {
+		return docsInformationService.showVersionDocsDiff(title, version);
 	}
 
 	@GetMapping("/find/modified/all")

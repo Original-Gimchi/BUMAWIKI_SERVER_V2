@@ -1,10 +1,9 @@
 package com.project.bumawiki.domain.docs.service;
 
-import static org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.*;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.springframework.data.domain.Pageable;
@@ -16,13 +15,13 @@ import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.exception.VersionNotExistException;
 import com.project.bumawiki.domain.docs.presentation.dto.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.VersionDocsSummaryDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
+import com.project.bumawiki.domain.docs.util.DocsUtil;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.global.error.exception.BumawikiException;
 import com.project.bumawiki.global.error.exception.ErrorCode;
@@ -70,26 +69,28 @@ public class DocsInformationService {
 		return docsRepository.findByLastModifiedAtAll();
 	}
 
-	public VersionDocsDiffResponseDto showVersionDocsDiff(String title, Long version) {
+	public VersionDocsDiffResponseDto showVersionDocsDiff(String title, Integer version) {
 		Docs docs = docsRepository.getByTitle(title);
-		String baseDocs = "";
-		String versionedDocs;
-		List<VersionDocs> versionDocs = docs.getDocsVersion();
-		try {
-			versionedDocs = versionDocs.get(version.intValue()).getContents();
-			if (version > 0) {
-				baseDocs = versionDocs.get((int)(version - 1)).getContents();
-			}
-		} catch (IndexOutOfBoundsException e) {
-			throw VersionNotExistException.EXCEPTION;
-		}
+		VersionDocs targetVersionDocs = versionDocsRepository.findByDocsAndVersion(docs, version)
+			.orElseThrow(() -> new BumawikiException(ErrorCode.VERSION_NOT_EXIST));
 
-		DiffMatchPatch dmp = new DiffMatchPatch();
-		LinkedList<Diff> diff = dmp.diffMain(baseDocs, versionedDocs);
-		dmp.diffCleanupSemantic(diff);
+		Optional<VersionDocs> baseVersionDocs = versionDocsRepository.findByDocsAndVersion(docs, version - 1);
+
+		LinkedList<DiffMatchPatch.Diff> diff = getDiff(baseVersionDocs, targetVersionDocs);
 
 		return new VersionDocsDiffResponseDto(docs.getTitle(), docs.getDocsType(),
-			new VersionDocsSummaryDto(versionDocs.get(version.intValue())), new ArrayList<>(diff));
+			new VersionDocsSummaryDto(targetVersionDocs), new ArrayList<>(diff));
+	}
+
+	private LinkedList<DiffMatchPatch.Diff> getDiff(Optional<VersionDocs> baseVersionDocs,
+		VersionDocs targetVersionDocs) {
+		LinkedList<DiffMatchPatch.Diff> diff;
+		if (baseVersionDocs.isEmpty()) {
+			diff = DocsUtil.getDiff("", targetVersionDocs.getContents());
+		} else {
+			diff = DocsUtil.getDiff(baseVersionDocs.get().getContents(), targetVersionDocs.getContents());
+		}
+		return diff;
 	}
 
 	//Docs Type으로 조회

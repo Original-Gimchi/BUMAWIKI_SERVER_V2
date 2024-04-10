@@ -9,14 +9,14 @@ import lombok.Getter;
 
 @Getter
 public class VersionDocsSummaryDto {
-	private final Long id;
+	private final Integer version;
 	private final LocalDateTime thisVersionCreatedAt;
 	private final Long userId;
 	private final String nickName;
 
 	public VersionDocsSummaryDto(VersionDocs versionDocs) {
-		User contributor = versionDocs.getUser().getContributor();
-		this.id = versionDocs.getId();
+		User contributor = versionDocs.getUser();
+		this.version = versionDocs.getVersion();
 		this.thisVersionCreatedAt = versionDocs.getThisVersionCreatedAt();
 		this.nickName = contributor.getNickName();
 		this.userId = contributor.getId();
