@@ -28,7 +28,7 @@ public class CustomDocsRepositoryImpl implements CustomDocsRepository {
 	public VersionResponseDto getDocsVersion(Docs findDocs) {
 		List<VersionDocsResponseDto> versionDocsResponseDto = jpaQueryFactory
 			.select(constructor(VersionDocsResponseDto.class, versionDocs.createdAt, user.id,
-				user.nickName))
+				user.nickName, versionDocs.version))
 			.from(docs)
 			.join(docs.versionDocs, versionDocs)
 			.join(versionDocs.user, user)
