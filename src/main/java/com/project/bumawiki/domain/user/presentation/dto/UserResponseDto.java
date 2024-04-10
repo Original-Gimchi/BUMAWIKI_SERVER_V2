@@ -2,7 +2,7 @@ package com.project.bumawiki.domain.user.presentation.dto;
 
 import java.util.List;
 
-import com.project.bumawiki.domain.contribute.dto.ContributeResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.ContributeDocsResponseDto;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
@@ -21,7 +21,7 @@ public class UserResponseDto {
 
 	private final Authority authority;
 
-	private final List<ContributeResponseDto> contributeDocs;
+	private final List<ContributeDocsResponseDto> contributeDocs;
 
 	public UserResponseDto(User user, List<VersionDocs> versionDocs) {
 		this.id = user.getId();
@@ -31,7 +31,7 @@ public class UserResponseDto {
 		this.name = user.getName();
 		this.contributeDocs = versionDocs
 			.stream()
-			.map(ContributeResponseDto::new)
+			.map(ContributeDocsResponseDto::new)
 			.toList();
 	}
 }

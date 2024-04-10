@@ -11,37 +11,36 @@ import com.project.bumawiki.domain.docs.util.DocsUtil;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.presentation.dto.SimpleUserDto;
 
-import lombok.Getter;
-
-@Getter
-public class DocsResponseDto {
-
-	private final Long id;
-	private final String title;
-	private final String contents;
-	private final DocsType docsType;
-	private final LocalDateTime lastModifiedAt;
-	private final int enroll;
-	private final boolean isDocsDetail;
-	private final List<SimpleUserDto> contributors;
-	private final Status status;
-	private final int version;
-	private final String thumbnail;
+public record DocsResponseDto (
+	Long id,
+	String title,
+	String contents,
+	DocsType docsType,
+	LocalDateTime lastModifiedAt,
+	int enroll,
+	boolean isDocsDetail,
+	List<SimpleUserDto> contributors,
+	Status status,
+	int version,
+	String thumbnail
+) {
 
 	public DocsResponseDto(Docs docs, List<User> contributors, VersionDocs versionDocs) {
-		this.id = docs.getId();
-		this.title = docs.getTitle();
-		this.contents = versionDocs.getContents();
-		this.lastModifiedAt = docs.getLastModifiedAt();
-		this.docsType = docs.getDocsType();
-		this.enroll = docs.getEnroll();
-		this.isDocsDetail = true;
-		this.contributors = contributors.stream()
+		this(
+			docs.getId(),
+			docs.getTitle(),
+			versionDocs.getContents(),
+			docs.getDocsType(),
+			docs.getLastModifiedAt(),
+			docs.getEnroll(),
+			true,
+			contributors.stream()
 			.map(SimpleUserDto::new)
-			.toList();
-		this.status = docs.getStatus();
-		this.version = versionDocs.getVersion();
-		this.thumbnail = DocsUtil.getThumbnail(versionDocs.getContents());
+			.toList(),
+			docs.getStatus(),
+			versionDocs.getVersion(),
+			DocsUtil.getThumbnail(versionDocs.getContents())
+		);
 	}
 }
 
