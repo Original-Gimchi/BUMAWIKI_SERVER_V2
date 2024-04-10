@@ -15,11 +15,12 @@ import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.presentation.dto.ClubResponseDto;
-import com.project.bumawiki.domain.docs.presentation.dto.TeacherResponseDto;
-import com.project.bumawiki.domain.docs.presentation.dto.VersionDocsSummaryDto;
+import com.project.bumawiki.domain.docs.implementation.DocsReader;
+import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsSummaryResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.docs.util.DocsUtil;
 import com.project.bumawiki.domain.user.domain.User;
@@ -34,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class DocsInformationService {
 	private final DocsRepository docsRepository;
 	private final VersionDocsRepository versionDocsRepository;
+	private final DocsReader docsReader;
 
 	public List<Docs> findAllByTitle(String title) {
 		List<Docs> docs = docsRepository.findAllByTitle(title);
@@ -53,7 +55,7 @@ public class DocsInformationService {
 			.map(VersionDocs::getUser)
 			.toList();
 
-		return new DocsResponseDto(docs, contributors);
+		return new DocsResponseDto(docs, contributors, docsReader.findLastVersion(docs));
 	}
 
 	public VersionResponseDto findDocsVersion(String title) {
@@ -79,7 +81,7 @@ public class DocsInformationService {
 		LinkedList<DiffMatchPatch.Diff> diff = getDiff(baseVersionDocs, targetVersionDocs);
 
 		return new VersionDocsDiffResponseDto(docs.getTitle(), docs.getDocsType(),
-			new VersionDocsSummaryDto(targetVersionDocs), new ArrayList<>(diff));
+			new VersionDocsSummaryResponseDto(targetVersionDocs), new ArrayList<>(diff));
 	}
 
 	private LinkedList<DiffMatchPatch.Diff> getDiff(Optional<VersionDocs> baseVersionDocs,
@@ -99,7 +101,7 @@ public class DocsInformationService {
 	}
 
 	public TeacherResponseDto getAllTeacher() {
-		return new TeacherResponseDto(
+		return TeacherResponseDto.from(
 			findByDocsType(DocsType.TEACHER),
 			findByDocsType(DocsType.MAJOR_TEACHER),
 			findByDocsType(DocsType.MENTOR_TEACHER)
@@ -107,7 +109,7 @@ public class DocsInformationService {
 	}
 
 	public ClubResponseDto getAllClub() {
-		return new ClubResponseDto(
+		return ClubResponseDto.from(
 			findByDocsType(DocsType.CLUB),
 			findByDocsType(DocsType.FREE_CLUB)
 		);
@@ -117,4 +119,7 @@ public class DocsInformationService {
 		return docsRepository.findByDocsType(docsType);
 	}
 
+	public List<VersionDocs> findAllVersionDocsByUser(User user) {
+		return versionDocsRepository.findAllByUser(user);
+	}
 }

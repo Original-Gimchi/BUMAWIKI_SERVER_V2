@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.bumawiki.domain.thumbsup.service.ThumbsUpCheckService;
 import com.project.bumawiki.global.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -14,13 +15,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/docs/like")
-public class DocsCheckYouLikeThisController {
-	private final DocsCheckYouLikeThisService docsCheckYouLikeThisService;
+public class ThumbsUpCheckController {
+	private final ThumbsUpCheckService thumbsUpCheckService;
 
 	@GetMapping("/{docsId}")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean checkYouLikeThis(@PathVariable Long docsId) {
-		return docsCheckYouLikeThisService.checkUserLikeThisDocs(
+		return thumbsUpCheckService.checkUserLikeThisDocs(
 			docsId, SecurityUtil.getCurrentUserWithLogin()
 		);
 	}

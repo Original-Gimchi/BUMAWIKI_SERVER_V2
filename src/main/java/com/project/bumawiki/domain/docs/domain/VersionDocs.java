@@ -35,7 +35,7 @@ public class VersionDocs {
 	private String contents;
 
 	@CreatedDate
-	private LocalDateTime thisVersionCreatedAt;
+	private LocalDateTime createdAt;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")

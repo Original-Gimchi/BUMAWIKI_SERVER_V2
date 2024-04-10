@@ -8,6 +8,7 @@ import org.springframework.lang.NonNull;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
+import com.project.bumawiki.domain.user.domain.User;
 
 public interface VersionDocsRepository extends JpaRepository<VersionDocs, Long> {
 
@@ -19,4 +20,6 @@ public interface VersionDocsRepository extends JpaRepository<VersionDocs, Long> 
 	List<VersionDocs> findByDocs(Docs docs);
 
 	Optional<VersionDocs> findByDocsAndVersion(Docs docs, Integer version);
+
+	List<VersionDocs> findAllByUser(User user);
 }

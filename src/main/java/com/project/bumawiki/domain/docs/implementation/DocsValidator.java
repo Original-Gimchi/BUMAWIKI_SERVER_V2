@@ -1,10 +1,10 @@
 package com.project.bumawiki.domain.docs.implementation;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
+import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.domain.type.Status;
-import com.project.bumawiki.domain.docs.exception.NoUpdatableDocsException;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.global.annotation.Implementation;
 import com.project.bumawiki.global.error.exception.BumawikiException;
@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DocsValidator {
 	private final DocsRepository docsRepository;
+	private final DocsReader docsReader;
 
 	public void checkTitleAlreadyExist(Docs docs) {
 		if (docsRepository.existsByTitle(docs.getTitle())) {
@@ -45,7 +46,7 @@ public class DocsValidator {
 
 	public void checkUpdatableDocsType(DocsType docsType) {
 		if (docsType.equals(DocsType.READONLY)) {
-			throw NoUpdatableDocsException.EXCEPTION;
+			throw new BumawikiException(ErrorCode.NO_UPDATABLE_DOCS);
 		}
 	}
 
@@ -59,5 +60,10 @@ public class DocsValidator {
 		if (!docs.getStatus().equals(Status.CONFLICTED)) {
 			throw new BumawikiException(ErrorCode.DOCS_IS_NOT_CONFLICTED);
 		}
+	}
+
+	public boolean isConflict(Docs docs, Integer updatingVersion) {
+		VersionDocs lastVersionDocs = docsReader.findLastVersion(docs);
+		return !lastVersionDocs.getVersion().equals(updatingVersion);
 	}
 }

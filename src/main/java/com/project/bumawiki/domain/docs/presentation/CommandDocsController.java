@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsCreateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTitleUpdateRequestDto;
-import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTypeUpdateDto;
+import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTypeUpdateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsUpdateRequestDto;
 import com.project.bumawiki.domain.docs.service.CommandDocsService;
 import com.project.bumawiki.global.util.SecurityUtil;
@@ -41,14 +41,14 @@ public class CommandDocsController {
 			request.updatingVersion());
 	}
 
-	@PutMapping("/{title}")
+	@PutMapping("/title/{title}")
 	public void updateDocsTitle(@PathVariable String title,
 		@RequestBody DocsTitleUpdateRequestDto request) {
 		commandDocsService.titleUpdate(title, request.title());
 	}
 
 	@PutMapping("/docsType")
-	public void updateDocsType(@RequestBody DocsTypeUpdateDto requestDto) {
+	public void updateDocsType(@RequestBody DocsTypeUpdateRequestDto requestDto) {
 		commandDocsService.docsTypeUpdate(requestDto.id(), requestDto.docsType());
 	}
 

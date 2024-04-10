@@ -4,7 +4,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.project.bumawiki.domain.docs.exception.DocsTypeNotFoundException;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +33,7 @@ public enum DocsType {
 		DocsType docsType = BY_LABEL.get(stringDocsType);
 
 		if (docsType == null) {
-			throw DocsTypeNotFoundException.EXCEPTION;
+			throw new BumawikiException(ErrorCode.DOCS_TYPE_NOT_FOUND);
 		}
 
 		return docsType;

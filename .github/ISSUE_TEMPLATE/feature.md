@@ -9,9 +9,9 @@ assignees: ''
 
 ✨ Describe
 
-
 ✅ Tasks
-- [ ] 1.  
 
+- [ ] 
+    1.
 
 🙋🏻 할 말

@@ -1,6 +1,5 @@
 package com.project.bumawiki.domain.docs.domain.repository;
 
-import static com.project.bumawiki.domain.contribute.domain.QContribute.*;
 import static com.project.bumawiki.domain.docs.domain.QDocs.*;
 import static com.project.bumawiki.domain.docs.domain.QVersionDocs.*;
 import static com.project.bumawiki.domain.thumbsup.domain.QThumbsUp.*;
@@ -28,15 +27,14 @@ public class CustomDocsRepositoryImpl implements CustomDocsRepository {
 	@Override
 	public VersionResponseDto getDocsVersion(Docs findDocs) {
 		List<VersionDocsResponseDto> versionDocsResponseDto = jpaQueryFactory
-			.select(constructor(VersionDocsResponseDto.class, versionDocs.thisVersionCreatedAt, user.id,
-				user.nickName))
+			.select(constructor(VersionDocsResponseDto.class, versionDocs.createdAt, user.id,
+				user.nickName, versionDocs.version))
 			.from(docs)
-			.join(docs.docsVersion, versionDocs)
-			.join(versionDocs.contributor, contribute)
-			.join(contribute.contributor, user)
+			.join(docs.versionDocs, versionDocs)
+			.join(versionDocs.user, user)
 			.where(docs.id.eq(findDocs.getId()))
 			.distinct()
-			.orderBy(versionDocs.thisVersionCreatedAt.desc())
+			.orderBy(versionDocs.createdAt.desc())
 			.fetch();
 
 		return new VersionResponseDto(versionDocsResponseDto, findDocs);
@@ -48,7 +46,7 @@ public class CustomDocsRepositoryImpl implements CustomDocsRepository {
 			.select(
 				constructor(DocsPopularResponseDto.class, docs.title, docs.enroll, docs.docsType, thumbsUp.id.count()))
 			.from(docs)
-			.innerJoin(docs.thumbsUps, thumbsUp)
+			.innerJoin(docs, thumbsUp.docs)
 			.groupBy(docs.title, docs.enroll, docs.docsType)
 			.orderBy(thumbsUp.id.count().desc())
 			.limit(25)

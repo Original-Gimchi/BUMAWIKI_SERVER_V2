@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.docs.presentation.dto;
+package com.project.bumawiki.domain.docs.presentation.dto.response;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,20 +8,12 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
-import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class DocsTypeDto {
-	private Map<Integer, List<DocsNameAndEnrollResponseDto>> data;
-	private Set<Integer> keys;
-
-	public static DocsTypeDto from(List<Docs> allDocs) {
-
+public record DocsTypeResponseDto(
+	Map<Integer, List<DocsNameAndEnrollResponseDto>> data,
+	Set<Integer> keys
+) {
+	public static DocsTypeResponseDto from(List<Docs> allDocs) {
 		List<DocsNameAndEnrollResponseDto> docsList = allDocs.stream()
 			.map(DocsNameAndEnrollResponseDto::new)
 			.toList();
@@ -31,10 +23,10 @@ public class DocsTypeDto {
 
 		// 기존의 리스트를 순회하면서 enroll 값을 기준으로 Map에 추가합니다.
 		for (DocsNameAndEnrollResponseDto doc : docsList) {
-			enrollMap.computeIfAbsent(doc.getEnroll(), k -> new ArrayList<>()).add(doc);
+			enrollMap.computeIfAbsent(doc.enroll(), k -> new ArrayList<>()).add(doc);
 		}
 
-		return new DocsTypeDto(
+		return new DocsTypeResponseDto(
 			enrollMap,
 			enrollMap.keySet()
 		);

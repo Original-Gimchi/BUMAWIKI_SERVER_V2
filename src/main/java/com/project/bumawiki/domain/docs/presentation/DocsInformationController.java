@@ -1,7 +1,6 @@
 package com.project.bumawiki.domain.docs.presentation;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,11 +14,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.presentation.dto.ClubResponseDto;
-import com.project.bumawiki.domain.docs.presentation.dto.DocsTypeDto;
-import com.project.bumawiki.domain.docs.presentation.dto.TeacherResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.DocsTypeResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.docs.service.DocsInformationService;
@@ -45,10 +44,10 @@ public class DocsInformationController {
 	}
 
 	@GetMapping("/{stringDocsType}")
-	public DocsTypeDto findAllByDocsType(
+	public DocsTypeResponseDto findAllByDocsType(
 		@PathVariable String stringDocsType) {
 		DocsType docsType = DocsType.valueOfLabel(stringDocsType);
-		return DocsTypeDto.from(docsInformationService.findByDocsTypeOrderByEnroll(docsType));
+		return DocsTypeResponseDto.from(docsInformationService.findByDocsTypeOrderByEnroll(docsType));
 	}
 
 	@GetMapping("/find/all/title/{title}")
@@ -56,7 +55,7 @@ public class DocsInformationController {
 		return docsInformationService.findAllByTitle(title)
 			.stream()
 			.map(DocsNameAndEnrollResponseDto::new)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@GetMapping("/find/title/{title}")
