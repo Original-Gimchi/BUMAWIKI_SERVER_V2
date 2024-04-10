@@ -40,6 +40,11 @@ public class ThumbsUp {
 	@JoinColumn(name = "docs_id")
 	private Docs docs;
 
+	public ThumbsUp(User user, Docs docs) {
+		this.user = user;
+		this.docs = docs;
+	}
+
 	public boolean doesUserThumbsUp(User user) {
 		return this.user.equals(user);
 	}
