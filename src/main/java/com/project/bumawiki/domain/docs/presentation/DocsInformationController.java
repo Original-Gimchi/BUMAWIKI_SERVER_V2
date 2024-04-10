@@ -18,7 +18,6 @@ import com.project.bumawiki.domain.docs.presentation.dto.DocsTypeDto;
 import com.project.bumawiki.domain.docs.presentation.dto.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
-import com.project.bumawiki.domain.docs.presentation.dto.response.DocsThumbsUpResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.docs.service.DocsInformationService;
@@ -88,10 +87,5 @@ public class DocsInformationController {
 			.stream()
 			.map(DocsNameAndEnrollResponseDto::new)
 			.toList();
-	}
-
-	@GetMapping("/thumbs/up/get/{title}")
-	public ResponseEntity<DocsThumbsUpResponseDto> getDocsThumbsUpsCount(@PathVariable String title) {
-		return ResponseEntity.ok(docsInformationService.getDocsThumbsUpsCount(title));
 	}
 }
