@@ -39,12 +39,12 @@ public class VersionDocs {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")
-	private User contributor;
+	private User user;
 
-	public VersionDocs(int version, Docs docs, String contents, User contributor) {
+	public VersionDocs(int version, Docs docs, String contents, User user) {
 		this.version = version;
 		this.docs = docs;
 		this.contents = contents;
-		this.contributor = contributor;
+		this.user = user;
 	}
 }

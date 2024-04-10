@@ -15,7 +15,7 @@ public class VersionDocsSummaryDto {
 	private final String nickName;
 
 	public VersionDocsSummaryDto(VersionDocs versionDocs) {
-		User contributor = versionDocs.getContributor().getContributor();
+		User contributor = versionDocs.getUser().getContributor();
 		this.id = versionDocs.getId();
 		this.thisVersionCreatedAt = versionDocs.getThisVersionCreatedAt();
 		this.nickName = contributor.getNickName();

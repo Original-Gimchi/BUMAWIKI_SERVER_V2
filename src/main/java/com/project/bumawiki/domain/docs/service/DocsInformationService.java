@@ -5,7 +5,6 @@ import static org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.springframework.data.domain.Pageable;
@@ -17,16 +16,16 @@ import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.exception.DocsNotFoundException;
 import com.project.bumawiki.domain.docs.exception.VersionNotExistException;
 import com.project.bumawiki.domain.docs.presentation.dto.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.VersionDocsSummaryDto;
-import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.user.domain.User;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,23 +36,22 @@ public class DocsInformationService {
 	private final DocsRepository docsRepository;
 	private final VersionDocsRepository versionDocsRepository;
 
-	public List<DocsNameAndEnrollResponseDto> findAllByTitle(String title) {
+	public List<Docs> findAllByTitle(String title) {
 		List<Docs> docs = docsRepository.findAllByTitle(title);
 
 		if (docs.isEmpty()) {
-			throw DocsNotFoundException.EXCEPTION;
+			throw new BumawikiException(ErrorCode.DOCS_NOT_FOUND);
 		}
 
-		return docs.stream()
-			.map(DocsNameAndEnrollResponseDto::new)
-			.collect(Collectors.toList());
+		return docs;
 	}
 
 	public DocsResponseDto findDocs(String title) {
 		Docs docs = docsRepository.getByTitle(title);
 
 		List<User> contributors = versionDocsRepository.findByDocs(docs)
-			.stream().map(VersionDocs::getContributor)
+			.stream()
+			.map(VersionDocs::getUser)
 			.toList();
 
 		return new DocsResponseDto(docs, contributors);
@@ -61,7 +59,6 @@ public class DocsInformationService {
 
 	public VersionResponseDto findDocsVersion(String title) {
 		Docs docs = docsRepository.getByTitle(title);
-
 		return docsRepository.getDocsVersion(docs);
 	}
 

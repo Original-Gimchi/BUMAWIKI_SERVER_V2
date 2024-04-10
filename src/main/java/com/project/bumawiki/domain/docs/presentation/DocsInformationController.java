@@ -1,6 +1,7 @@
 package com.project.bumawiki.domain.docs.presentation;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -49,8 +50,11 @@ public class DocsInformationController {
 	}
 
 	@GetMapping("/find/all/title/{title}")
-	public ResponseEntity<List<DocsNameAndEnrollResponseDto>> findAllByTitle(@PathVariable String title) {
-		return ResponseEntity.ok(docsInformationService.findAllByTitle(title));
+	public List<DocsNameAndEnrollResponseDto> findAllByTitle(@PathVariable String title) {
+		return docsInformationService.findAllByTitle(title)
+			.stream()
+			.map(DocsNameAndEnrollResponseDto::new)
+			.collect(Collectors.toList());
 	}
 
 	@GetMapping("/find/title/{title}")
