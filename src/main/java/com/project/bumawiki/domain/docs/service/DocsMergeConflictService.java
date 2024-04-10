@@ -3,44 +3,46 @@ package com.project.bumawiki.domain.docs.service;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.project.bumawiki.domain.docs.implementation.DocsReader;
+
+import com.project.bumawiki.domain.docs.implementation.DocsUpdater;
+import com.project.bumawiki.domain.docs.implementation.DocsValidator;
+import com.project.bumawiki.domain.docs.implementation.VersionDocsReader;
+import com.project.bumawiki.domain.docs.implementation.versiondocs.VersionDocsCreator;
+
+import com.project.bumawiki.global.util.SecurityUtil;
+
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.springframework.stereotype.Service;
 
-import com.project.bumawiki.domain.contribute.domain.Contribute;
-import com.project.bumawiki.domain.contribute.service.ContributeService;
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
-import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
-import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.Status;
-import com.project.bumawiki.domain.docs.exception.DocsIsNotConflictedException;
-import com.project.bumawiki.domain.docs.exception.DocsNotFoundException;
 import com.project.bumawiki.domain.docs.presentation.dto.DocsConflictSolveDto;
 import com.project.bumawiki.domain.docs.presentation.dto.MergeConflictDataResponse;
-import com.project.bumawiki.domain.docs.presentation.dto.response.ContentVersionDocsResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class DocsMergeConflictService {
-	private final DocsRepository docsRepository;
-	private final VersionDocsRepository versionDocsRepository;
-	private final ContributeService contributeService;
+	private final DocsReader docsReader;
+	private final VersionDocsReader versionDocsReader;
+	private final VersionDocsCreator versionDocsCreator;
+	private final DocsValidator docsValidator;
+	private final DocsUpdater docsUpdater;
 
 	public MergeConflictDataResponse getMergeConflict(String title) {
-		Docs docs = docsRepository.findByTitle(title)
-			.orElseThrow(() -> DocsNotFoundException.EXCEPTION);
+		Docs docs = docsReader.findByTitle(title);
 
-		if (docs.getStatus() != Status.CONFLICTED) {
-			throw new DocsIsNotConflictedException();
-		}
+		docsValidator.checkConflicted(docs);
 
-		List<VersionDocs> docsVersion = docs.getDocsVersion();
+		// 버전 최신순 3가지 조회가 전체에서 자르는지 3개만 가져오는지 확인이 필요합니다
+		List<VersionDocs> docsVersion = versionDocsReader.findTop3ByDocs(docs);
 
-		VersionDocs firstDocs = docsVersion.get(docsVersion.size() - 2);
-		VersionDocs secondDocs = docsVersion.get(docsVersion.size() - 1);
-		VersionDocs originalDocs = docsVersion.get(docsVersion.size() - 3);
+		VersionDocs firstDocs = docsVersion.get(1);
+		VersionDocs secondDocs = docsVersion.get(2);
+		VersionDocs originalDocs = docsVersion.get(0);
 
 		//최신글의 겹치는 점과 지금 바꾸려는 글의 차이점을 조회
 		DiffMatchPatch dmp = new DiffMatchPatch();
@@ -51,33 +53,25 @@ public class DocsMergeConflictService {
 		dmp.diffCleanupSemantic(diff2);
 
 		return new MergeConflictDataResponse(
-			new ContentVersionDocsResponseDto(firstDocs),
-			new ContentVersionDocsResponseDto(secondDocs),
-			new ContentVersionDocsResponseDto(originalDocs),
+			firstDocs.getContents(),
+			secondDocs.getContents(),
+			originalDocs.getContents(),
 			diff1,
 			diff2
 		);
 	}
 
 	public void solveConflict(String title, DocsConflictSolveDto dto) {
-		Docs docs = docsRepository.findByTitle(title)
-			.orElseThrow(() -> DocsNotFoundException.EXCEPTION);
+		Docs docs = docsReader.findByTitle(title);
 
-		if (docs.getStatus() != Status.CONFLICTED) {
-			throw new DocsIsNotConflictedException();
-		}
+		docsValidator.checkConflicted(docs);
 
-		VersionDocs savedVersionDocs = versionDocsRepository.save(
-			VersionDocs.builder()
-				.docsId(docs.getId())
-				.contents(dto.contents())
-				.version(docs.getLastVersion() + 1)
-				.build()
+		versionDocsCreator.create(
+			docs,
+			SecurityUtil.getCurrentUserWithLogin(),
+			dto.contents()
 		);
 
-		docs.updateStatus(Status.GOOD);
-
-		Contribute contribute = contributeService.updateContribute(savedVersionDocs);
-		savedVersionDocs.updateContributor(contribute);
+		docsUpdater.updateStatus(docs, Status.GOOD);
 	}
 }

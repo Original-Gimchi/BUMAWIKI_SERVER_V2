@@ -49,9 +49,15 @@ public class DocsValidator {
 		}
 	}
 
-	public void checkConflicted(Docs docs) {
-		if (docs.getStatus().equals(Status.CONFLICTED)) {
+	public void checkGood(Docs docs) {
+		if (!docs.getStatus().equals(Status.GOOD)) {
 			throw new BumawikiException(ErrorCode.DOCS_CONFLICTED);
+		}
+	}
+
+	public void checkConflicted(Docs docs) {
+		if (!docs.getStatus().equals(Status.CONFLICTED)) {
+			throw new BumawikiException(ErrorCode.DOCS_IS_NOT_CONFLICTED);
 		}
 	}
 }
