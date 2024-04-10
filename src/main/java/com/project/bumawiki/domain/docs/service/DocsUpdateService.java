@@ -30,7 +30,7 @@ public class DocsUpdateService {
 
 		docsValidator.checkUpdatableDocsType(docs.getDocsType());
 		docsValidator.checkUpdateOneSelf(user, docs);
-		docsValidator.checkConflicted(docs);
+		docsValidator.checkGood(docs);
 
 		if (versionDocsValidator.isConflict(docs, updatingVersion)) {
 			docsUpdater.updateStatus(docs, Status.CONFLICTED);
