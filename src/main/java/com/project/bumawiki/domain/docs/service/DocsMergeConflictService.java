@@ -13,10 +13,9 @@ import com.project.bumawiki.domain.docs.implementation.DocsCreator;
 import com.project.bumawiki.domain.docs.implementation.DocsReader;
 import com.project.bumawiki.domain.docs.implementation.DocsUpdater;
 import com.project.bumawiki.domain.docs.implementation.DocsValidator;
-import com.project.bumawiki.domain.docs.presentation.dto.request.DocsConflictSolveRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
 import com.project.bumawiki.domain.docs.util.DocsUtil;
-import com.project.bumawiki.global.util.SecurityUtil;
+import com.project.bumawiki.domain.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,15 +52,15 @@ public class DocsMergeConflictService {
 		);
 	}
 
-	public void solveConflict(String title, DocsConflictSolveRequestDto dto) {
+	public void solveConflict(String title, String contents, User user) {
 		Docs docs = docsReader.findByTitle(title);
 
 		docsValidator.checkConflicted(docs);
 
 		docsCreator.create(
 			docs,
-			SecurityUtil.getCurrentUserWithLogin(),
-			dto.contents()
+			user,
+			contents
 		);
 
 		docsUpdater.updateStatus(docs, Status.GOOD);

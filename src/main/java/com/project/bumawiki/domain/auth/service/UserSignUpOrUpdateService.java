@@ -5,11 +5,14 @@ import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.bumawiki.domain.auth.domain.Token;
+import com.project.bumawiki.domain.auth.service.implementation.TokenProvider;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
-import com.project.bumawiki.domain.user.exception.UserNotLoginException;
 import com.project.bumawiki.global.annotation.ServiceWithTransactionalReadOnly;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import leehj050211.bsmOauth.BsmOauth;
 import leehj050211.bsmOauth.dto.response.BsmResourceResponse;
@@ -23,23 +26,23 @@ import lombok.RequiredArgsConstructor;
 public class UserSignUpOrUpdateService {
 	private final BsmOauth bsmOauth;
 	private final UserRepository userRepository;
+	private final TokenProvider tokenProvider;
 
 	@Transactional
-	public User execute(String authId) throws IOException {
+	public Token execute(String authId) throws IOException {
 		String token;
 		BsmResourceResponse resource;
 		try {
 			token = bsmOauth.getToken(authId);
 			resource = bsmOauth.getResource(token);
-		} catch (BsmAuthCodeNotFoundException | BsmAuthTokenNotFoundException e) {
-			throw UserNotLoginException.EXCEPTION;
-		} catch (BsmAuthInvalidClientException e) {
-			throw UserNotLoginException.EXCEPTION;
+		} catch (BsmAuthCodeNotFoundException | BsmAuthTokenNotFoundException | BsmAuthInvalidClientException e) {
+			throw new BumawikiException(ErrorCode.USER_NOT_LOGIN);
 		}
-		return updateOrSignUp(resource);
+		User user = updateOrSignUp(resource);
+
+		return tokenProvider.createNewTokens(user);
 	}
 
-	@Transactional
 	protected User updateOrSignUp(BsmResourceResponse resource) {
 		Optional<User> user = userRepository.findByEmail(resource.getEmail());
 		if (user.isEmpty()) {
@@ -49,7 +52,6 @@ public class UserSignUpOrUpdateService {
 		return updateUser.update(resource);
 	}
 
-	@Transactional
 	protected User saveUser(final BsmResourceResponse resource) {
 		return userRepository.save(
 			User.builder()

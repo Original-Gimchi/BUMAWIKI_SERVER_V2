@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.bumawiki.domain.auth.annotation.LoginRequired;
+import com.project.bumawiki.domain.auth.service.QueryAuthService;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsCreateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTitleUpdateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTypeUpdateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsUpdateRequestDto;
 import com.project.bumawiki.domain.docs.service.CommandDocsService;
-import com.project.bumawiki.global.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,17 +26,19 @@ import lombok.RequiredArgsConstructor;
 @ResponseStatus(HttpStatus.NO_CONTENT)
 public class CommandDocsController {
 	private final CommandDocsService commandDocsService;
+	private final QueryAuthService queryAuthService;
 
 	@PostMapping
+	@LoginRequired
 	public void createDocs(@RequestBody DocsCreateRequestDto request) {
-		commandDocsService.create(request.toEntity(), SecurityUtil.getCurrentUserWithLogin(), request.contents());
+		commandDocsService.create(request.toEntity(), queryAuthService.getCurrentUser(), request.contents());
 	}
 
 	@PutMapping("/{title}")
 	public void updateDocs(@PathVariable String title,
 		@RequestBody DocsUpdateRequestDto request) {
 		commandDocsService.update(
-			SecurityUtil.getCurrentUserWithLogin(),
+			queryAuthService.getCurrentUser(),
 			title,
 			request.contents(),
 			request.updatingVersion());

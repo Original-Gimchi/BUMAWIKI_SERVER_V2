@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.bumawiki.domain.auth.annotation.LoginRequired;
+import com.project.bumawiki.domain.auth.service.QueryAuthService;
 import com.project.bumawiki.domain.coin.controller.dto.CoinAccountResponse;
 import com.project.bumawiki.domain.coin.controller.dto.PriceResponse;
 import com.project.bumawiki.domain.coin.controller.dto.RankingResponse;
 import com.project.bumawiki.domain.coin.controller.dto.TradeRequest;
 import com.project.bumawiki.domain.coin.controller.dto.TradeResponse;
 import com.project.bumawiki.domain.coin.service.CoinService;
-import com.project.bumawiki.global.util.SecurityUtil;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,32 +32,37 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/coins")
 public class CoinController {
 	private final CoinService coinService;
+	private final QueryAuthService queryAuthService;
 
 	@PostMapping
+	@LoginRequired
 	public CoinAccountResponse createCoinAccount() {
 		return CoinAccountResponse.from(
-			coinService.createCoinAccount(SecurityUtil.getCurrentUserWithLogin())
+			coinService.createCoinAccount(queryAuthService.getCurrentUser())
 		);
 	}
 
 	@GetMapping("/mine")
+	@LoginRequired
 	public CoinAccountResponse findOwnAccount() {
 		return CoinAccountResponse.from(
-			coinService.findByUser(SecurityUtil.getCurrentUserWithLogin())
+			coinService.findByUser(queryAuthService.getCurrentUser())
 		);
 	}
 
 	@PostMapping("/buy")
+	@LoginRequired
 	public TradeResponse buyCoin(@Valid @RequestBody TradeRequest tradeRequest) {
 		return TradeResponse.from(
-			coinService.buyCoin(tradeRequest.toEntity(), SecurityUtil.getCurrentUserWithLogin())
+			coinService.buyCoin(tradeRequest.toEntity(), queryAuthService.getCurrentUser())
 		);
 	}
 
 	@PostMapping("/sell")
+	@LoginRequired
 	public TradeResponse sellCoin(@Valid @RequestBody TradeRequest tradeRequest) {
 		return TradeResponse.from(
-			coinService.sellCoin(tradeRequest.toEntity(), SecurityUtil.getCurrentUserWithLogin())
+			coinService.sellCoin(tradeRequest.toEntity(), queryAuthService.getCurrentUser())
 		);
 	}
 
@@ -77,14 +83,16 @@ public class CoinController {
 	}
 
 	@DeleteMapping("/{tradeId}")
+	@LoginRequired
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void cancelTrade(@PathVariable Long tradeId) {
-		coinService.cancelTrade(tradeId, SecurityUtil.getCurrentUserWithLogin());
+		coinService.cancelTrade(tradeId, queryAuthService.getCurrentUser());
 	}
 
 	@PostMapping("/daily")
+	@LoginRequired
 	public Long dailyCheck() {
-		return coinService.dailyCheck(SecurityUtil.getCurrentUserWithLogin());
+		return coinService.dailyCheck(queryAuthService.getCurrentUser());
 	}
 
 	@GetMapping("/ranking")

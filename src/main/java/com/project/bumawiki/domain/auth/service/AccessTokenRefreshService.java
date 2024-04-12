@@ -2,11 +2,12 @@ package com.project.bumawiki.domain.auth.service;
 
 import org.springframework.stereotype.Service;
 
-import com.project.bumawiki.domain.auth.domain.RefreshToken;
-import com.project.bumawiki.domain.auth.domain.repository.RefreshTokenRepository;
-import com.project.bumawiki.global.jwt.dto.TokenResponseDto;
-import com.project.bumawiki.global.jwt.exception.RefreshTokenExpiredException;
-import com.project.bumawiki.global.jwt.util.JwtProvider;
+import com.project.bumawiki.domain.auth.domain.Token;
+import com.project.bumawiki.domain.auth.service.implementation.AuthReader;
+import com.project.bumawiki.domain.auth.service.implementation.AuthValidator;
+import com.project.bumawiki.domain.auth.service.implementation.TokenProvider;
+import com.project.bumawiki.domain.auth.util.BearerTokenExtractor;
+import com.project.bumawiki.domain.user.domain.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,25 +15,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class AccessTokenRefreshService {
-	private final RefreshTokenRepository refreshTokenRepository;
-	private final JwtProvider jwtProvider;
+	private final TokenProvider tokenProvider;
+	private final AuthValidator authValidator;
+	private final AuthReader authReader;
+	//TODO UserReader로 변경
+	private final UserRepository userRepository;
 
-	public TokenResponseDto execute(final String bearerRefreshToken) {
-		if (bearerRefreshToken == null) {
-			throw RefreshTokenExpiredException.EXCEPTION;
-		}
-		RefreshToken redisRefreshToken = refreshTokenRepository.findByRefreshToken(bearerRefreshToken)
-			.orElseThrow(() -> RefreshTokenExpiredException.EXCEPTION);
-		return getNewAccessTokens(redisRefreshToken);
-	}
+	public Token execute(String bearer) {
+		String refreshToken = BearerTokenExtractor.extract(bearer);
+		authValidator.shouldRefreshTokenValid(refreshToken);
 
-	private TokenResponseDto getNewAccessTokens(final RefreshToken redisRefreshToken) {
-		String newAccessToken = jwtProvider.generateAccessToken(redisRefreshToken.getId(), redisRefreshToken.getRole());
+		Long userId = authReader.getIdFromJwt(refreshToken);
+		String accessToken = tokenProvider.createAccessToken(userRepository.getById(userId));
 
-		return TokenResponseDto.builder()
-			.accessToken(newAccessToken)
-			.refreshToken(redisRefreshToken.getRefreshToken())
-			.expiredAt(redisRefreshToken.getExpiredAt())
-			.build();
+		return new Token(accessToken, refreshToken);
 	}
 }

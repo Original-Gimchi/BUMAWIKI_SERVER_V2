@@ -9,9 +9,6 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-  redis:
-    port: 6379
-    host: localhost
 
   logging:
     level:
