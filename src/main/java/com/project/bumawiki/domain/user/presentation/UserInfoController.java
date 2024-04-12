@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.bumawiki.domain.auth.service.QueryAuthService;
 import com.project.bumawiki.domain.docs.service.DocsInformationService;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.presentation.dto.UserResponseDto;
 import com.project.bumawiki.domain.user.service.UserInfoService;
-import com.project.bumawiki.global.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,11 +23,12 @@ public class UserInfoController {
 
 	private final UserInfoService userInfoService;
 	private final DocsInformationService docsInformationService;
+	private final QueryAuthService queryAuthService;
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public UserResponseDto findUserInfo() {
-		User user = SecurityUtil.getCurrentUserWithLogin();
+		User user = queryAuthService.getCurrentUser();
 		return new UserResponseDto(user, docsInformationService.findAllVersionDocsByUser(user));
 	}
 

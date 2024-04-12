@@ -15,10 +15,6 @@ spring:
       minimum-idle: 15
       idle-timeout: 600000
       max-lifetime: 1800000
-  data:
-    redis:
-      port: 6379
-      host: localhost
 
   logging:
     level:
@@ -44,13 +40,10 @@ decorator:
     p6spy:
       enable-logging: true
 
-auth:
-  jwt:
-    header: ${HEADER}
-    secret: ${SECRET}
-    accessExp: ${ACCESS_EXP}
-    refreshExp: ${REFRESH_EXP}
-    prefix: ${PREFIXES}
+jwt:
+  secret: ${SECRET}
+  accessExp: ${ACCESS_EXP}
+  refreshExp: ${REFRESH_EXP}
 
 bsm:
   client-id: ${BSM_CLIENT_ID}

@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.bumawiki.domain.auth.annotation.LoginRequired;
+import com.project.bumawiki.domain.auth.service.QueryAuthService;
 import com.project.bumawiki.domain.thumbsup.domain.repository.CustomThumbsUpRepository;
 import com.project.bumawiki.domain.thumbsup.presentation.dto.DocsThumbsUpResponseDto;
 import com.project.bumawiki.domain.thumbsup.presentation.dto.ThumbsUpResponseDto;
 import com.project.bumawiki.domain.thumbsup.service.ThumbsUpCountService;
-import com.project.bumawiki.global.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,11 +25,13 @@ import lombok.RequiredArgsConstructor;
 public class ThumbsUpInformationController {
 	private final CustomThumbsUpRepository customThumbsUpRepository;
 	private final ThumbsUpCountService thumbsUpCountService;
+	private final QueryAuthService queryAuthService;
 
 	@GetMapping("/get")
+	@LoginRequired
 	public List<ThumbsUpResponseDto> getThumbsUp() {
 		return customThumbsUpRepository.getUserThumbsUp(
-			SecurityUtil.getCurrentUserWithLogin()
+			queryAuthService.getCurrentUser()
 		);
 	}
 

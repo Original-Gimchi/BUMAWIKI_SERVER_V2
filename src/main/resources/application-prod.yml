@@ -15,10 +15,6 @@ spring:
       minimum-idle: 10
       idle-timeout: 600000
       max-lifetime: 1800000
-  data:
-    redis:
-      port: 6379
-      host: localhost
 
   logging:
     level:

@@ -30,12 +30,14 @@ public enum ErrorCode {
 
 	//User
 	USER_NOT_LOGIN(403, "USER-403-1", "로그인하지 않았습니다."),
+	USER_NOT_ADMIN(403, "USER-403-2", "관리자 권한이 없습니다."),
 	USER_NOT_FOUND(404, "USER-404-1", "사용자를 조회할 수 없습니다."),
 
 	//JWT
-	INVALID_TOKEN(403, "TOKEN-403-1", "잘못된 토큰으로 접근하였습니다."),
+	INVALID_JWT(403, "TOKEN-403-1", "잘못된 토큰으로 접근하였습니다."),
 	EXPIRED_JWT(403, "TOKEN-403-2", "액세스 토큰이 만료되었습니다."),
 	REFRESH_TOKEN_EXPIRED(403, "TOKEN-403-3", "리프레시 토큰이 만료되었습니다."),
+	TOKEN_MISSING(403, "TOKEN-403-4", "토큰이 없습니다."),
 
 	//ServerError,
 	INVALID_ARGUMENT(400, "ARG-400-1", "Arg Is Not Valid"),
