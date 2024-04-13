@@ -1,14 +1,14 @@
 package com.project.bumawiki.domain.auth.repository;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.context.annotation.RequestScope;
 
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.global.error.exception.BumawikiException;
 import com.project.bumawiki.global.error.exception.ErrorCode;
 
 @Repository
-@RequestScope
+@Scope("prototype")
 public class AuthRepository {
 	private User currentUser;
 
