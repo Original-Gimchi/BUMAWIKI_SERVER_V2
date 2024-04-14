@@ -16,8 +16,10 @@ import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.implementation.DocsReader;
+import com.project.bumawiki.domain.docs.implementation.DocsValidator;
 import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsSummaryResponseDto;
@@ -36,6 +38,7 @@ public class QueryDocsService {
 	private final DocsRepository docsRepository;
 	private final VersionDocsRepository versionDocsRepository;
 	private final DocsReader docsReader;
+	private final DocsValidator docsValidator;
 
 	public List<Docs> findAllByTitle(String title) {
 		List<Docs> docs = docsRepository.findAllByTitle(title);
@@ -121,5 +124,30 @@ public class QueryDocsService {
 
 	public List<VersionDocs> findAllVersionDocsByUser(User user) {
 		return versionDocsRepository.findAllByUser(user);
+	}
+
+	public MergeConflictDataResponseDto getMergeConflict(String title) {
+		Docs docs = docsReader.findByTitle(title);
+
+		docsValidator.checkConflicted(docs);
+
+		// 버전 최신순 3가지 조회가 전체에서 자르는지 3개만 가져오는지 확인이 필요합니다
+		List<VersionDocs> docsVersion = docsReader.findTop3ByDocs(docs);
+
+		String firstDocsContent = docsVersion.get(0).getContents();
+		String secondDocsContent = docsVersion.get(1).getContents();
+		String originalDocsContent = docsVersion.get(2).getContents();
+
+		//최신글의 겹치는 점과 지금 바꾸려는 글의 차이점을 조회
+		LinkedList<DiffMatchPatch.Diff> diff1 = DocsUtil.getDiff(originalDocsContent, firstDocsContent);
+		LinkedList<DiffMatchPatch.Diff> diff2 = DocsUtil.getDiff(originalDocsContent, secondDocsContent);
+
+		return new MergeConflictDataResponseDto(
+			firstDocsContent,
+			secondDocsContent,
+			originalDocsContent,
+			diff1,
+			diff2
+		);
 	}
 }

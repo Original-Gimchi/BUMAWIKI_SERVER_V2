@@ -64,4 +64,19 @@ public class CommandDocsService {
 
 		docsUpdater.updateType(docs, docsType);
 	}
+
+	public void solveConflict(String title, String contents, User user) {
+		Docs docs = docsReader.findByTitle(title);
+
+		docsValidator.checkConflicted(docs);
+
+		docsCreator.create(
+			docs,
+			user,
+			contents
+		);
+
+		docsUpdater.updateStatus(docs, Status.GOOD);
+	}
+
 }

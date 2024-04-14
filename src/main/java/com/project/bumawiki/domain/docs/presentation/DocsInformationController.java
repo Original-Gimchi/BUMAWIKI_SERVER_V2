@@ -18,6 +18,7 @@ import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDt
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsTypeResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
@@ -89,5 +90,11 @@ public class DocsInformationController {
 			.stream()
 			.map(DocsNameAndEnrollResponseDto::new)
 			.toList();
+	}
+
+	@GetMapping("/merge/{title}")
+	@ResponseStatus(HttpStatus.OK)
+	public MergeConflictDataResponseDto getMergeConflictData(@PathVariable String title) {
+		return queryDocsService.getMergeConflict(title);
 	}
 }
