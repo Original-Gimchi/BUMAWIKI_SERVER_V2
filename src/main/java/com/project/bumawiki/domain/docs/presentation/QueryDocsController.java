@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @ResponseStatus(HttpStatus.OK)
 @RequestMapping("/api/docs")
-public class DocsInformationController {
+public class QueryDocsController {
 	private final QueryDocsService queryDocsService;
 
 	@GetMapping("/all/teacher")
