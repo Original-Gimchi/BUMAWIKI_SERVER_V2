@@ -9,7 +9,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import com.project.bumawiki.domain.contribute.domain.Contribute;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.domain.type.Status;
 import com.project.bumawiki.domain.thumbsUp.domain.ThumbsUp;
 import com.project.bumawiki.domain.thumbsUp.exception.AlreadyThumbsUpexception;
 import com.project.bumawiki.domain.thumbsUp.exception.YouDontThumbsUpThisDocs;
@@ -107,9 +106,6 @@ public class Docs {
 
 	private int lastVersion;
 
-	@Enumerated(EnumType.STRING)
-	private Status status;
-
 	public void updateDocsType(DocsType docsType) {
 		this.docsType = docsType;
 	}
@@ -143,9 +139,5 @@ public class Docs {
 
 	public void updateLatestVersion(int version) {
 		this.lastVersion = version;
-	}
-
-	public void updateStatus(Status status) {
-		this.status = status;
 	}
 }

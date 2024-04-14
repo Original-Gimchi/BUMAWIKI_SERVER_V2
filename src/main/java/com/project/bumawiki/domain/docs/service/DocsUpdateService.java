@@ -12,9 +12,7 @@ import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepositoryMapper;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.domain.type.Status;
 import com.project.bumawiki.domain.docs.exception.CannotChangeYourDocsException;
-import com.project.bumawiki.domain.docs.exception.DocsConflictedException;
 import com.project.bumawiki.domain.docs.exception.NoUpdatableDocsException;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTitleUpdateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTypeUpdateDto;
@@ -23,6 +21,8 @@ import com.project.bumawiki.domain.user.UserFacade;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.service.UserService;
 import com.project.bumawiki.global.annotation.ServiceWithTransactionalReadOnly;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,18 +42,14 @@ public class DocsUpdateService {
 		Docs foundDocs = findDocsByTitle(title);
 		validate(authId, foundDocs);
 
-		if (foundDocs.getStatus() == Status.CONFLICTED) {
-			throw new DocsConflictedException();
-		}
-
 		VersionDocs savedVersionDocs = saveVersionDocs(docsUpdateRequestDto, foundDocs.getId(),
 			foundDocs.getLastVersion());
 		Docs docs;
 
 		if (foundDocs.getLastVersion() != docsUpdateRequestDto.getUpdatingVersion()) {
-			docs = setVersionDocs(savedVersionDocs, Status.CONFLICTED);
+			docs = setVersionDocs(savedVersionDocs);
 		} else {
-			docs = setVersionDocs(savedVersionDocs, Status.GOOD);
+			throw new BumawikiException(ErrorCode.DOCS_CONFLICTED);
 		}
 
 		setContribute(savedVersionDocs);
@@ -81,9 +77,8 @@ public class DocsUpdateService {
 		return docs.getId();
 	}
 
-	private Docs setVersionDocs(VersionDocs savedVersionDocs, Status status) {
+	private Docs setVersionDocs(VersionDocs savedVersionDocs) {
 		Docs docs = setVersionDocsToDocs(savedVersionDocs);
-		docs.updateStatus(status);
 		docs.setModifiedTime(savedVersionDocs.getThisVersionCreatedAt());
 		return docs;
 	}

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.domain.type.Status;
 import com.project.bumawiki.domain.docs.service.DocsUtil;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.presentation.dto.SimpleUserDto;
@@ -25,7 +24,6 @@ public class DocsResponseDto {
 	private final int enroll;
 	private final boolean isDocsDetail;
 	private final List<SimpleUserDto> contributors;
-	private final Status status;
 	private final int version;
 	private final String thumbnail;
 
@@ -43,7 +41,6 @@ public class DocsResponseDto {
 		this.contributors = contributors.stream()
 			.map(SimpleUserDto::new)
 			.collect(Collectors.toList());
-		this.status = docs.getStatus();
 		this.version = docs.getLastVersion();
 		this.thumbnail = DocsUtil.getThumbnail(versionDocs.getContents());
 	}
