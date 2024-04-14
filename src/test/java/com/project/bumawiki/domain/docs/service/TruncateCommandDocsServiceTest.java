@@ -39,15 +39,16 @@ class TruncateCommandDocsServiceTest {
 		Docs docs = new Docs("testTitle", 2024, DocsType.STUDENT);
 		Docs duplicateDocs = new Docs("testTitle", 2023, DocsType.TEACHER);
 		User user = userInfoService.findAnotherInfo(1L);
+		String contents = "이건 테스트용 content 입니다";
 
 		//when
-		commandDocsService.create(docs, user, "이건 테스트용 content 입니다");
+		commandDocsService.create(docs, user, contents);
 
 		//then
 		Docs checkDocs = docsReader.findByTitle(docs.getTitle());
 
 		assertThat(checkDocs).isNotNull();
 
-		commandDocsService.create(duplicateDocs, user, "이건 테스트용 content 입니다"); // exception
+		commandDocsService.create(duplicateDocs, user, contents); // exception
 	}
 }
