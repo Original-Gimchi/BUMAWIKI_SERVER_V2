@@ -83,12 +83,11 @@ public class User {
 			.toList();
 	}
 
-	public User update(BsmResourceResponse resource) {
+	public void update(BsmResourceResponse resource) {
 		this.email = resource.getEmail();
 		this.name = resource.getStudent().getName();
 		this.enroll = resource.getStudent().getEnrolledAt();
 		this.nickName = resource.getNickname();
-		return this;
 	}
 
 	public void changeUserAuthority(Authority authority) {
