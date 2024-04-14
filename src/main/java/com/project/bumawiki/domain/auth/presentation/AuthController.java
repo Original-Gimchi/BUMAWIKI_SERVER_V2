@@ -5,13 +5,14 @@ import java.io.IOException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.bumawiki.domain.auth.presentation.dto.LoginReqestDto;
+import com.project.bumawiki.domain.auth.presentation.dto.RefreshTokenRequestDto;
 import com.project.bumawiki.domain.auth.presentation.dto.TokenResponseDto;
-import com.project.bumawiki.domain.auth.service.AccessTokenRefreshService;
-import com.project.bumawiki.domain.auth.service.UserSignUpOrUpdateService;
+import com.project.bumawiki.domain.auth.service.CommandAuthService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,16 +21,15 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	private final UserSignUpOrUpdateService userSignUpOrUpdateService;
-	private final AccessTokenRefreshService accessTokenRefreshService;
+	private final CommandAuthService commandAuthService;
 
 	@PostMapping("/oauth/bsm")
-	public TokenResponseDto userSignup(@RequestHeader("authCode") String authCode) throws IOException {
-		return TokenResponseDto.from(userSignUpOrUpdateService.execute(authCode));
+	public TokenResponseDto userSignup(@RequestBody LoginReqestDto loginReqestDto) throws IOException {
+		return TokenResponseDto.from(commandAuthService.login(loginReqestDto.accessToken()));
 	}
 
 	@PutMapping("/refresh/access")
-	public TokenResponseDto refreshAccessToken(@RequestHeader("refreshToken") String refreshToken) {
-		return TokenResponseDto.from(accessTokenRefreshService.execute(refreshToken));
+	public TokenResponseDto refreshAccessToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
+		return TokenResponseDto.from(commandAuthService.refresh(refreshTokenRequestDto.refreshToken()));
 	}
 }
