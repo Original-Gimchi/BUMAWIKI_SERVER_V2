@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.docs.domain.repository;
+package com.project.bumawiki.domain.docs.infra;
 
 import static com.project.bumawiki.domain.docs.domain.QDocs.*;
 import static com.project.bumawiki.domain.docs.domain.QVersionDocs.*;
@@ -11,6 +11,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
+import com.project.bumawiki.domain.docs.domain.repository.CustomDocsRepository;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
