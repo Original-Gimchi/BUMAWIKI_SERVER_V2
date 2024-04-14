@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
+import com.project.bumawiki.domain.docs.service.QueryDocsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,11 +17,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/docs")
 public class DocsPopularInformationController {
-	private final DocsRepository docsRepository;
+	private final QueryDocsService queryDocsService;
 
 	@GetMapping("/popular")
 	@ResponseStatus(HttpStatus.OK)
 	public List<DocsPopularResponseDto> docsPopular() {
-		return docsRepository.findByThumbsUpsDesc();
+		return queryDocsService.readByThumbsUpsDesc();
 	}
 }

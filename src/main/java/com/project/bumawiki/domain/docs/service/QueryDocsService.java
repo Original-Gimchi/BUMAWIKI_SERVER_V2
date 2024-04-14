@@ -18,6 +18,7 @@ import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.implementation.DocsReader;
 import com.project.bumawiki.domain.docs.implementation.DocsValidator;
 import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
@@ -149,5 +150,9 @@ public class QueryDocsService {
 			diff1,
 			diff2
 		);
+	}
+
+	public List<DocsPopularResponseDto> readByThumbsUpsDesc() {
+		return docsRepository.findByThumbsUpsDesc();
 	}
 }
