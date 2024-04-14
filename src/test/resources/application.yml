@@ -35,13 +35,12 @@ decorator:
     p6spy:
       enable-logging: true
 
-auth:
-  jwt:
-    header: Authorization
-    secret: whfioydwfgiyodsgfionuasnfiuodsoiweqngfbkcjbwbdgfxhghfxjyuafgxasdfxyuyxfgqweiyrxftyqoifxyqiqwoixfniwoeqxfeiwunfxgiweuhfwqihwkefxhiwhfiuxnewhnfouxw
-    accessExp: 1800
-    refreshExp: 2592000
-    prefix: Bearer
+jwt:
+  header: Authorization
+  secret: whfioydwfgiyodsgfionuasnfiuodsoiweqngfbkcjbwbdgfxhghfxjyuafgxasdfxyuyxfgqweiyrxftyqoifxyqiqwoixfniwoeqxfeiwunfxgiweuhfwqihwkefxhiwhfiuxnewhnfouxw
+  accessExp: 1800
+  refreshExp: 2592000
+  prefix: Bearer
 
 bsm:
   client-id: ${BSM_CLIENT_ID}
