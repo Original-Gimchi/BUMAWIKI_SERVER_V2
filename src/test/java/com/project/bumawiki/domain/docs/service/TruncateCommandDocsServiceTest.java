@@ -1,13 +1,14 @@
-package com.project.bumawiki;
+package com.project.bumawiki.domain.docs.service;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.implementation.DocsReader;
-import com.project.bumawiki.domain.docs.service.CommandDocsService;
 
 import com.project.bumawiki.domain.user.domain.User;
 
 import com.project.bumawiki.domain.user.service.UserInfoService;
+
+import com.project.bumawiki.global.test.SetUp;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

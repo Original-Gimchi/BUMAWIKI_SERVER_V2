@@ -1,8 +1,4 @@
-package com.project.bumawiki;
-
-import com.project.bumawiki.domain.docs.domain.Docs;
-
-import com.project.bumawiki.domain.docs.domain.type.DocsType;
+package com.project.bumawiki.global.test;
 
 import com.project.bumawiki.domain.user.domain.User;
 
