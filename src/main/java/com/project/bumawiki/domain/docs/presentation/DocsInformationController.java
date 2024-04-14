@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsTypeResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
@@ -96,5 +97,11 @@ public class DocsInformationController {
 	@ResponseStatus(HttpStatus.OK)
 	public MergeConflictDataResponseDto getMergeConflictData(@PathVariable String title) {
 		return queryDocsService.getMergeConflict(title);
+	}
+
+	@GetMapping("/popular")
+	@ResponseStatus(HttpStatus.OK)
+	public List<DocsPopularResponseDto> docsPopular() {
+		return queryDocsService.readByThumbsUpsDesc();
 	}
 }
