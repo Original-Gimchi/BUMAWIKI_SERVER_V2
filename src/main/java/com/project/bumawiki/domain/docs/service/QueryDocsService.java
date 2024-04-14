@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class DocsInformationService {
+public class QueryDocsService {
 	private final DocsRepository docsRepository;
 	private final VersionDocsRepository versionDocsRepository;
 	private final DocsReader docsReader;
