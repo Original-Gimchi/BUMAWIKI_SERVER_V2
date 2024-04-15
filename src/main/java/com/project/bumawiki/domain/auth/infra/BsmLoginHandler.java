@@ -2,8 +2,7 @@ package com.project.bumawiki.domain.auth.infra;
 
 import java.io.IOException;
 
-import org.springframework.stereotype.Component;
-
+import com.project.bumawiki.global.annotation.Implementation;
 import com.project.bumawiki.global.error.exception.BumawikiException;
 import com.project.bumawiki.global.error.exception.ErrorCode;
 
@@ -14,7 +13,7 @@ import leehj050211.bsmOauth.exceptions.BsmAuthInvalidClientException;
 import leehj050211.bsmOauth.exceptions.BsmAuthTokenNotFoundException;
 import lombok.RequiredArgsConstructor;
 
-@Component
+@Implementation
 @RequiredArgsConstructor
 public class BsmLoginHandler {
 	private final BsmOauth bsmOauth;
@@ -23,8 +22,10 @@ public class BsmLoginHandler {
 		try {
 			String token = bsmOauth.getToken(authId);
 			return bsmOauth.getResource(token);
-		} catch (BsmAuthCodeNotFoundException | BsmAuthTokenNotFoundException | BsmAuthInvalidClientException e) {
-			throw new BumawikiException(ErrorCode.USER_NOT_LOGIN);
+		} catch (BsmAuthCodeNotFoundException | BsmAuthTokenNotFoundException e) {
+			throw new BumawikiException(ErrorCode.INVALID_AUTHID);
+		} catch (BsmAuthInvalidClientException e) {
+			throw new BumawikiException(ErrorCode.INVALID_BSM_CLIENT);
 		} catch (IOException e) {
 			throw new BumawikiException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
