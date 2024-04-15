@@ -1,4 +1,4 @@
-package com.project.bumawiki.global.test;
+package com.project.bumawiki.global.truncate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Component
-public class SetUp {
+public class Truncate {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
