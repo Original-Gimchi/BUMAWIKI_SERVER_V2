@@ -13,7 +13,6 @@ import com.project.bumawiki.domain.user.implementation.UserCreator;
 import com.project.bumawiki.domain.user.implementation.UserReader;
 import com.project.bumawiki.domain.user.implementation.UserUpdater;
 
-import leehj050211.bsmOauth.dto.response.BsmResourceResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,13 +27,13 @@ public class CommandAuthService {
 	private final UserUpdater userUpdater;
 
 	public Token login(String authId) {
-		BsmResourceResponse resource = bsmLoginHandler.getResource(authId);
-		User user = userReader.getByEmail(resource.getEmail());
+		User unknownUser = bsmLoginHandler.getUserByAuthId(authId);
+		User user = userReader.getByEmail(unknownUser.getEmail());
 
 		if (user == null) {
-			userCreator.create(resource);
+			userCreator.create(unknownUser);
 		} else {
-			userUpdater.update(user, resource);
+			userUpdater.update(user, unknownUser);
 		}
 
 		return tokenProvider.createNewTokens(user);

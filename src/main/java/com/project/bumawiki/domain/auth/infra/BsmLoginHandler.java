@@ -2,6 +2,8 @@ package com.project.bumawiki.domain.auth.infra;
 
 import java.io.IOException;
 
+import com.project.bumawiki.domain.user.domain.User;
+import com.project.bumawiki.domain.user.domain.authority.Authority;
 import com.project.bumawiki.global.annotation.Implementation;
 import com.project.bumawiki.global.error.exception.BumawikiException;
 import com.project.bumawiki.global.error.exception.ErrorCode;
@@ -18,10 +20,11 @@ import lombok.RequiredArgsConstructor;
 public class BsmLoginHandler {
 	private final BsmOauth bsmOauth;
 
-	public BsmResourceResponse getResource(String authId) {
+	public User getUserByAuthId(String authId) {
 		try {
 			String token = bsmOauth.getToken(authId);
-			return bsmOauth.getResource(token);
+			BsmResourceResponse response = bsmOauth.getResource(token);
+			return createUnknownUser(response);
 		} catch (BsmAuthCodeNotFoundException | BsmAuthTokenNotFoundException e) {
 			throw new BumawikiException(ErrorCode.INVALID_AUTHID);
 		} catch (BsmAuthInvalidClientException e) {
@@ -29,5 +32,15 @@ public class BsmLoginHandler {
 		} catch (IOException e) {
 			throw new BumawikiException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	private User createUnknownUser(BsmResourceResponse resource) {
+		return User.builder()
+			.email(resource.getEmail())
+			.nickName(resource.getNickname())
+			.authority(Authority.USER)
+			.enroll(resource.getStudent().getEnrolledAt())
+			.name(resource.getStudent().getName())
+			.build();
 	}
 }
