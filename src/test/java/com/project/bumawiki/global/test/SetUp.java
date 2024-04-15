@@ -1,7 +1,5 @@
 package com.project.bumawiki.global.test;
 
-import jakarta.persistence.EntityManager;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -13,16 +11,13 @@ import java.util.List;
 public class SetUp {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	@Autowired
-	private EntityManager entityManager;
-	@Autowired
-	private SetUpTestData setUpTestData;
 
 	@Transactional
 	public void beforeEach() {
 		final List<String> truncateQueries = getTruncateQueries(jdbcTemplate);
+		execute(jdbcTemplate, "SET REFERENTIAL_INTEGRITY FALSE");
 		truncateTables(jdbcTemplate, truncateQueries);
-		setUpTestData.setUpTestData();
+		execute(jdbcTemplate, "SET REFERENTIAL_INTEGRITY TRUE");
 	}
 
 	private List<String> getTruncateQueries(final JdbcTemplate jdbcTemplate) {
@@ -30,9 +25,7 @@ public class SetUp {
 	}
 
 	private void truncateTables(final JdbcTemplate jdbcTemplate, final List<String> truncateQueries) {
-		execute(jdbcTemplate, "SET REFERENTIAL_INTEGRITY FALSE");
 		truncateQueries.forEach(v -> execute(jdbcTemplate, v));
-		execute(jdbcTemplate, "SET REFERENTIAL_INTEGRITY TRUE");
 	}
 
 	private void execute(final JdbcTemplate jdbcTemplate, final String query) {
