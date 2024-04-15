@@ -1,7 +1,7 @@
 package com.project.bumawiki.domain.docs.presentation;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ public class DocsMergeConflictController {
 
 	private final DocsMergeConflictService mergeConflictService;
 
-	@GetMapping("/{title}")
+	@PostMapping("/{title}")
 	public MergeConflictDataResponse getMergeConflictData(@PathVariable String title,
 		@RequestBody ContentsRequestDto contentsRequestDto) {
 		return mergeConflictService.getMergeConflict(title, contentsRequestDto.contents());
