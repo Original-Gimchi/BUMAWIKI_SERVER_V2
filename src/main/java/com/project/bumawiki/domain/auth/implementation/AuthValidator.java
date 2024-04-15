@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.auth.service.implementation;
+package com.project.bumawiki.domain.auth.implementation;
 
 import org.springframework.stereotype.Service;
 

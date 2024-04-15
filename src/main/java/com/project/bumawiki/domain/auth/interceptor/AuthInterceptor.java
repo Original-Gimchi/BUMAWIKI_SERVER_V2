@@ -9,13 +9,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import com.project.bumawiki.domain.auth.annotation.AdminOnly;
 import com.project.bumawiki.domain.auth.annotation.LoginOrNot;
 import com.project.bumawiki.domain.auth.annotation.LoginRequired;
-import com.project.bumawiki.domain.auth.service.implementation.AuthReader;
-import com.project.bumawiki.domain.auth.service.implementation.AuthUpdater;
+import com.project.bumawiki.domain.auth.implementation.AuthReader;
+import com.project.bumawiki.domain.auth.implementation.AuthUpdater;
 import com.project.bumawiki.domain.auth.util.BearerTokenExtractor;
 import com.project.bumawiki.domain.auth.util.JwtParser;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
-import com.project.bumawiki.domain.user.domain.repository.UserRepository;
+import com.project.bumawiki.domain.user.implementation.UserReader;
 import com.project.bumawiki.global.error.exception.BumawikiException;
 import com.project.bumawiki.global.error.exception.ErrorCode;
 
@@ -30,8 +30,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 	private final JwtParser jwtParser;
 	private final AuthUpdater authUpdater;
 	private final AuthReader authReader;
-	//TODO UserReader로 변경
-	private final UserRepository userRepository;
+	private final UserReader userReader;
 
 	private static void shouldUserAdmin(User currentUser) {
 		if (currentUser.getAuthority() != Authority.ADMIN) {
@@ -55,7 +54,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 					String jwt = BearerTokenExtractor.extract(bearer);
 					Long userId = jwtParser.getIdFromJwt(jwt);
 
-					User user = userRepository.getById(userId);
+					User user = userReader.getById(userId);
 
 					authUpdater.updateCurrentUser(user);
 				}
