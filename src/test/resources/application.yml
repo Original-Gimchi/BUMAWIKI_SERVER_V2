@@ -44,16 +44,16 @@ jwt:
   prefix: Bearer
 
 bsm:
-  client-id: ${BSM_CLIENT_ID}
-  secret-key: ${BSM_SECRET_KEY}
-  redirect-url: ${BSM_REDIRECT_URL}
+  client-id: test-bsm-client-id
+  secret-key: test-bsm-client-secret
+  redirect-url: test-redirect-uri
 
 #S3
 aws:
   s3:
-    bucket: ${S3_BUCKET}
-    access-key: ${S3_ACCESSKEY}
-    secret-key: ${S3_SECRET}
+    bucket: test-bucket
+    access-key: test-access-key
+    secret-key: test-secret-key
 
 server:
   port: 8080
