@@ -14,8 +14,11 @@ public class UserRepositoryMapper {
 	private final UserRepository userRepository;
 
 	public User getByEmail(final String email) {
-		return userRepository.findByEmail(email)
-			.orElseThrow(() -> UserNotFoundException.EXCEPTION);
+		User user = userRepository.findByEmail(email);
+		if (user == null) {
+			throw UserNotFoundException.EXCEPTION;
+		}
+		return user;
 	}
 
 	public User getById(final Long userId) {
