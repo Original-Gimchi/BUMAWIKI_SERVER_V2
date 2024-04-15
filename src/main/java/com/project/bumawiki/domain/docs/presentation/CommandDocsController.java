@@ -65,6 +65,6 @@ public class CommandDocsController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@LoginRequired
 	public void solveConflict(@PathVariable String title, @RequestBody DocsConflictSolveRequestDto dto) {
-		commandDocsService.solveConflict(title, dto.contents(), queryAuthService.getCurrentUser());
+		commandDocsService.solveConflict(title, dto.contents(), dto.version(), queryAuthService.getCurrentUser());
 	}
 }

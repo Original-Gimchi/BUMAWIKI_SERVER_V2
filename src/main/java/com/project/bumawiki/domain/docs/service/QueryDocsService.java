@@ -130,8 +130,6 @@ public class QueryDocsService {
 	public MergeConflictDataResponseDto getMergeConflict(String title, String contents) {
 		Docs docs = docsReader.findByTitle(title);
 
-		docsValidator.checkConflicted(docs);
-
 		// 버전 최신순 3가지 조회가 전체에서 자르는지 3개만 가져오는지 확인이 필요합니다
 		List<VersionDocs> docsVersion = docsReader.findTop2ByDocs(docs);
 

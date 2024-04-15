@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.domain.type.Status;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -40,21 +39,13 @@ public class Docs {
 
 	private LocalDateTime lastModifiedAt;
 
-	@Enumerated(EnumType.STRING)
-	private Status status;
-
-	@OneToMany(
-		mappedBy = "docs",
-		cascade = CascadeType.REMOVE,
-		fetch = FetchType.LAZY
-	)
+	@OneToMany(mappedBy = "docs", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private List<VersionDocs> versionDocs;
 
 	public Docs(String title, int enroll, DocsType docsType) {
 		this.title = title;
 		this.enroll = enroll;
 		this.docsType = docsType;
-		this.status = Status.GOOD;
 	}
 
 	public void updateDocsType(DocsType docsType) {
@@ -67,9 +58,5 @@ public class Docs {
 
 	public void updateTitle(String title) {
 		this.title = title;
-	}
-
-	public void updateStatus(Status status) {
-		this.status = status;
 	}
 }

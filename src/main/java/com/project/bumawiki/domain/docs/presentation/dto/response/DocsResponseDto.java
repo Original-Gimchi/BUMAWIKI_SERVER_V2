@@ -6,7 +6,6 @@ import java.util.List;
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.domain.type.Status;
 import com.project.bumawiki.domain.docs.util.DocsUtil;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.presentation.dto.SimpleUserDto;
@@ -20,7 +19,6 @@ public record DocsResponseDto(
 	int enroll,
 	boolean isDocsDetail,
 	List<SimpleUserDto> contributors,
-	Status status,
 	int version,
 	String thumbnail
 ) {
@@ -37,7 +35,6 @@ public record DocsResponseDto(
 			contributors.stream()
 				.map(SimpleUserDto::new)
 				.toList(),
-			docs.getStatus(),
 			versionDocs.getVersion(),
 			DocsUtil.getThumbnail(versionDocs.getContents())
 		);

@@ -4,7 +4,6 @@ import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.domain.type.Status;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.global.annotation.Implementation;
 import com.project.bumawiki.global.error.exception.BumawikiException;
@@ -47,18 +46,6 @@ public class DocsValidator {
 	public void checkUpdatableDocsType(DocsType docsType) {
 		if (docsType.equals(DocsType.READONLY)) {
 			throw new BumawikiException(ErrorCode.NO_UPDATABLE_DOCS);
-		}
-	}
-
-	public void checkGood(Docs docs) {
-		if (!docs.getStatus().equals(Status.GOOD)) {
-			throw new BumawikiException(ErrorCode.DOCS_CONFLICTED);
-		}
-	}
-
-	public void checkConflicted(Docs docs) {
-		if (!docs.getStatus().equals(Status.CONFLICTED)) {
-			throw new BumawikiException(ErrorCode.DOCS_IS_NOT_CONFLICTED);
 		}
 	}
 

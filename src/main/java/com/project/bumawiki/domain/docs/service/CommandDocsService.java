@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
-import com.project.bumawiki.domain.docs.domain.type.Status;
 import com.project.bumawiki.domain.docs.implementation.DocsCreator;
 import com.project.bumawiki.domain.docs.implementation.DocsDeleter;
 import com.project.bumawiki.domain.docs.implementation.DocsReader;
@@ -12,6 +11,8 @@ import com.project.bumawiki.domain.docs.implementation.DocsUpdater;
 import com.project.bumawiki.domain.docs.implementation.DocsValidator;
 import com.project.bumawiki.domain.thumbsup.implementation.ThumbsUpDeleter;
 import com.project.bumawiki.domain.user.domain.User;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -43,10 +44,9 @@ public class CommandDocsService {
 
 		docsValidator.checkUpdatableDocsType(docs.getDocsType());
 		docsValidator.checkUpdateOneSelf(user, docs);
-		docsValidator.checkGood(docs);
 
 		if (docsValidator.isConflict(docs, updatingVersion)) {
-			docsUpdater.updateStatus(docs, Status.CONFLICTED);
+			throw new BumawikiException(ErrorCode.DOCS_CONFLICTED);
 		}
 
 		docsCreator.createVersionDocs(docs, user, contents);
@@ -65,18 +65,18 @@ public class CommandDocsService {
 		docsUpdater.updateType(docs, docsType);
 	}
 
-	public void solveConflict(String title, String contents, User user) {
+	public void solveConflict(String title, String contents, Integer version, User user) {
 		Docs docs = docsReader.findByTitle(title);
 
-		docsValidator.checkConflicted(docs);
+		if (docsValidator.isConflict(docs, version)) {
+			throw new BumawikiException(ErrorCode.DOCS_CONFLICTED);
+		}
 
 		docsCreator.create(
 			docs,
 			user,
 			contents
 		);
-
-		docsUpdater.updateStatus(docs, Status.GOOD);
 	}
 
 }
