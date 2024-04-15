@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.bumawiki.domain.auth.annotation.LoginRequired;
 import com.project.bumawiki.domain.auth.service.QueryAuthService;
+import com.project.bumawiki.domain.docs.presentation.dto.request.DocsConflictSolveRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsCreateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTitleUpdateRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsTypeUpdateRequestDto;
@@ -58,5 +59,12 @@ public class CommandDocsController {
 	@DeleteMapping("{id}")
 	public void deleteDocs(@PathVariable Long id) {
 		commandDocsService.delete(id);
+	}
+
+	@PutMapping("/merge/{title}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@LoginRequired
+	public void solveConflict(@PathVariable String title, @RequestBody DocsConflictSolveRequestDto dto) {
+		commandDocsService.solveConflict(title, dto.contents(), queryAuthService.getCurrentUser());
 	}
 }

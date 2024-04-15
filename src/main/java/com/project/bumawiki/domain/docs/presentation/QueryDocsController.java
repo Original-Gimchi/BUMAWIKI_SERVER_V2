@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsTypeResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDiffResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
-import com.project.bumawiki.domain.docs.service.DocsInformationService;
+import com.project.bumawiki.domain.docs.service.QueryDocsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,29 +32,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @ResponseStatus(HttpStatus.OK)
 @RequestMapping("/api/docs")
-public class DocsInformationController {
-	private final DocsInformationService docsInformationService;
+public class QueryDocsController {
+	private final QueryDocsService queryDocsService;
 
 	@GetMapping("/all/teacher")
 	public ResponseEntity<TeacherResponseDto> findAllTeacher() {
-		return ResponseEntity.ok(docsInformationService.getAllTeacher());
+		return ResponseEntity.ok(queryDocsService.getAllTeacher());
 	}
 
 	@GetMapping("/all/club")
 	public ResponseEntity<ClubResponseDto> findAllClub() {
-		return ResponseEntity.ok(docsInformationService.getAllClub());
+		return ResponseEntity.ok(queryDocsService.getAllClub());
 	}
 
 	@GetMapping("/{stringDocsType}")
 	public DocsTypeResponseDto findAllByDocsType(
 		@PathVariable String stringDocsType) {
 		DocsType docsType = DocsType.valueOfLabel(stringDocsType);
-		return DocsTypeResponseDto.from(docsInformationService.findByDocsTypeOrderByEnroll(docsType));
+		return DocsTypeResponseDto.from(queryDocsService.findByDocsTypeOrderByEnroll(docsType));
 	}
 
 	@GetMapping("/find/all/title/{title}")
 	public List<DocsNameAndEnrollResponseDto> findAllByTitle(@PathVariable String title) {
-		return docsInformationService.findAllByTitle(title)
+		return queryDocsService.findAllByTitle(title)
 			.stream()
 			.map(DocsNameAndEnrollResponseDto::new)
 			.toList();
@@ -60,18 +62,18 @@ public class DocsInformationController {
 
 	@GetMapping("/find/title/{title}")
 	public ResponseEntity<DocsResponseDto> findById(@PathVariable String title) {
-		return ResponseEntity.ok(docsInformationService.findDocs(title));
+		return ResponseEntity.ok(queryDocsService.findDocs(title));
 	}
 
 	@GetMapping("/find/{title}/version")
 	public ResponseEntity<VersionResponseDto> showDocsVersion(@PathVariable String title) {
-		return ResponseEntity.ok(docsInformationService.findDocsVersion(title));
+		return ResponseEntity.ok(queryDocsService.findDocsVersion(title));
 	}
 
 	@GetMapping("/find/modified")
 	public List<DocsNameAndEnrollResponseDto> showDocsModifiedTimeDesc(
 		@PageableDefault(size = 12) Pageable pageable) {
-		return docsInformationService.showDocsModifiedAtDesc(pageable)
+		return queryDocsService.showDocsModifiedAtDesc(pageable)
 			.stream()
 			.map(DocsNameAndEnrollResponseDto::new)
 			.toList();
@@ -80,14 +82,26 @@ public class DocsInformationController {
 	@GetMapping("/find/version/{title}/different/{version}")
 	public VersionDocsDiffResponseDto showVersionDocsDiff(@PathVariable String title,
 		@PathVariable Integer version) {
-		return docsInformationService.showVersionDocsDiff(title, version);
+		return queryDocsService.showVersionDocsDiff(title, version);
 	}
 
 	@GetMapping("/find/modified/all")
 	public List<DocsNameAndEnrollResponseDto> showDocsModifiedTimeDescAll() {
-		return docsInformationService.showDocsModifiedAtDescAll()
+		return queryDocsService.showDocsModifiedAtDescAll()
 			.stream()
 			.map(DocsNameAndEnrollResponseDto::new)
 			.toList();
+	}
+
+	@GetMapping("/merge/{title}")
+	@ResponseStatus(HttpStatus.OK)
+	public MergeConflictDataResponseDto getMergeConflictData(@PathVariable String title) {
+		return queryDocsService.getMergeConflict(title);
+	}
+
+	@GetMapping("/popular")
+	@ResponseStatus(HttpStatus.OK)
+	public List<DocsPopularResponseDto> docsPopular() {
+		return queryDocsService.readByThumbsUpsDesc();
 	}
 }
