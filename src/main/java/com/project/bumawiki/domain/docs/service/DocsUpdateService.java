@@ -46,7 +46,7 @@ public class DocsUpdateService {
 			foundDocs.getLastVersion());
 		Docs docs;
 
-		if (foundDocs.getLastVersion() != docsUpdateRequestDto.getUpdatingVersion()) {
+		if (foundDocs.getLastVersion() == docsUpdateRequestDto.getUpdatingVersion()) {
 			docs = setVersionDocs(savedVersionDocs);
 		} else {
 			throw new BumawikiException(ErrorCode.DOCS_CONFLICTED);
