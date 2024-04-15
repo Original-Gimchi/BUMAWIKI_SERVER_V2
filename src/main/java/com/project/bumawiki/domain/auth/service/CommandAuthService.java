@@ -28,10 +28,10 @@ public class CommandAuthService {
 
 	public Token login(String authId) {
 		User unknownUser = bsmLoginHandler.getUserByAuthId(authId);
-		User user = userReader.getByEmail(unknownUser.getEmail());
+		User user = userReader.getNullableUserByEmail(unknownUser.getEmail());
 
 		if (user == null) {
-			userCreator.create(unknownUser);
+			user = userCreator.create(unknownUser);
 		} else {
 			userUpdater.update(user, unknownUser);
 		}

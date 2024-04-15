@@ -17,7 +17,7 @@ public class UserReader {
 		return userRepository.findById(id).orElseThrow(() -> new BumawikiException(ErrorCode.USER_NOT_FOUND));
 	}
 
-	public User getByEmail(String email) {
-		return userRepository.findByEmail(email).orElseThrow(() -> new BumawikiException(ErrorCode.USER_NOT_FOUND));
+	public User getNullableUserByEmail(String email) {
+		return userRepository.findByEmail(email);
 	}
 }

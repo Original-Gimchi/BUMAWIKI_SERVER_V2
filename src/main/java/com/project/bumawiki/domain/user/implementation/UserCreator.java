@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class UserCreator {
 	private final UserRepository userRepository;
 
-	public void create(User user) {
-		userRepository.save(user);
+	public User create(User user) {
+		return userRepository.save(user);
 	}
 }
