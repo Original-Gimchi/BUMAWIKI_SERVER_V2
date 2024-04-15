@@ -29,8 +29,8 @@ public class DocsReader {
 			.orElseThrow(() -> new BumawikiException(ErrorCode.DOCS_NOT_FOUND));
 	}
 
-	public List<VersionDocs> findTop3ByDocs(Docs docs) {
-		return versionDocsRepository.findTop3ByDocsOrderByVersion(docs);
+	public List<VersionDocs> findTop2ByDocs(Docs docs) {
+		return versionDocsRepository.findTop2ByDocsOrderByVersionDesc(docs);
 	}
 
 	public VersionDocs findLastVersion(Docs docs) {

@@ -15,11 +15,12 @@ public interface VersionDocsRepository extends JpaRepository<VersionDocs, Long> 
 	@NonNull
 	VersionDocs findFirstByDocsOrderByVersionDesc(Docs docs);
 
-	List<VersionDocs> findTop3ByDocsOrderByVersion(Docs docs);
+	List<VersionDocs> findTop2ByDocsOrderByVersionDesc(Docs docs);
 
 	List<VersionDocs> findByDocs(Docs docs);
 
 	Optional<VersionDocs> findByDocsAndVersion(Docs docs, Integer version);
 
 	List<VersionDocs> findAllByUser(User user);
+
 }

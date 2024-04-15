@@ -127,25 +127,24 @@ public class QueryDocsService {
 		return versionDocsRepository.findAllByUser(user);
 	}
 
-	public MergeConflictDataResponseDto getMergeConflict(String title) {
+	public MergeConflictDataResponseDto getMergeConflict(String title, String contents) {
 		Docs docs = docsReader.findByTitle(title);
 
 		docsValidator.checkConflicted(docs);
 
 		// 버전 최신순 3가지 조회가 전체에서 자르는지 3개만 가져오는지 확인이 필요합니다
-		List<VersionDocs> docsVersion = docsReader.findTop3ByDocs(docs);
+		List<VersionDocs> docsVersion = docsReader.findTop2ByDocs(docs);
 
 		String firstDocsContent = docsVersion.get(0).getContents();
-		String secondDocsContent = docsVersion.get(1).getContents();
-		String originalDocsContent = docsVersion.get(2).getContents();
+		String originalDocsContent = docsVersion.get(1).getContents();
 
 		//최신글의 겹치는 점과 지금 바꾸려는 글의 차이점을 조회
 		LinkedList<DiffMatchPatch.Diff> diff1 = DocsUtil.getDiff(originalDocsContent, firstDocsContent);
-		LinkedList<DiffMatchPatch.Diff> diff2 = DocsUtil.getDiff(originalDocsContent, secondDocsContent);
+		LinkedList<DiffMatchPatch.Diff> diff2 = DocsUtil.getDiff(originalDocsContent, contents);
 
 		return new MergeConflictDataResponseDto(
 			firstDocsContent,
-			secondDocsContent,
+			contents,
 			originalDocsContent,
 			diff1,
 			diff2

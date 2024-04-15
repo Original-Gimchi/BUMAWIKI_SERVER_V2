@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
+import com.project.bumawiki.domain.docs.presentation.dto.ContentsRequestDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
@@ -25,6 +26,7 @@ import com.project.bumawiki.domain.docs.presentation.dto.response.VersionDocsDif
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.docs.service.QueryDocsService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Validated
@@ -95,8 +97,9 @@ public class QueryDocsController {
 
 	@GetMapping("/merge/{title}")
 	@ResponseStatus(HttpStatus.OK)
-	public MergeConflictDataResponseDto getMergeConflictData(@PathVariable String title) {
-		return queryDocsService.getMergeConflict(title);
+	public MergeConflictDataResponseDto getMergeConflictData(@PathVariable String title,
+		@Valid ContentsRequestDto contentsRequestDto) {
+		return queryDocsService.getMergeConflict(title, contentsRequestDto.contents());
 	}
 
 	@GetMapping("/popular")
