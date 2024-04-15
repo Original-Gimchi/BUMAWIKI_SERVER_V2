@@ -23,6 +23,7 @@ spring:
         org:
           hibernate:
             SQL: debug
+    show-sql: true
 
   servlet:
     multipart:
