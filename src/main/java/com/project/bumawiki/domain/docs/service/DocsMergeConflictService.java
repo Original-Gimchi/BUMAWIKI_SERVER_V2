@@ -32,8 +32,8 @@ public class DocsMergeConflictService {
 
 		List<VersionDocs> docsVersion = docs.getDocsVersion();
 
-		VersionDocs firstDocs = docsVersion.get(docsVersion.size() - 2);
-		VersionDocs originalDocs = docsVersion.get(docsVersion.size() - 3);
+		VersionDocs firstDocs = docsVersion.get(docsVersion.size() - 1);
+		VersionDocs originalDocs = docsVersion.get(docsVersion.size() - 2);
 
 		//최신글의 겹치는 점과 지금 바꾸려는 글의 차이점을 조회
 		DiffMatchPatch dmp = new DiffMatchPatch();
