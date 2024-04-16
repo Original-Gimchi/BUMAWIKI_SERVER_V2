@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
-import com.project.bumawiki.domain.thumbsup.exception.AlreadyThumbsUpException;
-import com.project.bumawiki.domain.thumbsup.exception.YouDontThumbsUpThisDocs;
 import com.project.bumawiki.domain.thumbsup.presentation.dto.ThumbsUpResponseDto;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 
@@ -19,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Max;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,37 +42,25 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Max(32)
 	@Column(unique = true, length = 32)
 	private String email;
+
+	@Max(16)
 	@Column(length = 16)
 	private String name;
+
+	@Max(8)
 	@Column(length = 8)
 	private Integer enroll;
+
+	@Max(20)
 	@Column(length = 20)
 	private String nickName;
+
 	@Enumerated(EnumType.STRING)
 	@Column(length = 16)
 	private Authority authority;
-
-	public void cancelThumbsUp(ThumbsUp thumbsUp) {
-		boolean removed = thumbsUps
-			.removeIf(thumbsUp::equals);
-
-		if (!removed) {
-			throw YouDontThumbsUpThisDocs.EXCEPTION;
-		}
-	}
-
-	public void addThumbsUp(ThumbsUp thumbsUp) {
-		boolean anyMatch = thumbsUps
-			.stream()
-			.anyMatch(iterThumbsUp -> iterThumbsUp.equals(thumbsUp));
-
-		if (anyMatch) {
-			throw AlreadyThumbsUpException.EXCEPTION;
-		}
-		this.thumbsUps.add(thumbsUp);
-	}
 
 	public List<ThumbsUpResponseDto> getList() {
 		return this.thumbsUps
