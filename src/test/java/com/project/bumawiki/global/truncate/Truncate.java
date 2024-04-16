@@ -1,11 +1,11 @@
 package com.project.bumawiki.global.truncate;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Component
 public class Truncate {
@@ -21,7 +21,12 @@ public class Truncate {
 	}
 
 	private List<String> getTruncateQueries(final JdbcTemplate jdbcTemplate) {
-		return jdbcTemplate.queryForList("SELECT Concat('TRUNCATE TABLE ', TABLE_NAME, ' RESTART IDENTITY;') AS q FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'", String.class);
+		return jdbcTemplate.queryForList(
+			"""
+				SELECT Concat('TRUNCATE TABLE ', TABLE_NAME, ' RESTART IDENTITY;') AS q
+				FROM INFORMATION_SCHEMA.TABLES
+				WHERE TABLE_SCHEMA = 'PUBLIC'""",
+			String.class);
 	}
 
 	private void truncateTables(final JdbcTemplate jdbcTemplate, final List<String> truncateQueries) {
