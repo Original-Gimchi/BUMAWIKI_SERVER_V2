@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
+import com.project.bumawiki.domain.docs.domain.repository.CustomDocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.implementation.DocsReader;
-import com.project.bumawiki.domain.docs.implementation.DocsValidator;
 import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
@@ -39,7 +39,7 @@ public class QueryDocsService {
 	private final DocsRepository docsRepository;
 	private final VersionDocsRepository versionDocsRepository;
 	private final DocsReader docsReader;
-	private final DocsValidator docsValidator;
+	private final CustomDocsRepository customDocsRepository;
 
 	public List<Docs> findAllByTitle(String title) {
 		List<Docs> docs = docsRepository.findAllByTitle(title);
@@ -64,7 +64,7 @@ public class QueryDocsService {
 
 	public VersionResponseDto findDocsVersion(String title) {
 		Docs docs = docsRepository.getByTitle(title);
-		return docsRepository.getDocsVersion(docs);
+		return customDocsRepository.getDocsVersion(docs);
 	}
 
 	public List<Docs> showDocsModifiedAtDesc(Pageable pageable) {
@@ -150,6 +150,6 @@ public class QueryDocsService {
 	}
 
 	public List<DocsPopularResponseDto> readByThumbsUpsDesc() {
-		return docsRepository.findByThumbsUpsDesc();
+		return customDocsRepository.findByThumbsUpsDesc();
 	}
 }

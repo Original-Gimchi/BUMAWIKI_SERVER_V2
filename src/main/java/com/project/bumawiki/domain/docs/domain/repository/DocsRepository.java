@@ -13,7 +13,7 @@ import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.global.error.exception.BumawikiException;
 import com.project.bumawiki.global.error.exception.ErrorCode;
 
-public interface DocsRepository extends JpaRepository<Docs, Long>, CustomDocsRepository {
+public interface DocsRepository extends JpaRepository<Docs, Long> {
 
 	@Query("select d from Docs d where d.docsType = :docsType order by d.enroll")
 	List<Docs> findByDocsType(@Param("docsType") DocsType docsType);
