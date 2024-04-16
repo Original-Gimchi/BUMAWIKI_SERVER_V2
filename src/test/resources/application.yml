@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test
+    url: jdbc:h2:mem:test;MODE=MYSQL;NON_KEYWORDS=USER
     driverClassName: org.h2.Driver
     username: sa
     password:
@@ -14,7 +14,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     database-platform: org.hibernate.dialect.H2Dialect
     generate-ddl: true
 
@@ -23,6 +23,7 @@ spring:
         org:
           hibernate:
             SQL: debug
+    show-sql: true
 
   servlet:
     multipart:
@@ -35,25 +36,24 @@ decorator:
     p6spy:
       enable-logging: true
 
-auth:
-  jwt:
-    header: Authorization
-    secret: whfioydwfgiyodsgfionuasnfiuodsoiweqngfbkcjbwbdgfxhghfxjyuafgxasdfxyuyxfgqweiyrxftyqoifxyqiqwoixfniwoeqxfeiwunfxgiweuhfwqihwkefxhiwhfiuxnewhnfouxw
-    accessExp: 1800
-    refreshExp: 2592000
-    prefix: Bearer
+jwt:
+  header: Authorization
+  secret: whfioydwfgiyodsgfionuasnfiuodsoiweqngfbkcjbwbdgfxhghfxjyuafgxasdfxyuyxfgqweiyrxftyqoifxyqiqwoixfniwoeqxfeiwunfxgiweuhfwqihwkefxhiwhfiuxnewhnfouxw
+  accessExp: 1800
+  refreshExp: 2592000
+  prefix: Bearer
 
 bsm:
-  client-id: ${BSM_CLIENT_ID}
-  secret-key: ${BSM_SECRET_KEY}
-  redirect-url: ${BSM_REDIRECT_URL}
+  client-id: test-bsm-client-id
+  secret-key: test-bsm-client-secret
+  redirect-url: test-redirect-uri
 
 #S3
 aws:
   s3:
-    bucket: ${S3_BUCKET}
-    access-key: ${S3_ACCESSKEY}
-    secret-key: ${S3_SECRET}
+    bucket: test-bucket
+    access-key: test-access-key
+    secret-key: test-secret-key
 
 server:
   port: 8080
