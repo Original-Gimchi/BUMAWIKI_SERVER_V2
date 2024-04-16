@@ -6,6 +6,6 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
 public class VersionDocsPk implements Serializable {
-	private int version;
-	private Docs docs;
+	private Integer version;
+	private Long docs;
 }
