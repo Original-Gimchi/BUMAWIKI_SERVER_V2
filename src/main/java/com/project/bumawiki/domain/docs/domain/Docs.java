@@ -15,6 +15,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,12 +30,16 @@ public class Docs {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotNull
+	@Size(max = 32)
 	@Column(length = 32, unique = true)
 	private String title;
 
 	@Column
+	@NotNull
 	private Integer enroll;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private DocsType docsType;
 
