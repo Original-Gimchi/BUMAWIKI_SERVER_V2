@@ -5,16 +5,14 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import com.navercorp.fixturemonkey.FixtureMonkey;
+import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.*;
-
-@Target(TYPE)
-@Retention(RUNTIME)
 @Transactional
 @SpringBootTest
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public @interface ServiceTest {
+public abstract class ServiceTest {
+	protected static final FixtureMonkey fixtureGenerator = FixtureMonkey.builder()
+		.objectIntrospector(FieldReflectionArbitraryIntrospector.INSTANCE)
+		.build();
 }

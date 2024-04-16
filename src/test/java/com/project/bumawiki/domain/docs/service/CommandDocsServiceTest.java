@@ -1,7 +1,6 @@
 package com.project.bumawiki.domain.docs.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,7 @@ import com.project.bumawiki.domain.user.domain.authority.Authority;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
 import com.project.bumawiki.global.annotation.ServiceTest;
 
-@ServiceTest
-class CommandDocsServiceTest {
-
+class CommandDocsServiceTest extends ServiceTest {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
