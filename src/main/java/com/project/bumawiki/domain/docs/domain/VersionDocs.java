@@ -35,6 +35,7 @@ public class VersionDocs {
 	@JoinColumn(name = "docs_id")
 	private Docs docs;
 
+	@NotNull
 	@Column(columnDefinition = "TEXT", nullable = false)
 	private String contents;
 
