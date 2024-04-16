@@ -1,4 +1,4 @@
-package com.project.bumawiki.global.annotation;
+package com.project.bumawiki.global.service;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

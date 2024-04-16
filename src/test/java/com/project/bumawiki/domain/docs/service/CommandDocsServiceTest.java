@@ -13,7 +13,7 @@ import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
-import com.project.bumawiki.global.annotation.ServiceTest;
+import com.project.bumawiki.global.service.ServiceTest;
 
 class CommandDocsServiceTest extends ServiceTest {
 	@Autowired
