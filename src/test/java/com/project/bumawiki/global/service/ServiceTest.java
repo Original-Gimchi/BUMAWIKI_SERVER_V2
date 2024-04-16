@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
+import com.navercorp.fixturemonkey.jakarta.validation.plugin.JakartaValidationPlugin;
 
 @Transactional
 @SpringBootTest
@@ -14,5 +15,6 @@ import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntr
 public abstract class ServiceTest {
 	protected static final FixtureMonkey fixtureGenerator = FixtureMonkey.builder()
 		.objectIntrospector(FieldReflectionArbitraryIntrospector.INSTANCE)
+		.plugin(new JakartaValidationPlugin())
 		.build();
 }
