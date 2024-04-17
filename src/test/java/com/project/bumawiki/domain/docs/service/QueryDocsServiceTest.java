@@ -3,6 +3,8 @@ package com.project.bumawiki.domain.docs.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,7 +12,9 @@ import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
+import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
@@ -66,6 +70,44 @@ class QueryDocsServiceTest extends ServiceTest {
 				assertThat(dto).isNotNull();
 				assertThat(dto.title()).isEqualTo(title);
 			}
+		);
+	}
+
+	@Test
+	void 제목으로_문서_역사_조회하기() {
+		// given
+		User user = fixtureGenerator.giveMeBuilder(User.class)
+			.setNull("id")
+			.set("authority", Authority.USER)
+			.setNull("thumbsUps")
+			.sample();
+
+		userRepository.save(user);
+
+		Docs docs = fixtureGenerator.giveMeBuilder(Docs.class)
+			.setNull("id")
+			.setNull("versionDocs")
+			.sample();
+		String title = docs.getTitle();
+
+		docsRepository.save(docs);
+
+		List<VersionDocs> versionDocsList = fixtureGenerator.giveMeBuilder(VersionDocs.class)
+			.set("docs", docs)
+			.set("user", user)
+			.sampleList(10);
+
+		versionDocsRepository.saveAll(versionDocsList);
+
+		// when
+		VersionResponseDto dto = queryDocsService.findDocsVersion(title);
+
+		// then
+		assertAll(
+			() -> assertThat(dto.versionDocsResponseDto()).isNotNull(),
+			() -> assertThat(dto.length()).isEqualTo(dto.versionDocsResponseDto().size()),
+			() -> assertThat(dto.docsType()).isEqualTo(docs.getDocsType()),
+			() -> assertThat(dto.title()).isEqualTo(title)
 		);
 	}
 }
