@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +111,37 @@ class QueryDocsServiceTest extends ServiceTest {
 			},
 			() -> assertThat(dto.docsType()).isEqualTo(docs.getDocsType()),
 			() -> assertThat(dto.title()).isEqualTo(title)
+		);
+	}
+
+	@Test
+	void 문서_타입으로_조회하기() {
+		// given
+		User user = fixtureGenerator.giveMeBuilder(User.class)
+			.setNull("id")
+			.set("authority", Authority.USER)
+			.setNull("thumbsUps")
+			.sample();
+
+		userRepository.save(user);
+
+		List<Docs> docsList = fixtureGenerator.giveMeBuilder(Docs.class)
+			.setNull("id")
+			.setNull("versionDocs")
+			.sampleList(30);
+
+		docsRepository.saveAll(docsList);
+
+		Random random = new Random();
+
+		// when
+		DocsType randomDocsType = DocsType.values()[random.nextInt(DocsType.values().length)];
+		List<Docs> findDocsList = queryDocsService.findByDocsTypeOrderByEnroll(randomDocsType);
+
+		// then
+		assertAll(
+			() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
+			() -> assertThat(findDocsList.get(random.nextInt(findDocsList.size())).getDocsType()).isEqualTo(randomDocsType)
 		);
 	}
 }
