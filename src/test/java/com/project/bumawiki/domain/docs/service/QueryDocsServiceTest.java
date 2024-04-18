@@ -104,8 +104,10 @@ class QueryDocsServiceTest extends ServiceTest {
 
 		// then
 		assertAll(
-			() -> assertThat(dto.versionDocsResponseDto()).isNotNull(),
-			() -> assertThat(dto.length()).isEqualTo(dto.versionDocsResponseDto().size()),
+			() -> {
+				assertThat(dto.versionDocsResponseDto()).isNotNull();
+				assertThat(dto.length()).isEqualTo(dto.versionDocsResponseDto().size());
+			},
 			() -> assertThat(dto.docsType()).isEqualTo(docs.getDocsType()),
 			() -> assertThat(dto.title()).isEqualTo(title)
 		);
