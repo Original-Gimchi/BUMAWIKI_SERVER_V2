@@ -134,8 +134,9 @@ class QueryDocsServiceTest extends ServiceTest {
 
 		Random random = new Random();
 
-		// when
 		DocsType randomDocsType = DocsType.values()[random.nextInt(DocsType.values().length)];
+
+		// when
 		List<Docs> findDocsList = queryDocsService.findByDocsTypeOrderByEnroll(randomDocsType);
 
 		// then
