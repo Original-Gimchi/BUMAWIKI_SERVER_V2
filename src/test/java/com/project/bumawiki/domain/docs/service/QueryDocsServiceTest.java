@@ -1,5 +1,6 @@
 package com.project.bumawiki.domain.docs.service;
 
+import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPropertySelector.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +21,8 @@ import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
 import com.project.bumawiki.global.service.ServiceTest;
+
+import com.navercorp.fixturemonkey.ArbitraryBuilder;
 
 class QueryDocsServiceTest extends ServiceTest {
 
@@ -141,7 +144,75 @@ class QueryDocsServiceTest extends ServiceTest {
 		// then
 		assertAll(
 			() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
-			() -> assertThat(findDocsList.get(random.nextInt(findDocsList.size())).getDocsType()).isEqualTo(randomDocsType)
+			() -> assertThat(findDocsList.get(random.nextInt(findDocsList.size())).getDocsType()).isEqualTo(
+				randomDocsType)
 		);
 	}
+
+	@Test
+	void 유저가_수정한_버전문서_조회() {
+		// given
+		User user = fixtureGenerator.giveMeBuilder(User.class)
+			.setNull("id")
+			.set("authority", Authority.USER)
+			.setNull("thumbsUps")
+			.sample();
+
+		User otherUser = fixtureGenerator.giveMeBuilder(User.class)
+			.setNull("id")
+			.set("authority", Authority.USER)
+			.setNull("thumbsUps")
+			.sample();
+
+		userRepository.save(user);
+		userRepository.save(otherUser);
+
+		Docs docs = getDefaultDocsBuilder().sample();
+		docsRepository.save(docs);
+
+		List<VersionDocs> versionDocsList = fixtureGenerator.giveMeBuilder(VersionDocs.class)
+			.set("user", user)
+			.set(javaGetter(VersionDocs::getDocs), docs)
+			.sampleList(10);
+
+		List<VersionDocs> versionDocsList2 = fixtureGenerator.giveMeBuilder(VersionDocs.class)
+			.set("user", otherUser)
+			.set(javaGetter(VersionDocs::getDocs), docs)
+			.sampleList(10);
+
+		versionDocsRepository.saveAll(versionDocsList);
+		versionDocsRepository.saveAll(versionDocsList2);
+
+		// when
+		List<VersionDocs> findVersionDocsList = queryDocsService.findAllVersionDocsByUser(user);
+
+		// then
+		assertAll(
+			() -> assertThat(findVersionDocsList.stream()
+				.allMatch(versionDocs -> versionDocs.getUser().getId().equals(user.getId()))).isTrue()
+		);
+
+	}
+
+	private ArbitraryBuilder<Docs> getDefaultDocsBuilder() {
+		return fixtureGenerator.giveMeBuilder(Docs.class)
+			.setNull("id")
+			.setNull("versionDocs")
+			.setPostCondition("docsType", DocsType.class, (it) -> it != DocsType.READONLY);
+	}
+
+	private Docs getTitleAndEnrollDocs(String Title, int enroll) {
+		return getDefaultDocsBuilder()
+			.set("title", Title)
+			.set("enroll", enroll)
+			.sample();
+	}
+
+	private ArbitraryBuilder<User> getDefaultUserBuilder() {
+		return fixtureGenerator.giveMeBuilder(User.class)
+			.setNull("id")
+			.set("authority", Authority.USER)
+			.setNull("thumbsUps");
+	}
+
 }
