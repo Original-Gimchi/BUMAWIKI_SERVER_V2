@@ -4,11 +4,15 @@ import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPrope
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+
+import net.jqwik.api.Arbitraries;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
@@ -190,6 +194,50 @@ class QueryDocsServiceTest extends ServiceTest {
 		assertAll(
 			() -> assertThat(findVersionDocsList.stream()
 				.allMatch(versionDocs -> versionDocs.getUser().getId().equals(user.getId()))).isTrue()
+		);
+
+	}
+
+	@Test
+	public void 최근_수정한_문서_10개_조회() {
+		//given
+		User user = getDefaultUserBuilder().sample();
+		userRepository.save(user);
+
+		List<Docs> docsList = fixtureGenerator.giveMeBuilder(Docs.class)
+			.setNull("id")
+			.setNull("versionDocs")
+			.setNotNull("lastModifiedAt")
+			.sampleList(20);
+
+		docsRepository.saveAll(docsList);
+
+		List<VersionDocs> versionDocsList = fixtureGenerator.giveMeBuilder(VersionDocs.class)
+			.set("user", user)
+			.set("docs", Arbitraries.of(docsList))
+			.setNotNull("createdAt")
+			.sampleList(40);
+
+		versionDocsRepository.saveAll(versionDocsList);
+
+		versionDocsList.forEach(versionDocs -> versionDocs.getDocs().updateModifiedAt(versionDocs.getCreatedAt()));
+
+		List<Long> sortedDocsList = docsList.stream()
+			.sorted(Comparator.comparing(Docs::getLastModifiedAt).reversed())
+			.map(Docs::getId)
+			.distinct()
+			.toList();
+
+		sortedDocsList = sortedDocsList.subList(0, Math.min(10, sortedDocsList.size()));
+		List<Long> finalSortedDocsList = sortedDocsList;
+		//when
+		List<Docs> findDocsList = queryDocsService.showDocsModifiedAtDesc(Pageable.ofSize(10));
+
+		//then
+		assertAll(
+			() -> assertThat(findDocsList.stream().map(Docs::getId).toList())
+				.containsAll(finalSortedDocsList),
+			() -> assertThat(findDocsList.size()).isLessThanOrEqualTo(10)
 		);
 
 	}
