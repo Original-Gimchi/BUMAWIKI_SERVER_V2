@@ -3,6 +3,8 @@ package com.project.bumawiki.domain.docs.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -14,7 +16,9 @@ import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
+import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
@@ -144,5 +148,69 @@ class QueryDocsServiceTest extends ServiceTest {
 			() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
 			() -> assertThat(findDocsList.get(random.nextInt(findDocsList.size())).getDocsType()).isEqualTo(randomDocsType)
 		);
+	}
+
+	@Test
+	void 모든_선생님_문서_조회하기() {
+		// given
+		User user = fixtureGenerator.giveMeBuilder(User.class)
+			.setNull("id")
+			.set("authority", Authority.USER)
+			.setNull("thumbsUps")
+			.sample();
+
+		userRepository.save(user);
+
+		List<Docs> docsList = fixtureGenerator.giveMeBuilder(Docs.class)
+			.setNull("id")
+			.set("versionDocs", new ArrayList<>())
+			.sampleList(30);
+
+		docsRepository.saveAll(docsList);
+
+		docsList.forEach(docs -> {
+			VersionDocs versionDocs = fixtureGenerator.giveMeBuilder(VersionDocs.class)
+				.set("docs", docs)
+				.set("user", user)
+				.sample();
+			docs.getVersionDocs().add(versionDocs);
+			versionDocsRepository.save(versionDocs);
+		});
+
+		// when
+		TeacherResponseDto dto = sortTeacherResponseDto(queryDocsService.getAllTeacher());
+
+		// then
+		List<DocsNameAndEnrollResponseDto> teacherList = getDocsListByDocsType(docsList, DocsType.TEACHER);
+		List<DocsNameAndEnrollResponseDto> majorTeacherList = getDocsListByDocsType(docsList, DocsType.MAJOR_TEACHER);
+		List<DocsNameAndEnrollResponseDto> mentorTeacherList = getDocsListByDocsType(docsList, DocsType.MENTOR_TEACHER);
+
+		TeacherResponseDto toComparedDto = new TeacherResponseDto(
+			teacherList,
+			majorTeacherList,
+			mentorTeacherList
+		);
+
+		assertThat(dto.equals(toComparedDto)).isTrue();
+	}
+
+	private List<DocsNameAndEnrollResponseDto> getDocsListByDocsType(List<Docs> docsList, DocsType docsType) {
+		return docsList.stream()
+			.filter(docs -> docs.getDocsType().equals(docsType))
+			.map(DocsNameAndEnrollResponseDto::new)
+			.toList();
+	}
+
+	private TeacherResponseDto sortTeacherResponseDto(TeacherResponseDto dto) {
+		List<DocsNameAndEnrollResponseDto> teacher = dto.teacher().stream()
+			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
+			.toList();
+		List<DocsNameAndEnrollResponseDto> majorTeacher = dto.majorTeacher().stream()
+			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
+			.toList();
+		List<DocsNameAndEnrollResponseDto> mentorTeacher = dto.mentorTeacher().stream()
+			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
+			.toList();
+		return new TeacherResponseDto(teacher, majorTeacher, mentorTeacher);
 	}
 }
