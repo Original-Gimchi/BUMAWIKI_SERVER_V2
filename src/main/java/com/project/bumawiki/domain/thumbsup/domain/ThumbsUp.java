@@ -1,12 +1,9 @@
 package com.project.bumawiki.domain.thumbsup.domain;
 
-import java.util.Objects;
-
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.thumbsup.presentation.dto.ThumbsUpResponseDto;
 import com.project.bumawiki.domain.user.domain.User;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -29,7 +26,6 @@ public class ThumbsUp {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "thumbs_up_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -43,19 +39,6 @@ public class ThumbsUp {
 	public ThumbsUp(User user, Docs docs) {
 		this.user = user;
 		this.docs = docs;
-	}
-
-	public boolean doesUserThumbsUp(User user) {
-		return this.user.equals(user);
-	}
-
-	public boolean doYouThumbsUp(Docs docs) {
-		return this.docs.equals(docs);
-	}
-
-	public boolean equals(ThumbsUp thumbsUp) {
-		return Objects.equals(user, thumbsUp.getUser())
-			&& Objects.equals(docs, thumbsUp.docs);
 	}
 
 	public ThumbsUpResponseDto getDto() {
