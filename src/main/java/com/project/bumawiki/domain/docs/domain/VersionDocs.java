@@ -31,6 +31,7 @@ public class VersionDocs {
 	private Integer version;
 
 	@Id
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "docs_id")
 	private Docs docs;
