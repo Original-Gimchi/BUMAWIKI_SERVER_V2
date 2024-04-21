@@ -42,6 +42,7 @@ public class DocsValidator {
 			throw new BumawikiException(ErrorCode.CANNOT_CHANGE_YOUR_DOCS);
 		}
 	}
+
 	public void checkUpdatableDocsType(DocsType docsType) {
 		if (docsType.equals(DocsType.READONLY)) {
 			throw new BumawikiException(ErrorCode.NO_UPDATABLE_DOCS);
