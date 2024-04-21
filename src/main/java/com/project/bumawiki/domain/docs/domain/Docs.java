@@ -36,6 +36,7 @@ public class Docs {
 	private String title;
 
 	@Column
+	@NotNull
 	private Integer enroll;
 
 	@NotNull
