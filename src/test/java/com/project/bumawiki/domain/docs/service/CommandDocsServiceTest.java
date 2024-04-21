@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.jqwik.api.Arbitraries;
@@ -123,7 +122,7 @@ class CommandDocsServiceTest extends ServiceTest {
 		assertThat(docsRepository.findById(docs.getId()).get().getDocsType()).isEqualTo(docsType);
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 일반문서_중_본인이름_포함_시_문서_업데이트_실패() {
 		// given
 		String name = Arbitraries.strings().ofLength(3).sample();
@@ -137,7 +136,7 @@ class CommandDocsServiceTest extends ServiceTest {
 			() -> commandDocsService.update(user, docs.getTitle(), contents, versionDocs.getVersion()));
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 학생문서_중_본인문서_업데이트_실패() {
 		// given
 		String name = Arbitraries.strings().ofLength(3).sample();
@@ -147,14 +146,12 @@ class CommandDocsServiceTest extends ServiceTest {
 		String contents = Arbitraries.strings().ofMinLength(1).sample();
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
-		// when
-		commandDocsService.update(user, docs.getTitle(), contents, versionDocs.getVersion());
 		// when, then
 		assertThrows(BumawikiException.class, () -> commandDocsService.update(user, docs.getTitle(), contents,
 			versionDocs.getVersion()));
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 읽기전용_문서_업데이트_실패() {
 		// given
 		User user = getSavedUserWithOutThumbsUp();
@@ -167,7 +164,7 @@ class CommandDocsServiceTest extends ServiceTest {
 			versionDocs.getVersion()));
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 버전_불일치_문서_업데이트_실패() {
 		// given
 		User user = getSavedUserWithOutThumbsUp();
@@ -221,7 +218,7 @@ class CommandDocsServiceTest extends ServiceTest {
 		return fixtureGenerator.giveMeBuilder(Docs.class).setNull("id").sample();
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 문서_충돌_해결() {
 		// given
 		Docs docs = getSavedDocs();
@@ -304,7 +301,7 @@ class CommandDocsServiceTest extends ServiceTest {
 			fixtureGenerator.giveMeBuilder(User.class).setNull("id").set("name", name).setNull("thumbsUps").sample());
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 좋아요_내림차순_문서_전체_조회() {
 		// given
 		User user = userRepository.save(
