@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
-import com.project.bumawiki.domain.thumbsup.exception.AlreadyThumbsUpException;
-import com.project.bumawiki.domain.thumbsup.exception.YouDontThumbsUpThisDocs;
 import com.project.bumawiki.domain.thumbsup.presentation.dto.ThumbsUpResponseDto;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 
@@ -19,7 +17,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -58,7 +55,7 @@ public class User {
 	@Column(length = 8)
 	private Integer enroll;
 
-	@Max(20)
+	@Size(max = 20)
 	@Column(length = 20)
 	private String nickName;
 
