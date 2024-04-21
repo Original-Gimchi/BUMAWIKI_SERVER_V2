@@ -64,10 +64,7 @@ class QueryDocsServiceTest extends ServiceTest {
 
 		userRepository.save(user);
 
-		Docs docs = fixtureGenerator.giveMeBuilder(Docs.class)
-			.setNull("id")
-			.setNull("versionDocs")
-			.sample();
+		Docs docs = fixtureGenerator.giveMeBuilder(Docs.class).setNull("id").setNull("versionDocs").sample();
 		String title = docs.getTitle();
 
 		docsRepository.save(docs);
@@ -84,12 +81,10 @@ class QueryDocsServiceTest extends ServiceTest {
 		DocsResponseDto dto = queryDocsService.findDocs(title);
 
 		// then
-		assertAll(
-			() -> {
-				assertThat(dto).isNotNull();
-				assertThat(dto.title()).isEqualTo(title);
-			}
-		);
+		assertAll(() -> {
+			assertThat(dto).isNotNull();
+			assertThat(dto.title()).isEqualTo(title);
+		});
 	}
 
 	@RepeatedTest(100)
@@ -110,8 +105,8 @@ class QueryDocsServiceTest extends ServiceTest {
 		String title = docs.getTitle();
 		docsRepository.save(docs);
 		//when
-		BumawikiException exception =
-			assertThrows(BumawikiException.class, () -> queryDocsService.showVersionDocsDiff(title, 0));
+		BumawikiException exception = assertThrows(BumawikiException.class,
+			() -> queryDocsService.showVersionDocsDiff(title, 0));
 
 		//then
 		assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.VERSION_NOT_EXIST);
@@ -150,8 +145,7 @@ class QueryDocsServiceTest extends ServiceTest {
 				assertThat(dto.length()).isEqualTo(dto.versionDocsResponseDto().size());
 			},
 			() -> assertThat(dto.docsType()).isEqualTo(docs.getDocsType()),
-			() -> assertThat(dto.title()).isEqualTo(title)
-		);
+			() -> assertThat(dto.title()).isEqualTo(title));
 	}
 
 	@Test
@@ -177,11 +171,9 @@ class QueryDocsServiceTest extends ServiceTest {
 		List<Docs> findDocsList = queryDocsService.findByDocsTypeOrderByEnroll(randomDocsType);
 
 		// then
-		assertAll(
-			() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
+		assertAll(() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
 			() -> assertThat(findDocsList.get(random.nextInt(findDocsList.size())).getDocsType()).isEqualTo(
-				randomDocsType)
-		);
+				randomDocsType));
 	}
 
 	@Test
@@ -222,10 +214,8 @@ class QueryDocsServiceTest extends ServiceTest {
 		List<VersionDocs> findVersionDocsList = queryDocsService.findAllVersionDocsByUser(user);
 
 		// then
-		assertAll(
-			() -> assertThat(findVersionDocsList.stream()
-				.allMatch(versionDocs -> versionDocs.getUser().getId().equals(user.getId()))).isTrue()
-		);
+		assertAll(() -> assertThat(findVersionDocsList.stream()
+			.allMatch(versionDocs -> versionDocs.getUser().getId().equals(user.getId()))).isTrue());
 
 	}
 
@@ -235,9 +225,7 @@ class QueryDocsServiceTest extends ServiceTest {
 		User user = getDefaultUserBuilder().sample();
 		userRepository.save(user);
 
-		List<Docs> docsList = getDefaultDocsBuilder()
-			.setNotNull("lastModifiedAt")
-			.sampleList(20);
+		List<Docs> docsList = getDefaultDocsBuilder().setNotNull("lastModifiedAt").sampleList(20);
 
 		docsRepository.saveAll(docsList);
 
@@ -263,11 +251,8 @@ class QueryDocsServiceTest extends ServiceTest {
 		List<Docs> findDocsList = queryDocsService.showDocsModifiedAtDesc(Pageable.ofSize(10));
 
 		//then
-		assertAll(
-			() -> assertThat(findDocsList.stream().map(Docs::getId).toList())
-				.containsAll(finalSortedDocsList),
-			() -> assertThat(findDocsList.size()).isLessThanOrEqualTo(10)
-		);
+		assertAll(() -> assertThat(findDocsList.stream().map(Docs::getId).toList()).containsAll(finalSortedDocsList),
+			() -> assertThat(findDocsList.size()).isLessThanOrEqualTo(10));
 
 	}
 
@@ -306,11 +291,7 @@ class QueryDocsServiceTest extends ServiceTest {
 		List<DocsNameAndEnrollResponseDto> majorTeacherList = getDocsListByDocsType(docsList, DocsType.MAJOR_TEACHER);
 		List<DocsNameAndEnrollResponseDto> mentorTeacherList = getDocsListByDocsType(docsList, DocsType.MENTOR_TEACHER);
 
-		TeacherResponseDto toComparedDto = new TeacherResponseDto(
-			teacherList,
-			majorTeacherList,
-			mentorTeacherList
-		);
+		TeacherResponseDto toComparedDto = new TeacherResponseDto(teacherList, majorTeacherList, mentorTeacherList);
 
 		assertThat(dto.equals(toComparedDto)).isTrue();
 	}
@@ -357,10 +338,8 @@ class QueryDocsServiceTest extends ServiceTest {
 	@RepeatedTest(100)
 	void 좋아요_내림차순_문서_전체_조회() {
 		// given
-		User user = userRepository.save(fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.setNull("thumbsUps")
-			.sample());
+		User user = userRepository.save(
+			fixtureGenerator.giveMeBuilder(User.class).setNull("id").setNull("thumbsUps").sample());
 		List<Docs> docs = docsRepository.saveAll(getDefaultDocsBuilder().sampleList(5));
 
 		for (Docs doc : docs) {
@@ -375,48 +354,47 @@ class QueryDocsServiceTest extends ServiceTest {
 		List<DocsPopularResponseDto> list = queryDocsService.readByThumbsUpsDesc();
 
 		// then
-		assertThat(thumbsUpRepository.findByDocs_Id(
-			docsRepository.findByTitle(list.get(0).title()).get().getId()))
-			.hasSize(list.get(0).thumbsUpsCounts().intValue());
+		assertThat(
+			thumbsUpRepository.findByDocs_Id(docsRepository.findByTitle(list.get(0).title()).get().getId())).hasSize(
+			list.get(0).thumbsUpsCounts().intValue());
 	}
 
 	@RepeatedTest(100)
 	void 문서_충돌_조회() {
 		//given
-		Docs docs = fixtureGenerator.giveMeBuilder(Docs.class)
-			.set("id", null)
-			.setNull("versionDocs")
-			.sample();
+		Docs docs = fixtureGenerator.giveMeBuilder(Docs.class).set("id", null).setNull("versionDocs").sample();
 
 		docsRepository.save(docs);
 
-		User user = userRepository.save(fixtureGenerator.giveMeBuilder(User.class)
-			.set("id", null)
-			.set("thumbsUps", null)
-			.sample()
-		);
+		User user = userRepository.save(
+			fixtureGenerator.giveMeBuilder(User.class).set("id", null).set("thumbsUps", null).sample());
 
 		userRepository.save(user);
 
-		String firstContents = fixtureGenerator.giveMeBuilder(String.class)
-			.setNotNull("value")
+		String firstContents = fixtureGenerator.giveMeBuilder(String.class).setNotNull("value").sample();
+		String secondContents = Arbitraries.strings()
+			.ascii()
+			.ofMinLength(1)
+			.filter(s -> !s.equals(firstContents))
 			.sample();
-		String secondContents = Arbitraries.strings().ascii().ofMinLength(1).filter(s -> !s.equals(firstContents)).sample();
-		String thirdContents = Arbitraries.strings().ascii().ofMinLength(1).filter(s -> !s.equals(firstContents) && !s.equals(secondContents)).sample();
+		String thirdContents = Arbitraries.strings()
+			.ascii()
+			.ofMinLength(1)
+			.filter(s -> !s.equals(firstContents) && !s.equals(secondContents))
+			.sample();
 
 		versionDocsRepository.save(new VersionDocs(0, docs, firstContents, user));
 		versionDocsRepository.save(new VersionDocs(1, docs, secondContents, user));
 		//when
 		MergeConflictDataResponseDto mergeConflict = queryDocsService.getMergeConflict(docs.getTitle(), thirdContents);
 		//then
-		assertAll(
-			() -> assertThat(mergeConflict.originalDocsContent()).isEqualTo(firstContents),
+		assertAll(() -> assertThat(mergeConflict.originalDocsContent()).isEqualTo(firstContents),
 			() -> assertThat(mergeConflict.firstDocsContent()).isEqualTo(secondContents),
-			() -> assertThat(mergeConflict.diff1().size()).isEqualTo(DocsUtil.getDiff(firstContents, secondContents).size()),
-			() -> assertThat(mergeConflict.diff2().size()).isEqualTo(DocsUtil.getDiff(firstContents, thirdContents).size())
-		);
+			() -> assertThat(mergeConflict.diff1().size()).isEqualTo(
+				DocsUtil.getDiff(firstContents, secondContents).size()),
+			() -> assertThat(mergeConflict.diff2().size()).isEqualTo(
+				DocsUtil.getDiff(firstContents, thirdContents).size()));
 	}
-
 
 	private List<DocsNameAndEnrollResponseDto> getDocsListByDocsType(List<Docs> docsList, DocsType docsType) {
 		return docsList.stream()
@@ -426,13 +404,16 @@ class QueryDocsServiceTest extends ServiceTest {
 	}
 
 	private TeacherResponseDto sortTeacherResponseDto(TeacherResponseDto dto) {
-		List<DocsNameAndEnrollResponseDto> teacher = dto.teacher().stream()
+		List<DocsNameAndEnrollResponseDto> teacher = dto.teacher()
+			.stream()
 			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
 			.toList();
-		List<DocsNameAndEnrollResponseDto> majorTeacher = dto.majorTeacher().stream()
+		List<DocsNameAndEnrollResponseDto> majorTeacher = dto.majorTeacher()
+			.stream()
 			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
 			.toList();
-		List<DocsNameAndEnrollResponseDto> mentorTeacher = dto.mentorTeacher().stream()
+		List<DocsNameAndEnrollResponseDto> mentorTeacher = dto.mentorTeacher()
+			.stream()
 			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
 			.toList();
 		return new TeacherResponseDto(teacher, majorTeacher, mentorTeacher);
@@ -453,10 +434,12 @@ class QueryDocsServiceTest extends ServiceTest {
 	}
 
 	private ClubResponseDto sortClubResponseDto(ClubResponseDto dto) {
-		List<DocsNameAndEnrollResponseDto> club = dto.club().stream()
+		List<DocsNameAndEnrollResponseDto> club = dto.club()
+			.stream()
 			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
 			.toList();
-		List<DocsNameAndEnrollResponseDto> freeClub = dto.freeClub().stream()
+		List<DocsNameAndEnrollResponseDto> freeClub = dto.freeClub()
+			.stream()
 			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
 			.toList();
 		return new ClubResponseDto(club, freeClub);
