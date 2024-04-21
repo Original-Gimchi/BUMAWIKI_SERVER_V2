@@ -45,13 +45,13 @@ public class CustomDocsRepositoryImpl implements CustomDocsRepository {
 	public List<DocsPopularResponseDto> findByThumbsUpsDesc() {
 		return jpaQueryFactory
 			.select(
-				constructor(DocsPopularResponseDto.class, docs.title, docs.enroll, docs.docsType, thumbsUp.id.count()))
-			.from(docs)
-			.innerJoin(docs, thumbsUp.docs)
-			.groupBy(docs.title, docs.enroll, docs.docsType)
+				constructor(DocsPopularResponseDto.class, thumbsUp.docs.title, thumbsUp.docs.enroll,
+					thumbsUp.docs.docsType, thumbsUp.id.count()))
+			.from(thumbsUp)
+			.innerJoin(thumbsUp.docs)
+			.groupBy(thumbsUp.docs.title, thumbsUp.docs.enroll, thumbsUp.docs.docsType)
 			.orderBy(thumbsUp.id.count().desc())
 			.limit(25)
 			.fetch();
-
 	}
 }

@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.project.bumawiki.domain.coin.domain.Price;
-import com.project.bumawiki.domain.coin.exception.PriceNotFoundException;
 
 public interface PriceRepository extends JpaRepository<Price, Long> {
 
@@ -20,9 +19,12 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
 
 	default Price getRecentPrice() {
 		return findTopOrderByStartedTime()
-			.orElseThrow(
-				PriceNotFoundException::new
-			);
+			.orElse(save(
+				new Price(1000000L)
+			));
+			// .orElseThrow(
+			// 	PriceNotFoundException::new
+			// );
 	}
 
 	@Query("select p from Price p where p.startedTime >= :twoWeeksAgo order by p.startedTime asc")

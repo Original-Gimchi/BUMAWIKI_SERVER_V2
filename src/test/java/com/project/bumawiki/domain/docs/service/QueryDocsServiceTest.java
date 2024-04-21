@@ -1,7 +1,6 @@
 package com.project.bumawiki.domain.docs.service;
 
 import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPropertySelector.*;
-import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPropertySelector.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -21,13 +21,21 @@ import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
+import com.project.bumawiki.domain.docs.presentation.dto.response.ClubResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsNameAndEnrollResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.DocsResponseDto;
+import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictDataResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
+import com.project.bumawiki.domain.docs.util.DocsUtil;
+import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
+import com.project.bumawiki.domain.thumbsup.domain.repository.ThumbsUpRepository;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 import com.project.bumawiki.global.service.ServiceTest;
 
 import com.navercorp.fixturemonkey.ArbitraryBuilder;
@@ -46,14 +54,13 @@ class QueryDocsServiceTest extends ServiceTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private ThumbsUpRepository thumbsUpRepository;
+
 	@Test
 	void 제목으로_문서_상세_조회하기() {
-		// given
-		User user = fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.set("authority", Authority.USER)
-			.setNull("thumbsUps")
-			.sample();
+
+		User user = getDefaultUserBuilder().sample();
 
 		userRepository.save(user);
 
@@ -85,6 +92,31 @@ class QueryDocsServiceTest extends ServiceTest {
 		);
 	}
 
+	@RepeatedTest(100)
+	void 없는_문서_조회_시_예외_발생() {
+		//given
+		String title = Arbitraries.strings().ofMinLength(0).sample();
+		//when
+		BumawikiException exception = assertThrows(BumawikiException.class, () -> queryDocsService.findDocs(title));
+
+		//then
+		assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.DOCS_NOT_FOUND);
+	}
+
+	@Test
+	void 없는_버전_조회_시_Exception() {
+		//given
+		Docs docs = getDefaultDocsBuilder().sample();
+		String title = docs.getTitle();
+		docsRepository.save(docs);
+		//when
+		BumawikiException exception =
+			assertThrows(BumawikiException.class, () -> queryDocsService.showVersionDocsDiff(title, 0));
+
+		//then
+		assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.VERSION_NOT_EXIST);
+	}
+
 	@Test
 	void 제목으로_문서_역사_조회하기() {
 		// given
@@ -96,10 +128,7 @@ class QueryDocsServiceTest extends ServiceTest {
 
 		userRepository.save(user);
 
-		Docs docs = fixtureGenerator.giveMeBuilder(Docs.class)
-			.setNull("id")
-			.setNull("versionDocs")
-			.sample();
+		Docs docs = getDefaultDocsBuilder().sample();
 		String title = docs.getTitle();
 
 		docsRepository.save(docs);
@@ -136,10 +165,7 @@ class QueryDocsServiceTest extends ServiceTest {
 
 		userRepository.save(user);
 
-		List<Docs> docsList = fixtureGenerator.giveMeBuilder(Docs.class)
-			.setNull("id")
-			.setNull("versionDocs")
-			.sampleList(30);
+		List<Docs> docsList = getDefaultDocsBuilder().sampleList(30);
 
 		docsRepository.saveAll(docsList);
 
@@ -209,9 +235,7 @@ class QueryDocsServiceTest extends ServiceTest {
 		User user = getDefaultUserBuilder().sample();
 		userRepository.save(user);
 
-		List<Docs> docsList = fixtureGenerator.giveMeBuilder(Docs.class)
-			.setNull("id")
-			.setNull("versionDocs")
+		List<Docs> docsList = getDefaultDocsBuilder()
 			.setNotNull("lastModifiedAt")
 			.sampleList(20);
 
@@ -291,6 +315,109 @@ class QueryDocsServiceTest extends ServiceTest {
 		assertThat(dto.equals(toComparedDto)).isTrue();
 	}
 
+	@Test
+	void 모든_동아리_문서_조회하기() {
+		// given
+		User user = fixtureGenerator.giveMeBuilder(User.class)
+			.setNull("id")
+			.set("authority", Authority.USER)
+			.setNull("thumbsUps")
+			.sample();
+
+		userRepository.save(user);
+
+		List<Docs> docsList = fixtureGenerator.giveMeBuilder(Docs.class)
+			.setNull("id")
+			.set("versionDocs", new ArrayList<>())
+			.sampleList(30);
+
+		docsRepository.saveAll(docsList);
+
+		docsList.forEach(docs -> {
+			VersionDocs versionDocs = fixtureGenerator.giveMeBuilder(VersionDocs.class)
+				.set("docs", docs)
+				.set("user", user)
+				.sample();
+			docs.getVersionDocs().add(versionDocs);
+			versionDocsRepository.save(versionDocs);
+		});
+
+		// when
+		ClubResponseDto dto = sortClubResponseDto(queryDocsService.getAllClub());
+
+		// then
+		List<DocsNameAndEnrollResponseDto> clubList = getDocsListByDocsType(docsList, DocsType.CLUB);
+		List<DocsNameAndEnrollResponseDto> freeClubList = getDocsListByDocsType(docsList, DocsType.FREE_CLUB);
+
+		ClubResponseDto toComparedDto = new ClubResponseDto(clubList, freeClubList);
+
+		assertThat(dto.equals(toComparedDto)).isTrue();
+	}
+
+	@RepeatedTest(100)
+	void 좋아요_내림차순_문서_전체_조회() {
+		// given
+		User user = userRepository.save(fixtureGenerator.giveMeBuilder(User.class)
+			.setNull("id")
+			.setNull("thumbsUps")
+			.sample());
+		List<Docs> docs = docsRepository.saveAll(getDefaultDocsBuilder().sampleList(5));
+
+		for (Docs doc : docs) {
+			thumbsUpRepository.saveAll(fixtureGenerator.giveMeBuilder(ThumbsUp.class)
+				.setNull("id")
+				.set("docs", doc)
+				.set("user", user)
+				.sampleList(Arbitraries.integers().between(1, 30).sample()));
+		}
+
+		// when
+		List<DocsPopularResponseDto> list = queryDocsService.readByThumbsUpsDesc();
+
+		// then
+		assertThat(thumbsUpRepository.findByDocs_Id(
+			docsRepository.findByTitle(list.get(0).title()).get().getId()))
+			.hasSize(list.get(0).thumbsUpsCounts().intValue());
+	}
+
+	@RepeatedTest(100)
+	void 문서_충돌_조회() {
+		//given
+		Docs docs = fixtureGenerator.giveMeBuilder(Docs.class)
+			.set("id", null)
+			.setNull("versionDocs")
+			.sample();
+
+		docsRepository.save(docs);
+
+		User user = userRepository.save(fixtureGenerator.giveMeBuilder(User.class)
+			.set("id", null)
+			.set("thumbsUps", null)
+			.sample()
+		);
+
+		userRepository.save(user);
+
+		String firstContents = fixtureGenerator.giveMeBuilder(String.class)
+			.setNotNull("value")
+			.sample();
+		String secondContents = Arbitraries.strings().ascii().ofMinLength(1).filter(s -> !s.equals(firstContents)).sample();
+		String thirdContents = Arbitraries.strings().ascii().ofMinLength(1).filter(s -> !s.equals(firstContents) && !s.equals(secondContents)).sample();
+
+		versionDocsRepository.save(new VersionDocs(0, docs, firstContents, user));
+		versionDocsRepository.save(new VersionDocs(1, docs, secondContents, user));
+		//when
+		MergeConflictDataResponseDto mergeConflict = queryDocsService.getMergeConflict(docs.getTitle(), thirdContents);
+		//then
+		assertAll(
+			() -> assertThat(mergeConflict.originalDocsContent()).isEqualTo(firstContents),
+			() -> assertThat(mergeConflict.firstDocsContent()).isEqualTo(secondContents),
+			() -> assertThat(mergeConflict.diff1().size()).isEqualTo(DocsUtil.getDiff(firstContents, secondContents).size()),
+			() -> assertThat(mergeConflict.diff2().size()).isEqualTo(DocsUtil.getDiff(firstContents, thirdContents).size())
+		);
+	}
+
+
 	private List<DocsNameAndEnrollResponseDto> getDocsListByDocsType(List<Docs> docsList, DocsType docsType) {
 		return docsList.stream()
 			.filter(docs -> docs.getDocsType().equals(docsType))
@@ -318,17 +445,20 @@ class QueryDocsServiceTest extends ServiceTest {
 			.setPostCondition("docsType", DocsType.class, (it) -> it != DocsType.READONLY);
 	}
 
-	private Docs getTitleAndEnrollDocs(String Title, int enroll) {
-		return getDefaultDocsBuilder()
-			.set("title", Title)
-			.set("enroll", enroll)
-			.sample();
-	}
-
 	private ArbitraryBuilder<User> getDefaultUserBuilder() {
 		return fixtureGenerator.giveMeBuilder(User.class)
 			.setNull("id")
 			.set("authority", Authority.USER)
 			.setNull("thumbsUps");
+	}
+
+	private ClubResponseDto sortClubResponseDto(ClubResponseDto dto) {
+		List<DocsNameAndEnrollResponseDto> club = dto.club().stream()
+			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
+			.toList();
+		List<DocsNameAndEnrollResponseDto> freeClub = dto.freeClub().stream()
+			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
+			.toList();
+		return new ClubResponseDto(club, freeClub);
 	}
 }
