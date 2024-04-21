@@ -171,9 +171,11 @@ class QueryDocsServiceTest extends ServiceTest {
 		List<Docs> findDocsList = queryDocsService.findByDocsTypeOrderByEnroll(randomDocsType);
 
 		// then
-		assertAll(() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
-			() -> assertThat(findDocsList.get(random.nextInt(findDocsList.size())).getDocsType()).isEqualTo(
-				randomDocsType));
+		assertAll(
+			() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
+			() -> assertThat(findDocsList.get(random.nextInt(findDocsList.size())).getDocsType())
+				.isEqualTo(randomDocsType)
+		);
 	}
 
 	@Test
@@ -214,8 +216,12 @@ class QueryDocsServiceTest extends ServiceTest {
 		List<VersionDocs> findVersionDocsList = queryDocsService.findAllVersionDocsByUser(user);
 
 		// then
-		assertAll(() -> assertThat(findVersionDocsList.stream()
-			.allMatch(versionDocs -> versionDocs.getUser().getId().equals(user.getId()))).isTrue());
+		assertAll(
+			() -> assertThat(
+				findVersionDocsList.stream()
+					.allMatch(versionDocs -> versionDocs.getUser().getId().equals(user.getId()))
+			).isTrue()
+		);
 
 	}
 
@@ -225,7 +231,9 @@ class QueryDocsServiceTest extends ServiceTest {
 		User user = getDefaultUserBuilder().sample();
 		userRepository.save(user);
 
-		List<Docs> docsList = getDefaultDocsBuilder().setNotNull("lastModifiedAt").sampleList(20);
+		List<Docs> docsList = getDefaultDocsBuilder()
+			.setNotNull("lastModifiedAt")
+			.sampleList(20);
 
 		docsRepository.saveAll(docsList);
 
@@ -251,7 +259,8 @@ class QueryDocsServiceTest extends ServiceTest {
 		List<Docs> findDocsList = queryDocsService.showDocsModifiedAtDesc(Pageable.ofSize(10));
 
 		//then
-		assertAll(() -> assertThat(findDocsList.stream().map(Docs::getId).toList()).containsAll(finalSortedDocsList),
+		assertAll(
+			() -> assertThat(findDocsList.stream().map(Docs::getId).toList()).containsAll(finalSortedDocsList),
 			() -> assertThat(findDocsList.size()).isLessThanOrEqualTo(10));
 
 	}
@@ -355,8 +364,8 @@ class QueryDocsServiceTest extends ServiceTest {
 
 		// then
 		assertThat(
-			thumbsUpRepository.findByDocs_Id(docsRepository.findByTitle(list.get(0).title()).get().getId())).hasSize(
-			list.get(0).thumbsUpsCounts().intValue());
+			thumbsUpRepository.findByDocs_Id(docsRepository.findByTitle(list.get(0).title()).get().getId())
+		).hasSize(list.get(0).thumbsUpsCounts().intValue());
 	}
 
 	@RepeatedTest(100)
@@ -388,12 +397,14 @@ class QueryDocsServiceTest extends ServiceTest {
 		//when
 		MergeConflictDataResponseDto mergeConflict = queryDocsService.getMergeConflict(docs.getTitle(), thirdContents);
 		//then
-		assertAll(() -> assertThat(mergeConflict.originalDocsContent()).isEqualTo(firstContents),
+		assertAll(
+			() -> assertThat(mergeConflict.originalDocsContent()).isEqualTo(firstContents),
 			() -> assertThat(mergeConflict.firstDocsContent()).isEqualTo(secondContents),
 			() -> assertThat(mergeConflict.diff1().size()).isEqualTo(
 				DocsUtil.getDiff(firstContents, secondContents).size()),
 			() -> assertThat(mergeConflict.diff2().size()).isEqualTo(
-				DocsUtil.getDiff(firstContents, thirdContents).size()));
+				DocsUtil.getDiff(firstContents, thirdContents).size())
+		);
 	}
 
 	private List<DocsNameAndEnrollResponseDto> getDocsListByDocsType(List<Docs> docsList, DocsType docsType) {

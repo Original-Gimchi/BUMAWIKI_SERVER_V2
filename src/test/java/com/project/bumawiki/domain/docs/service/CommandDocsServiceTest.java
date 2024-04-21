@@ -49,8 +49,10 @@ class CommandDocsServiceTest extends ServiceTest {
 		commandDocsService.create(docs, user, contents);
 
 		//then
-		assertAll(() -> assertThat(docsRepository.findById(docs.getId()).get()).isEqualTo(docs),
-			() -> assertThat(versionDocsRepository.findByDocs(docs).get(0).getContents()).isEqualTo(contents));
+		assertAll(
+			() -> assertThat(docsRepository.findById(docs.getId()).get()).isEqualTo(docs),
+			() -> assertThat(versionDocsRepository.findByDocs(docs).get(0).getContents()).isEqualTo(contents)
+		);
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
@@ -63,16 +65,19 @@ class CommandDocsServiceTest extends ServiceTest {
 		User user = getSavedUserWithOutThumbsUp();
 
 		// when
-		BumawikiException exception = assertThrows(BumawikiException.class, () -> {
-			commandDocsService.create(savingDocs, user, contents);
-		});
+		BumawikiException exception = assertThrows(BumawikiException.class,
+			() -> commandDocsService.create(savingDocs, user, contents)
+		);
 
 		// then
 		assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.DOCS_TITLE_ALREADY_EXIST);
 	}
 
 	private Docs getDocs(String title) {
-		return fixtureGenerator.giveMeBuilder(Docs.class).setNull("id").set("title", title).sample();
+		return fixtureGenerator.giveMeBuilder(Docs.class)
+			.setNull("id")
+			.set("title", title)
+			.sample();
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
@@ -88,8 +93,11 @@ class CommandDocsServiceTest extends ServiceTest {
 
 		// then
 		assertAll(
-			() -> assertThat(versionDocsRepository.findFirstByDocsOrderByVersionDesc(docs).getContents()).isEqualTo(
-				contents), () -> assertThat(versionDocsRepository.count()).isEqualTo(2));
+			() -> assertThat(
+				versionDocsRepository.findFirstByDocsOrderByVersionDesc(docs).getContents()
+			).isEqualTo(contents),
+			() -> assertThat(versionDocsRepository.count()).isEqualTo(2)
+		);
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
@@ -103,8 +111,10 @@ class CommandDocsServiceTest extends ServiceTest {
 		commandDocsService.delete(docs.getId());
 
 		// then
-		assertAll(() -> assertThat(docsRepository.findById(docs.getId())).isEmpty(),
-			() -> assertThat(thumbsUpRepository.count()).isZero());
+		assertAll(
+			() -> assertThat(docsRepository.findById(docs.getId())).isEmpty(),
+			() -> assertThat(thumbsUpRepository.count()).isZero()
+		);
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
@@ -133,7 +143,8 @@ class CommandDocsServiceTest extends ServiceTest {
 
 		// when, then
 		assertThrows(BumawikiException.class,
-			() -> commandDocsService.update(user, docs.getTitle(), contents, versionDocs.getVersion()));
+			() -> commandDocsService.update(user, docs.getTitle(), contents, versionDocs.getVersion())
+		);
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
@@ -147,8 +158,9 @@ class CommandDocsServiceTest extends ServiceTest {
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
 		// when, then
-		assertThrows(BumawikiException.class, () -> commandDocsService.update(user, docs.getTitle(), contents,
-			versionDocs.getVersion()));
+		assertThrows(BumawikiException.class,
+			() -> commandDocsService.update(user, docs.getTitle(), contents, versionDocs.getVersion())
+		);
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
@@ -160,8 +172,9 @@ class CommandDocsServiceTest extends ServiceTest {
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
 		// when
-		assertThrows(BumawikiException.class, () -> commandDocsService.update(user, docs.getTitle(), contents,
-			versionDocs.getVersion()));
+		assertThrows(BumawikiException.class,
+			() -> commandDocsService.update(user, docs.getTitle(), contents, versionDocs.getVersion())
+		);
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
@@ -173,8 +186,9 @@ class CommandDocsServiceTest extends ServiceTest {
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
 		// when
-		assertThrows(BumawikiException.class, () -> commandDocsService.update(user, docs.getTitle(), contents,
-			versionDocs.getVersion() + 1));
+		assertThrows(BumawikiException.class,
+			() -> commandDocsService.update(user, docs.getTitle(), contents, versionDocs.getVersion() + 1)
+		);
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
@@ -198,7 +212,9 @@ class CommandDocsServiceTest extends ServiceTest {
 		Docs updatingDocs = getSavedDocs(getStringWithout(title));
 
 		//when, then
-		assertThrows(BumawikiException.class, () -> commandDocsService.titleUpdate(updatingDocs.getTitle(), title));
+		assertThrows(BumawikiException.class,
+			() -> commandDocsService.titleUpdate(updatingDocs.getTitle(), title)
+		);
 	}
 
 	private static String getTitle() {
@@ -230,8 +246,9 @@ class CommandDocsServiceTest extends ServiceTest {
 		commandDocsService.solveConflict(docs.getTitle(), contents, versionDocs.getVersion(), user);
 
 		// then
-		assertThat(versionDocsRepository.findFirstByDocsOrderByVersionDesc(docs).getVersion()).isEqualTo(
-			versionDocs.getVersion() + 1);
+		assertThat(
+			versionDocsRepository.findFirstByDocsOrderByVersionDesc(docs).getVersion()
+		).isEqualTo(versionDocs.getVersion() + 1);
 	}
 
 	private List<ThumbsUp> getSavedThumbsUpList(Docs docs, User user) {
@@ -250,24 +267,32 @@ class CommandDocsServiceTest extends ServiceTest {
 	}
 
 	private Docs getSavedDocsNotReadonly() {
-		return docsRepository.save(fixtureGenerator.giveMeBuilder(Docs.class)
-			.setNull("id")
-			.setPostCondition("docsType", DocsType.class, (it) -> it != DocsType.READONLY)
-			.sample());
+		return docsRepository.save(
+			fixtureGenerator.giveMeBuilder(Docs.class)
+				.setNull("id")
+				.setPostCondition("docsType", DocsType.class, (it) -> it != DocsType.READONLY)
+				.sample()
+		);
 	}
 
 	private Docs getSavedDocsReadonly() {
 		return docsRepository.save(
-			fixtureGenerator.giveMeBuilder(Docs.class).setNull("id").set("docsType", DocsType.READONLY).sample());
+			fixtureGenerator.giveMeBuilder(Docs.class)
+				.setNull("id")
+				.set("docsType", DocsType.READONLY)
+				.sample()
+		);
 	}
 
 	private Docs getSavedNotStudentDocs(String name, Integer enroll) {
-		return docsRepository.save(fixtureGenerator.giveMeBuilder(Docs.class)
-			.setNull("id")
-			.setPostCondition("docsType", DocsType.class, (it) -> it != DocsType.STUDENT)
-			.set("title", name + Arbitraries.strings().ofMinLength(1).ofMaxLength(29).sample())
-			.set("enroll", enroll)
-			.sample());
+		return docsRepository.save(
+			fixtureGenerator.giveMeBuilder(Docs.class)
+				.setNull("id")
+				.setPostCondition("docsType", DocsType.class, (it) -> it != DocsType.STUDENT)
+				.set("title", name + Arbitraries.strings().ofMinLength(1).ofMaxLength(29).sample())
+				.set("enroll", enroll)
+				.sample()
+		);
 	}
 
 	private Docs getSavedDocs(String title) {
@@ -275,45 +300,68 @@ class CommandDocsServiceTest extends ServiceTest {
 	}
 
 	private VersionDocs getSavedVersionDocs(Docs docs, User user) {
-		return versionDocsRepository.save(fixtureGenerator.giveMeBuilder(VersionDocs.class)
-			.set("version", 0)
-			.set("docs", docs)
-			.set("user", user)
-			.sample());
+		return versionDocsRepository.save(
+			fixtureGenerator.giveMeBuilder(VersionDocs.class)
+				.set("version", 0)
+				.set("docs", docs)
+				.set("user", user)
+				.sample()
+		);
 	}
 
 	private User getSavedUserWithOutThumbsUp() {
 		return userRepository.save(
-			fixtureGenerator.giveMeBuilder(User.class).setNull("id").setNull("thumbsUps").sample());
+			fixtureGenerator.giveMeBuilder(User.class)
+				.setNull("id")
+				.setNull("thumbsUps")
+				.sample()
+		);
 	}
 
 	private User getSavedUserWithOutThumbsUp(String name, Integer enroll) {
-		return userRepository.save(fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.set("name", name)
-			.set("enroll", enroll)
-			.setNull("thumbsUps")
-			.sample());
+		return userRepository.save(
+			fixtureGenerator.giveMeBuilder(User.class)
+				.setNull("id")
+				.set("name", name)
+				.set("enroll", enroll)
+				.setNull("thumbsUps")
+				.sample()
+		);
 	}
 
 	private User getSavedUserWithOutThumbsUp(String name) {
 		return userRepository.save(
-			fixtureGenerator.giveMeBuilder(User.class).setNull("id").set("name", name).setNull("thumbsUps").sample());
+			fixtureGenerator.giveMeBuilder(User.class)
+				.setNull("id")
+				.set("name", name)
+				.setNull("thumbsUps")
+				.sample()
+		);
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
 	void 좋아요_내림차순_문서_전체_조회() {
 		// given
 		User user = userRepository.save(
-			fixtureGenerator.giveMeBuilder(User.class).setNull("id").setNull("thumbsUps").sample());
-		List<Docs> docs = docsRepository.saveAll(
-			fixtureGenerator.giveMeBuilder(Docs.class).setNull("id").sampleList(5));
-		for (Docs doc : docs) {
-			thumbsUpRepository.saveAll(fixtureGenerator.giveMeBuilder(ThumbsUp.class)
+			fixtureGenerator.giveMeBuilder(User.class)
 				.setNull("id")
-				.set("docs", doc)
-				.set("user", user)
-				.sampleList(Arbitraries.integers().between(1, 30).sample()));
+				.setNull("thumbsUps")
+				.sample()
+		);
+		List<Docs> docs = docsRepository.saveAll(
+			fixtureGenerator.giveMeBuilder(Docs.class)
+				.setNull("id")
+				.sampleList(5)
+		);
+
+		for (Docs doc : docs) {
+			thumbsUpRepository.saveAll(
+				fixtureGenerator.giveMeBuilder(ThumbsUp.class)
+					.setNull("id")
+					.set("docs", doc)
+					.set("user", user)
+					.sampleList(Arbitraries.integers().between(1, 30).sample())
+			);
 		}
 
 		// when
@@ -321,7 +369,7 @@ class CommandDocsServiceTest extends ServiceTest {
 
 		// then
 		assertThat(
-			thumbsUpRepository.findByDocs_Id(docsRepository.findByTitle(list.get(0).title()).get().getId())).hasSize(
-			list.get(0).thumbsUpsCounts().intValue());
+			thumbsUpRepository.findByDocs_Id(docsRepository.findByTitle(list.get(0).title()).get().getId())
+		).hasSize(list.get(0).thumbsUpsCounts().intValue());
 	}
 }
