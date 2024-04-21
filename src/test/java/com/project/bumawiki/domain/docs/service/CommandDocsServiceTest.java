@@ -137,7 +137,7 @@ class CommandDocsServiceTest extends ServiceTest {
 		// given
 		String name = Arbitraries.strings().ofLength(3).sample();
 		User user = getSavedUserWithOutThumbsUp(name);
-		Docs docs = getSavedDocs(name + Arbitraries.strings().ofMinLength(1).ofMaxLength(29).sample());
+		Docs docs = getSavedNotStudentDocs(name);
 		String contents = Arbitraries.strings().ofMinLength(1).sample();
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
@@ -151,9 +151,8 @@ class CommandDocsServiceTest extends ServiceTest {
 	void 학생문서_중_본인문서_업데이트_실패() {
 		// given
 		String name = Arbitraries.strings().ofLength(3).sample();
-		Integer enroll = Arbitraries.integers().between(1000, 9999).sample();
-		User user = getSavedUserWithOutThumbsUp(name, enroll);
-		Docs docs = getSavedNotStudentDocs(name, enroll);
+		User user = getSavedUserWithOutThumbsUp(name);
+		Docs docs = getSavedNotStudentDocs(name);
 		String contents = Arbitraries.strings().ofMinLength(1).sample();
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
@@ -284,13 +283,12 @@ class CommandDocsServiceTest extends ServiceTest {
 		);
 	}
 
-	private Docs getSavedNotStudentDocs(String name, Integer enroll) {
+	private Docs getSavedNotStudentDocs(String name) {
 		return docsRepository.save(
 			fixtureGenerator.giveMeBuilder(Docs.class)
 				.setNull("id")
 				.setPostCondition("docsType", DocsType.class, (it) -> it != DocsType.STUDENT)
 				.set("title", name + Arbitraries.strings().ofMinLength(1).ofMaxLength(29).sample())
-				.set("enroll", enroll)
 				.sample()
 		);
 	}
