@@ -3,30 +3,27 @@ package com.project.bumawiki.domain.docs.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.project.bumawiki.domain.docs.domain.type.DocsType;
-
-import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
-import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
-import com.project.bumawiki.domain.thumbsup.domain.repository.ThumbsUpRepository;
-import com.project.bumawiki.global.error.exception.BumawikiException;
-
-import com.project.bumawiki.global.error.exception.ErrorCode;
-
-import net.jqwik.api.Arbitraries;
+import java.util.List;
 
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.jqwik.api.Arbitraries;
+
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.repository.DocsRepository;
 import com.project.bumawiki.domain.docs.domain.repository.VersionDocsRepository;
+import com.project.bumawiki.domain.docs.domain.type.DocsType;
+import com.project.bumawiki.domain.docs.presentation.dto.response.DocsPopularResponseDto;
+import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
+import com.project.bumawiki.domain.thumbsup.domain.repository.ThumbsUpRepository;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 import com.project.bumawiki.global.service.ServiceTest;
-
-import java.util.List;
 
 class CommandDocsServiceTest extends ServiceTest {
 	@Autowired
@@ -166,9 +163,9 @@ class CommandDocsServiceTest extends ServiceTest {
 		String contents = Arbitraries.strings().ofMinLength(1).sample();
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
-		// when
-		commandDocsService.update(user, docs.getTitle(), contents,
-			versionDocs.getVersion());
+		// when, then
+		assertThrows(BumawikiException.class, () -> commandDocsService.update(user, docs.getTitle(), contents,
+			versionDocs.getVersion()));
 	}
 
 	@Test
@@ -180,8 +177,8 @@ class CommandDocsServiceTest extends ServiceTest {
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
 		// when
-		commandDocsService.update(user, docs.getTitle(), contents,
-			versionDocs.getVersion());
+		assertThrows(BumawikiException.class, () -> commandDocsService.update(user, docs.getTitle(), contents,
+			versionDocs.getVersion()));
 	}
 
 	@Test
@@ -193,8 +190,8 @@ class CommandDocsServiceTest extends ServiceTest {
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
 		// when
-		commandDocsService.update(user, docs.getTitle(), contents,
-			versionDocs.getVersion() + 1);
+		assertThrows(BumawikiException.class, () -> commandDocsService.update(user, docs.getTitle(), contents,
+			versionDocs.getVersion() + 1));
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
