@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
+import com.project.bumawiki.domain.thumbsup.exception.AlreadyThumbsUpException;
+import com.project.bumawiki.domain.thumbsup.exception.YouDontThumbsUpThisDocs;
 import com.project.bumawiki.domain.thumbsup.presentation.dto.ThumbsUpResponseDto;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 
@@ -18,6 +20,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,15 +46,15 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Max(32)
+	@Size(max = 32)
 	@Column(unique = true, length = 32)
 	private String email;
 
-	@Max(16)
+	@Size(max = 16)
+	@NotNull
 	@Column(length = 16)
 	private String name;
 
-	@Max(8)
 	@Column(length = 8)
 	private Integer enroll;
 
@@ -58,8 +62,8 @@ public class User {
 	@Column(length = 20)
 	private String nickName;
 
-	@Enumerated(EnumType.STRING)
 	@Column(length = 16)
+	@Enumerated(EnumType.STRING)
 	private Authority authority;
 
 	public List<ThumbsUpResponseDto> getList() {
