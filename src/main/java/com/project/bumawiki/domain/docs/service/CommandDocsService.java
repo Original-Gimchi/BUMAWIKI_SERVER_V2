@@ -30,13 +30,13 @@ public class CommandDocsService {
 	private final ThumbsUpDeleter thumbsUpDeleter;
 
 	public void create(Docs docs, User user, String contents) {
-		docsValidator.checkTitleAlreadyExist(docs);
+		docsValidator.checkTitleAlreadyExist(docs.getTitle());
 		docsCreator.create(docs, user, contents);
 	}
 
 	public void delete(Long id) {
-		docsDeleter.delete(id);
 		thumbsUpDeleter.deleteAllByDocsId(id);
+		docsDeleter.delete(id);
 	}
 
 	public void update(User user, String title, String contents, Integer updatingVersion) {
@@ -53,8 +53,8 @@ public class CommandDocsService {
 	}
 
 	public void titleUpdate(String title, String changedTitle) {
+		docsValidator.checkTitleAlreadyExist(changedTitle);
 		Docs docs = docsReader.findByTitle(title);
-		docsValidator.checkTitleAlreadyExist(docs);
 
 		docsUpdater.updateTitle(docs, changedTitle);
 	}
@@ -72,7 +72,7 @@ public class CommandDocsService {
 			throw new BumawikiException(ErrorCode.DOCS_CONFLICTED);
 		}
 
-		docsCreator.create(
+		docsCreator.createVersionDocs(
 			docs,
 			user,
 			contents

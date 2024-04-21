@@ -17,8 +17,8 @@ public class DocsValidator {
 	private final DocsRepository docsRepository;
 	private final DocsReader docsReader;
 
-	public void checkTitleAlreadyExist(Docs docs) {
-		if (docsRepository.existsByTitle(docs.getTitle())) {
+	public void checkTitleAlreadyExist(String title) {
+		if (docsRepository.existsByTitle(title)) {
 			throw new BumawikiException(ErrorCode.DOCS_TITLE_ALREADY_EXIST);
 		}
 	}
@@ -42,7 +42,6 @@ public class DocsValidator {
 			throw new BumawikiException(ErrorCode.CANNOT_CHANGE_YOUR_DOCS);
 		}
 	}
-
 	public void checkUpdatableDocsType(DocsType docsType) {
 		if (docsType.equals(DocsType.READONLY)) {
 			throw new BumawikiException(ErrorCode.NO_UPDATABLE_DOCS);
