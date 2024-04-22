@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.bumawiki.domain.auth.annotation.AdminOnly;
 import com.project.bumawiki.domain.auth.annotation.LoginRequired;
 import com.project.bumawiki.domain.auth.service.QueryAuthService;
 import com.project.bumawiki.domain.docs.presentation.dto.request.DocsConflictSolveRequestDto;
@@ -36,6 +37,7 @@ public class CommandDocsController {
 	}
 
 	@PutMapping("/{title}")
+	@LoginRequired
 	public void updateDocs(@PathVariable String title,
 		@RequestBody DocsUpdateRequestDto request) {
 		commandDocsService.update(
@@ -46,17 +48,20 @@ public class CommandDocsController {
 	}
 
 	@PutMapping("/title/{title}")
+	@AdminOnly
 	public void updateDocsTitle(@PathVariable String title,
 		@RequestBody DocsTitleUpdateRequestDto request) {
 		commandDocsService.titleUpdate(title, request.title());
 	}
 
 	@PutMapping("/docsType")
+	@AdminOnly
 	public void updateDocsType(@RequestBody DocsTypeUpdateRequestDto requestDto) {
 		commandDocsService.docsTypeUpdate(requestDto.id(), requestDto.docsType());
 	}
 
 	@DeleteMapping("{id}")
+	@AdminOnly
 	public void deleteDocs(@PathVariable Long id) {
 		commandDocsService.delete(id);
 	}
