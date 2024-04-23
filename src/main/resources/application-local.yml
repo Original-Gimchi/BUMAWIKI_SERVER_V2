@@ -54,6 +54,9 @@ bsm:
 aws:
   s3:
     bucket: ${S3_BUCKET}
+    region: ${S3_REGION}
+    end-point-url: ${S3_ENDPOINT_URL}
+    read-url: ${S3_READ_URL}
     access-key: ${S3_ACCESSKEY}
     secret-key: ${S3_SECRET}
 
