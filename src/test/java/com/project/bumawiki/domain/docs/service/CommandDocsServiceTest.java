@@ -151,7 +151,7 @@ class CommandDocsServiceTest extends ServiceTest {
 		String name = FixtureGenerator.getDefaultStringBuilder().ofLength(3).sample();
 		User user = getSavedUserWithOutThumbsUp(name);
 		Docs docs = getSavedNotStudentDocs(name);
-		String contents =FixtureGenerator.getDefaultStringBuilder().sample();
+		String contents = FixtureGenerator.getDefaultStringBuilder().sample();
 		VersionDocs versionDocs = getSavedVersionDocs(docs, user);
 
 		// when, then
