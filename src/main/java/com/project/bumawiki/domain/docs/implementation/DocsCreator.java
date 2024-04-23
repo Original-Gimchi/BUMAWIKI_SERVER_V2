@@ -19,7 +19,7 @@ public class DocsCreator {
 
 	public void create(Docs docs, User user, String contents) {
 		docsRepository.save(docs);
-		versionDocsRepository.save(
+		VersionDocs versionDocs = versionDocsRepository.save(
 			new VersionDocs(
 				0,
 				docs,
@@ -27,6 +27,7 @@ public class DocsCreator {
 				user
 			)
 		);
+		docsUpdater.updateModifiedAt(docs, versionDocs.getCreatedAt());
 	}
 
 	public void createVersionDocs(Docs docs, User user, String contents) {
