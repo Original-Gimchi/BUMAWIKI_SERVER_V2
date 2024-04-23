@@ -51,7 +51,7 @@ public class FixtureGenerator {
 			.set(javaGetter(ThumbsUp::getDocs), docs);
 	}
 
-	public static StringArbitrary getDefaultStringBuilder(){
+	public static StringArbitrary getDefaultStringBuilder() {
 		return Arbitraries.strings()
 			.ascii()
 			.ofMinLength(1);

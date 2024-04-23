@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.RepeatedTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,8 +158,12 @@ class QueryDocsServiceTest extends ServiceTest {
 		// then
 		assertAll(
 			() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
-			() -> assertThat(findDocsList.get(Arbitraries.integers().between(0, 29).sample()).getDocsType())
-				.isEqualTo(randomDocsType)
+			() -> assertThat(
+				findDocsList.stream().map(Docs::getDocsType).collect(Collectors.toSet()).size()
+			).isEqualTo(0),
+			() -> assertThat(
+				findDocsList.stream().map(Docs::getDocsType).collect(Collectors.toSet()).contains(randomDocsType)
+			).isTrue()
 		);
 	}
 
@@ -305,16 +310,17 @@ class QueryDocsServiceTest extends ServiceTest {
 	void 좋아요_내림차순_문서_전체_조회() {
 		// given
 		User user = FixtureGenerator.getDefaultUserBuilder().sample();
+		userRepository.save(user);
 		List<Docs> docs = FixtureGenerator.getDefaultDocsBuilder().sampleList(5);
 
 		docsRepository.saveAll(docs);
 
-		for (Docs doc : docs) {
+		docs.forEach(it ->
 			thumbsUpRepository.saveAll(
-				FixtureGenerator.getDefaultThumbsUpBuilder(doc, user)
-				.sampleList(Arbitraries.integers().between(1, 30).sample())
-			);
-		}
+				FixtureGenerator.getDefaultThumbsUpBuilder(it, user)
+					.sampleList(Arbitraries.integers().between(1, 30).sample())
+			)
+		);
 
 		// when
 		List<DocsPopularResponseDto> list = queryDocsService.readByThumbsUpsDesc();
