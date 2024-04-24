@@ -34,4 +34,8 @@ public class CoinAccountReader {
 	public List<CoinAccount> getRanking(Pageable pageable, Long price) {
 		return coinAccountRepository.getRanking(pageable, price);
 	}
+
+	public List<CoinAccount> findAllByCoinGreaterThan0() {
+		return coinAccountRepository.findAllByCoinGreaterThan0();
+	}
 }

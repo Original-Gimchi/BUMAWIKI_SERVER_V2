@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.project.bumawiki.domain.coin.domain.Trade;
 import com.project.bumawiki.domain.coin.domain.repository.TradeRepository;
+import com.project.bumawiki.domain.coin.domain.type.TradeStatus;
 import com.project.bumawiki.global.annotation.Implementation;
 import com.project.bumawiki.global.error.exception.BumawikiException;
 import com.project.bumawiki.global.error.exception.ErrorCode;
@@ -22,5 +23,9 @@ public class TradeReader {
 
 	public List<Trade> findAllByCoinAccountIdOrderByTradedTimeDesc(Long accountId) {
 		return tradeRepository.findAllByCoinAccountIdOrderByTradedTimeDesc(accountId);
+	}
+
+	public List<Trade> findAllByTradeStatus(TradeStatus tradeStatus) {
+		return tradeRepository.findAllByTradeStatus(tradeStatus);
 	}
 }
