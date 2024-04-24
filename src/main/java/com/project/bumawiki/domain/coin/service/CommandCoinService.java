@@ -3,10 +3,7 @@ package com.project.bumawiki.domain.coin.service;
 import static com.project.bumawiki.global.util.RandomUtil.*;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +19,14 @@ import com.project.bumawiki.domain.coin.implementation.PriceReader;
 import com.project.bumawiki.domain.coin.implementation.TradeCreator;
 import com.project.bumawiki.domain.coin.implementation.TradeReader;
 import com.project.bumawiki.domain.coin.implementation.TradeValidator;
-import com.project.bumawiki.domain.coin.presentation.dto.RankingResponse;
 import com.project.bumawiki.domain.user.domain.User;
-import com.project.bumawiki.domain.user.implementation.UserReader;
-import com.project.bumawiki.global.error.exception.BumawikiException;
-import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CoinService {
+public class CommandCoinService {
 	public static final Long FIRST_MONEY = 10000000L;
 	private final CoinAccountReader coinAccountReader;
 	private final CoinAccountCreator coinAccountCreator;
@@ -41,7 +34,6 @@ public class CoinService {
 	private final PriceReader priceReader;
 	private final TradeReader tradeReader;
 	private final TradeCreator tradeCreator;
-	private final UserReader userReader;
 	private final TradeValidator tradeValidator;
 
 	public CoinAccount createCoinAccount(User user) {
@@ -55,14 +47,9 @@ public class CoinService {
 		return coinAccountCreator.create(coinAccount);
 	}
 
-	@Transactional(readOnly = true)
-	public CoinAccount findCoinAccountByUser(User currentUserWithLogin) {
-		return coinAccountReader.getByUserId(currentUserWithLogin.getId());
-	}
-
 	public Trade buyCoin(TradeWithoutTradeStatusAndCoinAccountId coinData, User user) {
 		CoinAccount coinAccount = coinAccountReader.getByUserId(user.getId());
-		Price nowPrice = getRecentPrice();
+		Price nowPrice = priceReader.getRecentPrice();
 
 		Trade trade = coinData.toTrade(coinAccount);
 
@@ -75,10 +62,9 @@ public class CoinService {
 		return tradeCreator.create(trade);
 	}
 
-	@Transactional
 	public Trade sellCoin(TradeWithoutTradeStatusAndCoinAccountId coinData, User user) {
 		CoinAccount coinAccount = coinAccountReader.getByUserId(user.getId());
-		Price nowPrice = getRecentPrice();
+		Price nowPrice = priceReader.getRecentPrice();
 
 		Trade trade = coinData.toTrade(coinAccount);
 
@@ -109,41 +95,6 @@ public class CoinService {
 		trade.updateTradeStatus(TradeStatus.BOUGHT);
 	}
 
-	@Transactional(readOnly = true)
-	public List<Trade> getTrades(Long accountId) {
-		return tradeReader.findAllByCoinAccountIdOrderByTradedTimeDesc(accountId);
-	}
-
-	public List<Price> getPriceByPeriod(String period) {
-		switch (period) {
-			case "full" -> {
-				return priceReader.findAllByOrderByStartedTime();
-			}
-			case "halfMonth" -> {
-				LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
-				return priceReader.findAllAfterStartedTime(twoWeeksAgo);
-			}
-			case "week" -> {
-				LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
-				return priceReader.findAllAfterStartedTime(oneWeekAgo);
-			}
-			case "day" -> {
-				LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
-				return priceReader.findAllAfterStartedTime(oneDayAgo);
-			}
-			case "halfDay" -> {
-				LocalDateTime halfDayAgo = LocalDateTime.now().minusHours(12);
-				return priceReader.findAllAfterStartedTime(halfDayAgo);
-			}
-			case "threeHours" -> {
-				LocalDateTime threeHoursAgo = LocalDateTime.now().minusHours(3);
-				return priceReader.findAllAfterStartedTime(threeHoursAgo);
-			}
-		}
-
-		throw new BumawikiException(ErrorCode.NO_PERIOD);
-	}
-
 	public void cancelTrade(Long tradeId, User user) {
 		Trade trade = tradeReader.findById(tradeId);
 
@@ -172,21 +123,5 @@ public class CoinService {
 		account.updateLastRewardedTimeNow();
 
 		return randomNumber;
-	}
-
-	public List<RankingResponse> getRanking(Pageable pageable) {
-		Price recentPrice = getRecentPrice();
-		return coinAccountReader.getRanking(pageable, recentPrice.getPrice())
-			.stream()
-			.map(ranking -> new RankingResponse(
-					ranking,
-					recentPrice.getPrice(),
-					userReader.getById(ranking.getUserId())
-				)
-			).toList();
-	}
-
-	public Price getRecentPrice() {
-		return priceReader.getRecentPrice();
 	}
 }
