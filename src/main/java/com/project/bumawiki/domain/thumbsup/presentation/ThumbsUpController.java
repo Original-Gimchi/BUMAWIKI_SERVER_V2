@@ -33,22 +33,23 @@ public class ThumbsUpController {
 	private final CommandThumbsUpService commandThumbsUpService;
 	private final QueryAuthService queryAuthService;
 
+	@LoginRequired
 	@PostMapping("/create")
 	public void createLike(@RequestBody ThumbsUpRequestDto thumbsUpRequestDto) {
 		commandThumbsUpService.createThumbsUp(queryAuthService.getCurrentUser(), thumbsUpRequestDto.docsId());
 	}
 
+	@LoginOrNot
 	@GetMapping("/like/{docsId}")
 	@ResponseStatus(HttpStatus.OK)
-	@LoginOrNot
 	public Boolean checkYouLikeThis(@PathVariable Long docsId) {
 		return queryThumbsUpService.checkUserLikeThisDocs(
-			docsId, queryAuthService.getCurrentUser()
+			docsId, queryAuthService.getNullableCurrentUser()
 		);
 	}
 
-	@GetMapping("/my")
 	@LoginRequired
+	@GetMapping("/my")
 	public List<ThumbsUpResponseDto> getThumbsUps() {
 		return queryThumbsUpService.getThumbsUp(queryAuthService.getCurrentUser());
 	}
@@ -60,6 +61,7 @@ public class ThumbsUpController {
 		);
 	}
 
+	@LoginRequired
 	@DeleteMapping
 	public void cancel(@RequestBody ThumbsUpRequestDto thumbsUpRequestDto) {
 		commandThumbsUpService.cancelThumbsUp(queryAuthService.getCurrentUser(), thumbsUpRequestDto.docsId());
