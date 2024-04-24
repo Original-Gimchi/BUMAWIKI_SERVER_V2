@@ -40,8 +40,7 @@ public class FixtureGenerator {
 	public static ArbitraryBuilder<User> getDefaultUserBuilder() {
 		return fixtureGenerator.giveMeBuilder(User.class)
 			.setNull(javaGetter(User::getId))
-			.set(javaGetter(User::getAuthority), Authority.USER)
-			.setNull(javaGetter(User::getThumbsUps));
+			.set(javaGetter(User::getAuthority), Authority.USER);
 	}
 
 	public static ArbitraryBuilder<ThumbsUp> getDefaultThumbsUpBuilder(Docs docs, User user) {
