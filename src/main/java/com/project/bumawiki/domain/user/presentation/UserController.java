@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/user")
-public class UserInfoController {
+public class UserController {
 
 	private final QueryUserService userInfoService;
 	private final QueryDocsService queryDocsService;
@@ -50,7 +50,7 @@ public class UserInfoController {
 	@AdminOnly
 	@PatchMapping("/authority")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void setUserAuthority(@RequestBody UserAuthorityRequestDto userAuthorityRequestDto) {
+	public void updateUserAuthority(@RequestBody UserAuthorityRequestDto userAuthorityRequestDto) {
 		commandUserService.updateUserAuthority(userAuthorityRequestDto.id(), userAuthorityRequestDto.authority());
 	}
 
