@@ -51,7 +51,7 @@ public class CoinService {
 	}
 
 	@Transactional(readOnly = true)
-	public CoinAccount findByUser(User currentUserWithLogin) {
+	public CoinAccount findCoinAccountByUser(User currentUserWithLogin) {
 		return coinAccountRepository.getByUserId(currentUserWithLogin.getId());
 	}
 

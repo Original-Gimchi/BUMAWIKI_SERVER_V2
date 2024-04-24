@@ -46,7 +46,7 @@ public class CoinController {
 	@LoginRequired
 	public CoinAccountResponse findOwnAccount() {
 		return CoinAccountResponse.from(
-			coinService.findByUser(queryAuthService.getCurrentUser())
+			coinService.findCoinAccountByUser(queryAuthService.getCurrentUser())
 		);
 	}
 
