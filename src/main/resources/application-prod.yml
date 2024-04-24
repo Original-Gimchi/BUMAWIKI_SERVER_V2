@@ -59,6 +59,9 @@ aws:
     bucket: ${S3_BUCKET}
     access-key: ${S3_ACCESSKEY}
     secret-key: ${S3_SECRET}
+    region: ${S3_REGION}
+    end-point-url: ${S3_ENDPOINT_URL}
+    read-url: ${S3_READ_URL}
 
 image:
   path: ${SAVING_URL}

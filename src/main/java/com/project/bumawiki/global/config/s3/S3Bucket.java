@@ -10,4 +10,7 @@ import lombok.Getter;
 public class S3Bucket {
 	@Value("${aws.s3.bucket}")
 	private String s3Bucket;
+
+	@Value("${aws.s3.read-url}")
+	private String readUrl;
 }

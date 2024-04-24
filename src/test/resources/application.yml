@@ -54,6 +54,9 @@ aws:
     bucket: test-bucket
     access-key: test-access-key
     secret-key: test-secret-key
+    region: asdf
+    end-point-url: asdf
+    read-url: asdf
 
 server:
   port: 8080

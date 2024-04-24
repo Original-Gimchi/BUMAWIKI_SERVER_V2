@@ -4,13 +4,11 @@ import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPrope
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 
@@ -29,16 +27,13 @@ import com.project.bumawiki.domain.docs.presentation.dto.response.MergeConflictD
 import com.project.bumawiki.domain.docs.presentation.dto.response.TeacherResponseDto;
 import com.project.bumawiki.domain.docs.presentation.dto.response.VersionResponseDto;
 import com.project.bumawiki.domain.docs.util.DocsUtil;
-import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
 import com.project.bumawiki.domain.thumbsup.domain.repository.ThumbsUpRepository;
 import com.project.bumawiki.domain.user.domain.User;
-import com.project.bumawiki.domain.user.domain.authority.Authority;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
 import com.project.bumawiki.global.error.exception.BumawikiException;
 import com.project.bumawiki.global.error.exception.ErrorCode;
+import com.project.bumawiki.global.service.FixtureGenerator;
 import com.project.bumawiki.global.service.ServiceTest;
-
-import com.navercorp.fixturemonkey.ArbitraryBuilder;
 
 class QueryDocsServiceTest extends ServiceTest {
 
@@ -57,10 +52,10 @@ class QueryDocsServiceTest extends ServiceTest {
 	@Autowired
 	private ThumbsUpRepository thumbsUpRepository;
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 제목으로_문서_상세_조회하기() {
 
-		User user = getDefaultUserBuilder().sample();
+		User user = FixtureGenerator.getDefaultUserBuilder().sample();
 
 		userRepository.save(user);
 
@@ -87,7 +82,7 @@ class QueryDocsServiceTest extends ServiceTest {
 		});
 	}
 
-	@RepeatedTest(100)
+	@RepeatedTest(REPEAT_COUNT)
 	void 없는_문서_조회_시_예외_발생() {
 		//given
 		String title = Arbitraries.strings().ofMinLength(0).sample();
@@ -98,10 +93,10 @@ class QueryDocsServiceTest extends ServiceTest {
 		assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.DOCS_NOT_FOUND);
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 없는_버전_조회_시_Exception() {
 		//given
-		Docs docs = getDefaultDocsBuilder().sample();
+		Docs docs = FixtureGenerator.getDefaultDocsBuilder().sample();
 		String title = docs.getTitle();
 		docsRepository.save(docs);
 		//when
@@ -112,25 +107,20 @@ class QueryDocsServiceTest extends ServiceTest {
 		assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.VERSION_NOT_EXIST);
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 제목으로_문서_역사_조회하기() {
 		// given
-		User user = fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.set("authority", Authority.USER)
-			.setNull("thumbsUps")
+		User user = FixtureGenerator.getDefaultUserBuilder()
 			.sample();
 
 		userRepository.save(user);
 
-		Docs docs = getDefaultDocsBuilder().sample();
+		Docs docs = FixtureGenerator.getDefaultDocsBuilder().sample();
 		String title = docs.getTitle();
 
 		docsRepository.save(docs);
 
-		List<VersionDocs> versionDocsList = fixtureGenerator.giveMeBuilder(VersionDocs.class)
-			.set("docs", docs)
-			.set("user", user)
+		List<VersionDocs> versionDocsList = FixtureGenerator.getDefaultVersionDocsBuilder(docs, user)
 			.sampleList(10);
 
 		versionDocsRepository.saveAll(versionDocsList);
@@ -148,65 +138,55 @@ class QueryDocsServiceTest extends ServiceTest {
 			() -> assertThat(dto.title()).isEqualTo(title));
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 문서_타입으로_조회하기() {
 		// given
-		User user = fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.set("authority", Authority.USER)
-			.setNull("thumbsUps")
+		User user = FixtureGenerator.getDefaultUserBuilder()
 			.sample();
 
 		userRepository.save(user);
 
-		List<Docs> docsList = getDefaultDocsBuilder().sampleList(30);
+		DocsType randomDocsType = Arbitraries.of(DocsType.class).sample();
 
+		List<Docs> docsList = FixtureGenerator.getDefaultDocsBuilder().sampleList(30);
+		docsList.add(FixtureGenerator.getDefaultDocsBuilder()
+			.set(javaGetter(Docs::getDocsType), randomDocsType).sample());
 		docsRepository.saveAll(docsList);
-
-		Random random = new Random();
-
-		DocsType randomDocsType = DocsType.values()[random.nextInt(DocsType.values().length)];
-
 		// when
 		List<Docs> findDocsList = queryDocsService.findByDocsTypeOrderByEnroll(randomDocsType);
 
 		// then
 		assertAll(
 			() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
-			() -> assertThat(findDocsList.get(random.nextInt(findDocsList.size())).getDocsType())
-				.isEqualTo(randomDocsType)
+			() -> assertThat(
+				findDocsList.stream().map(Docs::getDocsType).collect(Collectors.toSet()).size()
+			).isEqualTo(1),
+			() -> assertThat(
+				findDocsList.stream().map(Docs::getDocsType).collect(Collectors.toSet()).contains(randomDocsType)
+			).isTrue()
 		);
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 유저가_수정한_버전문서_조회() {
 		// given
-		User user = fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.set("authority", Authority.USER)
-			.setNull("thumbsUps")
+		User user = FixtureGenerator.getDefaultUserBuilder()
 			.sample();
 
-		User otherUser = fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.set("authority", Authority.USER)
-			.setNull("thumbsUps")
+		User otherUser = FixtureGenerator.getDefaultUserBuilder()
 			.sample();
 
 		userRepository.save(user);
 		userRepository.save(otherUser);
 
-		Docs docs = getDefaultDocsBuilder().sample();
+		Docs docs = FixtureGenerator.getDefaultDocsBuilder().sample();
+
 		docsRepository.save(docs);
 
-		List<VersionDocs> versionDocsList = fixtureGenerator.giveMeBuilder(VersionDocs.class)
-			.set("user", user)
-			.set(javaGetter(VersionDocs::getDocs), docs)
+		List<VersionDocs> versionDocsList = FixtureGenerator.getDefaultVersionDocsBuilder(docs, user)
 			.sampleList(10);
 
-		List<VersionDocs> versionDocsList2 = fixtureGenerator.giveMeBuilder(VersionDocs.class)
-			.set("user", otherUser)
-			.set(javaGetter(VersionDocs::getDocs), docs)
+		List<VersionDocs> versionDocsList2 = FixtureGenerator.getDefaultVersionDocsBuilder(docs, user)
 			.sampleList(10);
 
 		versionDocsRepository.saveAll(versionDocsList);
@@ -225,22 +205,21 @@ class QueryDocsServiceTest extends ServiceTest {
 
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	public void 최근_수정한_문서_10개_조회() {
 		//given
-		User user = getDefaultUserBuilder().sample();
+		User user = FixtureGenerator.getDefaultUserBuilder().sample();
 		userRepository.save(user);
 
-		List<Docs> docsList = getDefaultDocsBuilder()
-			.setNotNull("lastModifiedAt")
+		List<Docs> docsList = FixtureGenerator.getDefaultDocsBuilder()
+			.setNotNull(javaGetter(Docs::getLastModifiedAt))
 			.sampleList(20);
 
 		docsRepository.saveAll(docsList);
 
-		List<VersionDocs> versionDocsList = fixtureGenerator.giveMeBuilder(VersionDocs.class)
-			.set("user", user)
-			.set("docs", Arbitraries.of(docsList))
-			.setNotNull("createdAt")
+		List<VersionDocs> versionDocsList = FixtureGenerator.getDefaultVersionDocsBuilder(null, user)
+			.set(javaGetter(VersionDocs::getDocs), Arbitraries.of(docsList))
+			.setNotNull(javaGetter(VersionDocs::getCreatedAt))
 			.sampleList(40);
 
 		versionDocsRepository.saveAll(versionDocsList);
@@ -265,28 +244,20 @@ class QueryDocsServiceTest extends ServiceTest {
 
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 모든_선생님_문서_조회하기() {
 		// given
-		User user = fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.set("authority", Authority.USER)
-			.setNull("thumbsUps")
-			.sample();
+		User user = FixtureGenerator.getDefaultUserBuilder().sample();
 
 		userRepository.save(user);
 
-		List<Docs> docsList = fixtureGenerator.giveMeBuilder(Docs.class)
-			.setNull("id")
-			.set("versionDocs", new ArrayList<>())
+		List<Docs> docsList = FixtureGenerator.getDefaultDocsBuilder()
 			.sampleList(30);
 
 		docsRepository.saveAll(docsList);
 
 		docsList.forEach(docs -> {
-			VersionDocs versionDocs = fixtureGenerator.giveMeBuilder(VersionDocs.class)
-				.set("docs", docs)
-				.set("user", user)
+			VersionDocs versionDocs = FixtureGenerator.getDefaultVersionDocsBuilder(docs, user)
 				.sample();
 			docs.getVersionDocs().add(versionDocs);
 			versionDocsRepository.save(versionDocs);
@@ -305,28 +276,20 @@ class QueryDocsServiceTest extends ServiceTest {
 		assertThat(dto.equals(toComparedDto)).isTrue();
 	}
 
-	@Test
+	@RepeatedTest(REPEAT_COUNT)
 	void 모든_동아리_문서_조회하기() {
 		// given
-		User user = fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.set("authority", Authority.USER)
-			.setNull("thumbsUps")
-			.sample();
+		User user = FixtureGenerator.getDefaultUserBuilder().sample();
 
 		userRepository.save(user);
 
-		List<Docs> docsList = fixtureGenerator.giveMeBuilder(Docs.class)
-			.setNull("id")
-			.set("versionDocs", new ArrayList<>())
+		List<Docs> docsList = FixtureGenerator.getDefaultDocsBuilder()
 			.sampleList(30);
 
 		docsRepository.saveAll(docsList);
 
 		docsList.forEach(docs -> {
-			VersionDocs versionDocs = fixtureGenerator.giveMeBuilder(VersionDocs.class)
-				.set("docs", docs)
-				.set("user", user)
+			VersionDocs versionDocs = FixtureGenerator.getDefaultVersionDocsBuilder(docs, user)
 				.sample();
 			docs.getVersionDocs().add(versionDocs);
 			versionDocsRepository.save(versionDocs);
@@ -347,17 +310,18 @@ class QueryDocsServiceTest extends ServiceTest {
 	@RepeatedTest(100)
 	void 좋아요_내림차순_문서_전체_조회() {
 		// given
-		User user = userRepository.save(
-			fixtureGenerator.giveMeBuilder(User.class).setNull("id").setNull("thumbsUps").sample());
-		List<Docs> docs = docsRepository.saveAll(getDefaultDocsBuilder().sampleList(5));
+		User user = FixtureGenerator.getDefaultUserBuilder().sample();
+		userRepository.save(user);
+		List<Docs> docs = FixtureGenerator.getDefaultDocsBuilder().sampleList(5);
 
-		for (Docs doc : docs) {
-			thumbsUpRepository.saveAll(fixtureGenerator.giveMeBuilder(ThumbsUp.class)
-				.setNull("id")
-				.set("docs", doc)
-				.set("user", user)
-				.sampleList(Arbitraries.integers().between(1, 30).sample()));
-		}
+		docsRepository.saveAll(docs);
+
+		docs.forEach(it ->
+			thumbsUpRepository.saveAll(
+				FixtureGenerator.getDefaultThumbsUpBuilder(it, user)
+					.sampleList(Arbitraries.integers().between(1, 30).sample())
+			)
+		);
 
 		// when
 		List<DocsPopularResponseDto> list = queryDocsService.readByThumbsUpsDesc();
@@ -371,24 +335,19 @@ class QueryDocsServiceTest extends ServiceTest {
 	@RepeatedTest(100)
 	void 문서_충돌_조회() {
 		//given
-		Docs docs = fixtureGenerator.giveMeBuilder(Docs.class).set("id", null).setNull("versionDocs").sample();
+		Docs docs = FixtureGenerator.getDefaultDocsBuilder().sample();
 
 		docsRepository.save(docs);
 
-		User user = userRepository.save(
-			fixtureGenerator.giveMeBuilder(User.class).set("id", null).set("thumbsUps", null).sample());
+		User user = FixtureGenerator.getDefaultUserBuilder().sample();
 
 		userRepository.save(user);
 
-		String firstContents = fixtureGenerator.giveMeBuilder(String.class).setNotNull("value").sample();
-		String secondContents = Arbitraries.strings()
-			.ascii()
-			.ofMinLength(1)
+		String firstContents = FixtureGenerator.getDefaultStringBuilder().sample();
+		String secondContents = FixtureGenerator.getDefaultStringBuilder()
 			.filter(s -> !s.equals(firstContents))
 			.sample();
-		String thirdContents = Arbitraries.strings()
-			.ascii()
-			.ofMinLength(1)
+		String thirdContents = FixtureGenerator.getDefaultStringBuilder()
 			.filter(s -> !s.equals(firstContents) && !s.equals(secondContents))
 			.sample();
 
@@ -428,20 +387,6 @@ class QueryDocsServiceTest extends ServiceTest {
 			.sorted(Comparator.comparing(DocsNameAndEnrollResponseDto::id))
 			.toList();
 		return new TeacherResponseDto(teacher, majorTeacher, mentorTeacher);
-	}
-
-	private ArbitraryBuilder<Docs> getDefaultDocsBuilder() {
-		return fixtureGenerator.giveMeBuilder(Docs.class)
-			.setNull("id")
-			.setNull("versionDocs")
-			.setPostCondition("docsType", DocsType.class, (it) -> it != DocsType.READONLY);
-	}
-
-	private ArbitraryBuilder<User> getDefaultUserBuilder() {
-		return fixtureGenerator.giveMeBuilder(User.class)
-			.setNull("id")
-			.set("authority", Authority.USER)
-			.setNull("thumbsUps");
 	}
 
 	private ClubResponseDto sortClubResponseDto(ClubResponseDto dto) {

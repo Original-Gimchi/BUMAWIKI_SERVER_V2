@@ -1,4 +1,4 @@
-package com.project.bumawiki.global.s3.service.implement;
+package com.project.bumawiki.global.s3.implement;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -36,7 +36,7 @@ public class ImageCreator {
 			throw new S3SaveException();
 		}
 
-		return amazonS3.getUrl(s3Bucket.getS3Bucket(), fileName).toString();
+		return s3Bucket.getReadUrl() + fileName;
 	}
 
 	private String createFileName(MultipartFile multipartFile) {

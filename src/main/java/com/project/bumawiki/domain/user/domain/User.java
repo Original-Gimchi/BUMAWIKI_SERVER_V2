@@ -17,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -31,6 +32,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
 	@OneToMany(
 		mappedBy = "user",
 		fetch = FetchType.LAZY,
@@ -38,19 +44,10 @@ public class User {
 		orphanRemoval = true)
 	@Builder.Default
 	private final List<ThumbsUp> thumbsUps = new ArrayList<>();
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
+	@Email
 	@Size(max = 32)
 	@Column(unique = true, length = 32)
 	private String email;
-
-	@Size(max = 16)
-	@NotNull
-	@Column(length = 16)
-	private String name;
 
 	@Column(length = 8)
 	private Integer enroll;
@@ -62,6 +59,10 @@ public class User {
 	@Column(length = 16)
 	@Enumerated(EnumType.STRING)
 	private Authority authority;
+	@NotNull
+	@Size(max = 16)
+	@Column(length = 16)
+	private String name;
 
 	public List<ThumbsUpResponseDto> getList() {
 		return this.thumbsUps

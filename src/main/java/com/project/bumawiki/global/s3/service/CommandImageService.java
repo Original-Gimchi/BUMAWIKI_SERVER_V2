@@ -3,7 +3,7 @@ package com.project.bumawiki.global.s3.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.project.bumawiki.global.s3.service.implement.ImageCreator;
+import com.project.bumawiki.global.s3.implement.ImageCreator;
 
 import lombok.RequiredArgsConstructor;
 
