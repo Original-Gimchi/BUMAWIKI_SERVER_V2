@@ -7,31 +7,24 @@ import com.project.bumawiki.domain.docs.presentation.dto.response.ContributeDocs
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.authority.Authority;
 
-import lombok.Getter;
-
-@Getter
-public class UserResponseDto {
-	private final Long id;
-
-	private final String email;
-
-	private final String nickName;
-
-	private final String name;
-
-	private final Authority authority;
-
-	private final List<ContributeDocsResponseDto> contributeDocs;
-
+public record UserResponseDto(
+	Long id,
+	String email,
+	String nickName,
+	String name,
+	Authority authority,
+	List<ContributeDocsResponseDto> contributeDocs
+) {
 	public UserResponseDto(User user, List<VersionDocs> versionDocs) {
-		this.id = user.getId();
-		this.email = user.getEmail();
-		this.nickName = user.getNickName();
-		this.authority = user.getAuthority();
-		this.name = user.getName();
-		this.contributeDocs = versionDocs
-			.stream()
-			.map(ContributeDocsResponseDto::new)
-			.toList();
+		this(
+			user.getId(),
+			user.getEmail(),
+			user.getNickName(),
+			user.getName(),
+			user.getAuthority(),
+			versionDocs.stream()
+				.map(ContributeDocsResponseDto::new)
+				.toList()
+		);
 	}
 }
