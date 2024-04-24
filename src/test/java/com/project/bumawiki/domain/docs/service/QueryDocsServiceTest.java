@@ -146,12 +146,12 @@ class QueryDocsServiceTest extends ServiceTest {
 
 		userRepository.save(user);
 
-		List<Docs> docsList = FixtureGenerator.getDefaultDocsBuilder().sampleList(30);
-
-		docsRepository.saveAll(docsList);
-
 		DocsType randomDocsType = Arbitraries.of(DocsType.class).sample();
 
+		List<Docs> docsList = FixtureGenerator.getDefaultDocsBuilder().sampleList(30);
+		docsList.add(FixtureGenerator.getDefaultDocsBuilder()
+			.set(javaGetter(Docs::getDocsType), randomDocsType).sample());
+		docsRepository.saveAll(docsList);
 		// when
 		List<Docs> findDocsList = queryDocsService.findByDocsTypeOrderByEnroll(randomDocsType);
 
@@ -160,7 +160,7 @@ class QueryDocsServiceTest extends ServiceTest {
 			() -> assertThat(docsList.containsAll(findDocsList)).isTrue(),
 			() -> assertThat(
 				findDocsList.stream().map(Docs::getDocsType).collect(Collectors.toSet()).size()
-			).isEqualTo(0),
+			).isEqualTo(1),
 			() -> assertThat(
 				findDocsList.stream().map(Docs::getDocsType).collect(Collectors.toSet()).contains(randomDocsType)
 			).isTrue()
@@ -212,6 +212,7 @@ class QueryDocsServiceTest extends ServiceTest {
 		userRepository.save(user);
 
 		List<Docs> docsList = FixtureGenerator.getDefaultDocsBuilder()
+			.setNotNull(javaGetter(Docs::getLastModifiedAt))
 			.sampleList(20);
 
 		docsRepository.saveAll(docsList);
