@@ -17,9 +17,11 @@ import com.project.bumawiki.domain.coin.domain.TradeWithoutTradeStatusAndCoinAcc
 import com.project.bumawiki.domain.coin.domain.type.TradeStatus;
 import com.project.bumawiki.domain.coin.implementation.CoinAccountCreator;
 import com.project.bumawiki.domain.coin.implementation.CoinAccountReader;
+import com.project.bumawiki.domain.coin.implementation.CoinAccountValidator;
 import com.project.bumawiki.domain.coin.implementation.PriceReader;
 import com.project.bumawiki.domain.coin.implementation.TradeCreator;
 import com.project.bumawiki.domain.coin.implementation.TradeReader;
+import com.project.bumawiki.domain.coin.implementation.TradeValidator;
 import com.project.bumawiki.domain.coin.presentation.dto.RankingResponse;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.implementation.UserReader;
@@ -35,17 +37,15 @@ public class CoinService {
 	public static final Long FIRST_MONEY = 10000000L;
 	private final CoinAccountReader coinAccountReader;
 	private final CoinAccountCreator coinAccountCreator;
+	private final CoinAccountValidator coinAccountValidator;
 	private final PriceReader priceReader;
 	private final TradeReader tradeReader;
 	private final TradeCreator tradeCreator;
 	private final UserReader userReader;
+	private final TradeValidator tradeValidator;
 
 	public CoinAccount createCoinAccount(User user) {
-		boolean alreadyCreatedAccount = coinAccountReader.existsByUserId(user.getId());
-
-		if (alreadyCreatedAccount) {
-			throw new BumawikiException(ErrorCode.ALREADY_CREATED);
-		}
+		coinAccountValidator.checkAlreadyCreatedAccount(user.getId());
 
 		CoinAccount coinAccount = new CoinAccount(
 			user.getId(),
@@ -147,15 +147,11 @@ public class CoinService {
 	public void cancelTrade(Long tradeId, User user) {
 		Trade trade = tradeReader.findById(tradeId);
 
-		if (trade.getTradeStatus() != TradeStatus.BUYING && trade.getTradeStatus() != TradeStatus.SELLING) {
-			throw new BumawikiException(ErrorCode.TRADE_ALREADY_FINISHED);
-		}
+		tradeValidator.checkTradeStatusIsNotBuyingAndSelling(trade.getTradeStatus());
 
 		CoinAccount byId = coinAccountReader.getById(trade.getCoinAccountId());
 
-		if (!byId.getUserId().equals(user.getId())) {
-			throw new BumawikiException(ErrorCode.CANCEL_OTHERS_TRADE);
-		}
+		tradeValidator.checkTradeOwnership(byId.getUserId(), user.getId());
 
 		trade.updateTradeStatus(TradeStatus.CANCELLED);
 	}
@@ -170,9 +166,8 @@ public class CoinService {
 
 		CoinAccount account = coinAccountReader.getByUserId(user.getId());
 
-		if (account.wasRewardedToday()) {
-			throw new BumawikiException(ErrorCode.ALREADY_AWARDED);
-		}
+		coinAccountValidator.checkAlreadyRewardedToday(account);
+
 		account.addMoney(randomNumber);
 		account.updateLastRewardedTimeNow();
 
