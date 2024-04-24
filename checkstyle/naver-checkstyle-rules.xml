@@ -30,16 +30,9 @@ The following rules in the Naver coding convention cannot be checked by this con
         <property name="message" value="[newline-lf] Line must end with LF, not CRLF"/>
     </module>
 
-
     <!-- [newline-eof] -->
     <module name="NewlineAtEndOfFile">
         <property name="lineSeparator" value="lf"/>
-    </module>
-
-    <!-- [no-trailing-spaces] -->
-    <module name="RegexpSingleline">
-        <property name="format" value="^(?!\s+\* $).*?\s+$"/>
-        <property name="message" value="[no-trailing-spaces] Line has trailing spaces."/>
     </module>
 
     <!-- [line-length-120] -->
