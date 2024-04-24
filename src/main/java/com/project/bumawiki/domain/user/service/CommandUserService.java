@@ -18,11 +18,8 @@ public class CommandUserService {
 	private final UserUpdater userUpdater;
 
 	public void updateUserAuthority(Long id, Authority authority) {
-		System.out.println("updateUserAuthority");
 		User user = userReader.getById(id);
-		System.out.println("updateUserAuthority2");
 		userUpdater.updateAuthority(user, authority);
-		System.out.println("updateUserAuthority3");
 	}
 
 }
