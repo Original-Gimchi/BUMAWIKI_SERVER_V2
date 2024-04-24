@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Valid
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/docs")
+@RequestMapping("/api/thumbsup")
 public class ThumbsUpController {
 	private final QueryThumbsUpService queryThumbsUpService;
 	private final CommandThumbsUpService commandThumbsUpService;
