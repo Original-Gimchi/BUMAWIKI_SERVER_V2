@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ThumbsUpManipulateService {
+public class CommandThumbsUpService {
 	private final DocsReader docsReader;
 	private final ThumbsUpValidator thumbsUpValidator;
 	private final ThumbsUpCreator thumbsUpCreator;

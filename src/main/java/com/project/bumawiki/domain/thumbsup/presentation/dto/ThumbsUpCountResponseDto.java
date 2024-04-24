@@ -1,10 +1,10 @@
 package com.project.bumawiki.domain.thumbsup.presentation.dto;
 
-public record DocsThumbsUpResponseDto(
+public record ThumbsUpCountResponseDto(
 	Long thumbsUpsCount
 ) {
 
-	public DocsThumbsUpResponseDto(Long thumbsUpsCount) {
+	public ThumbsUpCountResponseDto(Long thumbsUpsCount) {
 		this.thumbsUpsCount = thumbsUpsCount;
 	}
 }

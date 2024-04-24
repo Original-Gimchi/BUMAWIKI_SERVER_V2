@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.thumbsup.domain.repository;
+package com.project.bumawiki.domain.thumbsup.infra;
 
 import static com.project.bumawiki.domain.docs.domain.QDocs.*;
 import static com.project.bumawiki.domain.thumbsup.domain.QThumbsUp.*;
@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.project.bumawiki.domain.thumbsup.domain.repository.CustomThumbsUpRepository;
 import com.project.bumawiki.domain.thumbsup.presentation.dto.ThumbsUpResponseDto;
 import com.project.bumawiki.domain.user.domain.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
