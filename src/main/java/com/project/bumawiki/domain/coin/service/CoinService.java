@@ -115,33 +115,30 @@ public class CoinService {
 	}
 
 	public List<Price> getPriceByPeriod(String period) {
-		if (period.equals("full")) {
-			return priceReader.findAllByOrderByStartedTime();
-		}
-
-		if (period.equals("halfMonth")) {
-			LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
-			return priceReader.findAllAfterStartedTime(twoWeeksAgo);
-		}
-
-		if (period.equals("week")) {
-			LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
-			return priceReader.findAllAfterStartedTime(oneWeekAgo);
-		}
-
-		if (period.equals("day")) {
-			LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
-			return priceReader.findAllAfterStartedTime(oneDayAgo);
-		}
-
-		if (period.equals("halfDay")) {
-			LocalDateTime halfDayAgo = LocalDateTime.now().minusHours(12);
-			return priceReader.findAllAfterStartedTime(halfDayAgo);
-		}
-
-		if (period.equals("threeHours")) {
-			LocalDateTime threeHoursAgo = LocalDateTime.now().minusHours(3);
-			return priceReader.findAllAfterStartedTime(threeHoursAgo);
+		switch (period) {
+			case "full" -> {
+				return priceReader.findAllByOrderByStartedTime();
+			}
+			case "halfMonth" -> {
+				LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+				return priceReader.findAllAfterStartedTime(twoWeeksAgo);
+			}
+			case "week" -> {
+				LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+				return priceReader.findAllAfterStartedTime(oneWeekAgo);
+			}
+			case "day" -> {
+				LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
+				return priceReader.findAllAfterStartedTime(oneDayAgo);
+			}
+			case "halfDay" -> {
+				LocalDateTime halfDayAgo = LocalDateTime.now().minusHours(12);
+				return priceReader.findAllAfterStartedTime(halfDayAgo);
+			}
+			case "threeHours" -> {
+				LocalDateTime threeHoursAgo = LocalDateTime.now().minusHours(3);
+				return priceReader.findAllAfterStartedTime(threeHoursAgo);
+			}
 		}
 
 		throw new BumawikiException(ErrorCode.NO_PERIOD);
