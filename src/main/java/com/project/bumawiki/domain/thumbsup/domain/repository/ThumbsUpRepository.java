@@ -15,4 +15,7 @@ public interface ThumbsUpRepository extends JpaRepository<ThumbsUp, Long> {
 	void deleteByDocsAndUser(Docs docs, User user);
 
 	List<ThumbsUp> findByDocs_Id(Long docsId);
+
+	long countByDocs_Title(String title);
+
 }

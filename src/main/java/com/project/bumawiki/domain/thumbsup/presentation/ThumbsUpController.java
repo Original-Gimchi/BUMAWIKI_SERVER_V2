@@ -51,7 +51,10 @@ public class ThumbsUpController {
 	@LoginRequired
 	@GetMapping("/my")
 	public List<ThumbsUpResponseDto> getThumbsUps() {
-		return queryThumbsUpService.getThumbsUp(queryAuthService.getCurrentUser());
+		return queryThumbsUpService.getThumbsUp(queryAuthService.getCurrentUser())
+			.stream()
+			.map(ThumbsUpResponseDto::new)
+			.toList();
 	}
 
 	@GetMapping("/{title}")
