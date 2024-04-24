@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.bumawiki.domain.coin.controller.dto.RankingResponse;
 import com.project.bumawiki.domain.coin.domain.CoinAccount;
 import com.project.bumawiki.domain.coin.domain.Price;
 import com.project.bumawiki.domain.coin.domain.Trade;
@@ -19,6 +18,7 @@ import com.project.bumawiki.domain.coin.domain.repository.CoinAccountRepository;
 import com.project.bumawiki.domain.coin.domain.repository.PriceRepository;
 import com.project.bumawiki.domain.coin.domain.repository.TradeRepository;
 import com.project.bumawiki.domain.coin.domain.type.TradeStatus;
+import com.project.bumawiki.domain.coin.presentation.dto.RankingResponse;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
 import com.project.bumawiki.global.error.exception.BumawikiException;

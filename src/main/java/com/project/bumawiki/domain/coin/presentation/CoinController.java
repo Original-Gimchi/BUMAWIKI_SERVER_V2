@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.coin.controller;
+package com.project.bumawiki.domain.coin.presentation;
 
 import java.util.List;
 
@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.bumawiki.domain.auth.annotation.LoginRequired;
 import com.project.bumawiki.domain.auth.service.QueryAuthService;
-import com.project.bumawiki.domain.coin.controller.dto.CoinAccountResponse;
-import com.project.bumawiki.domain.coin.controller.dto.PriceResponse;
-import com.project.bumawiki.domain.coin.controller.dto.RankingResponse;
-import com.project.bumawiki.domain.coin.controller.dto.TradeRequest;
-import com.project.bumawiki.domain.coin.controller.dto.TradeResponse;
+import com.project.bumawiki.domain.coin.presentation.dto.CoinAccountResponse;
+import com.project.bumawiki.domain.coin.presentation.dto.PriceResponse;
+import com.project.bumawiki.domain.coin.presentation.dto.RankingResponse;
+import com.project.bumawiki.domain.coin.presentation.dto.TradeRequest;
+import com.project.bumawiki.domain.coin.presentation.dto.TradeResponse;
 import com.project.bumawiki.domain.coin.service.CoinService;
 
 import jakarta.validation.Valid;
