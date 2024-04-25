@@ -140,12 +140,15 @@ public class QueryDocsService {
 		LinkedList<DiffMatchPatch.Diff> diff1 = DocsUtil.getDiff(originalDocsContent, firstDocsContent);
 		LinkedList<DiffMatchPatch.Diff> diff2 = DocsUtil.getDiff(originalDocsContent, contents);
 
+		VersionDocs lastVersion = docsReader.findLastVersion(docs);
+
 		return new MergeConflictDataResponseDto(
 			firstDocsContent,
 			contents,
 			originalDocsContent,
 			diff1,
-			diff2
+			diff2,
+			lastVersion.getVersion()
 		);
 	}
 
