@@ -58,7 +58,12 @@ public class FixtureGenerator {
 			.ofMinLength(1);
 	}
 
-	public static TradeWithoutTradeStatusAndCoinAccountId getRandomTradeWithoutTradeStatusAndCoinAccountId() {
-		return fixtureGenerator.giveMeOne(TradeWithoutTradeStatusAndCoinAccountId.class);
+	public static ArbitraryBuilder<TradeWithoutTradeStatusAndCoinAccountId> getRandomTradeWithoutTradeStatusAndCoinAccountId() {
+		return fixtureGenerator.giveMeBuilder(TradeWithoutTradeStatusAndCoinAccountId.class)
+			.setPostCondition(
+				javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinCount),
+				Long.class,
+				it -> it > 0
+			);
 	}
 }
