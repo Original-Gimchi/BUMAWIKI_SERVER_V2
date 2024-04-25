@@ -53,7 +53,7 @@ public class CommandCoinService {
 
 		Trade trade = coinData.toTrade(coinAccount);
 
-		if (coinData.coinPrice() >= nowPrice.getPrice()) {
+		if (coinData.getCoinPrice() >= nowPrice.getPrice()) {
 			buyNow(trade, coinAccount);
 		} else {
 			buyLater(trade);
@@ -68,7 +68,7 @@ public class CommandCoinService {
 
 		Trade trade = coinData.toTrade(coinAccount);
 
-		if (coinData.coinPrice() <= nowPrice.getPrice()) {
+		if (coinData.getCoinPrice() <= nowPrice.getPrice()) {
 			sellNow(trade, coinAccount);
 		} else {
 			sellLater(trade);
