@@ -7,6 +7,7 @@ import java.util.Collections;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.arbitraries.StringArbitrary;
 
+import com.project.bumawiki.domain.coin.domain.TradeWithoutTradeStatusAndCoinAccountId;
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
@@ -55,5 +56,9 @@ public class FixtureGenerator {
 		return Arbitraries.strings()
 			.ascii()
 			.ofMinLength(1);
+	}
+
+	public static TradeWithoutTradeStatusAndCoinAccountId getRandomTradeWithoutTradeStatusAndCoinAccountId() {
+		return fixtureGenerator.giveMeOne(TradeWithoutTradeStatusAndCoinAccountId.class);
 	}
 }
