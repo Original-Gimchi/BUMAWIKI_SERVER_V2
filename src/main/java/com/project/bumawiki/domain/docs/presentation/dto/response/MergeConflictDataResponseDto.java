@@ -9,6 +9,7 @@ public record MergeConflictDataResponseDto(
 	String secondDocsContent,
 	String originalDocsContent,
 	LinkedList<DiffMatchPatch.Diff> diff1,
-	LinkedList<DiffMatchPatch.Diff> diff2
+	LinkedList<DiffMatchPatch.Diff> diff2,
+	Integer lastVersion
 ) {
 }
