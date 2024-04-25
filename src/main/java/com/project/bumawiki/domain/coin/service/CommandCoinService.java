@@ -62,6 +62,15 @@ public class CommandCoinService {
 		return tradeCreator.create(trade);
 	}
 
+	private void buyLater(Trade trade) {
+		trade.updateTradeStatus(TradeStatus.BUYING);
+	}
+
+	private void buyNow(Trade trade, CoinAccount coinAccount) {
+		coinAccount.buyCoin(trade.getCoinPrice(), trade.getCoinCount());
+		trade.updateTradeStatus(TradeStatus.BOUGHT);
+	}
+
 	public Trade sellCoin(TradeWithoutTradeStatusAndCoinAccountId coinData, User user) {
 		CoinAccount coinAccount = coinAccountReader.getByUserId(user.getId());
 		Price nowPrice = priceReader.getRecentPrice();
@@ -84,15 +93,6 @@ public class CommandCoinService {
 	private void sellNow(Trade trade, CoinAccount coinAccount) {
 		coinAccount.sellCoin(trade.getCoinPrice(), trade.getCoinCount());
 		trade.updateTradeStatus(TradeStatus.SOLD);
-	}
-
-	private void buyLater(Trade trade) {
-		trade.updateTradeStatus(TradeStatus.BUYING);
-	}
-
-	private void buyNow(Trade trade, CoinAccount coinAccount) {
-		coinAccount.buyCoin(trade.getCoinPrice(), trade.getCoinCount());
-		trade.updateTradeStatus(TradeStatus.BOUGHT);
 	}
 
 	public void cancelTrade(Long tradeId, User user) {

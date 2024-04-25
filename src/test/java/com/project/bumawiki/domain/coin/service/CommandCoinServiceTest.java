@@ -81,4 +81,9 @@ class CommandCoinServiceTest extends ServiceTest {
 			).isEqualTo(coinData.getCoinCount())
 		);
 	}
+
+	@RepeatedTest(REPEAT_COUNT)
+	void 코인_판매하기() {
+
+	}
 }
