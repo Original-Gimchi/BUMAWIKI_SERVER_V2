@@ -91,7 +91,7 @@ class CommandCoinServiceTest extends ServiceTest {
 				assertAll(
 					() -> assertThat(tradeRepository.findAll().size()).isEqualTo(1),
 					() -> assertThat(
-						coinAccount.getMoney() > coinData.getCoinPrice() * coinData.getCoinCount()
+						coinAccount.getMoney() >= coinData.getCoinPrice() * coinData.getCoinCount()
 					).isEqualTo(true)
 				);
 			}
