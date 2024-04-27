@@ -62,7 +62,6 @@ class CommandCoinServiceTest extends ServiceTest {
 			void 잔고가_충분할_경우() {
 				// given
 				Price price = priceRepository.getRecentPrice();
-				System.out.println(price.getPrice());
 
 				User user = FixtureGenerator.getDefaultUserBuilder().sample();
 
@@ -73,9 +72,9 @@ class CommandCoinServiceTest extends ServiceTest {
 					.setPostCondition(
 						javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinPrice),
 						Long.class,
-						it -> it < CommandCoinService.FIRST_MONEY / 100L
+						it -> it < price.getPrice() / 100L
 					)
-					.set(javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinCount), price.getPrice()/100000L)
+					.set(javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinCount), price.getPrice() / 100000L)
 					.sample();
 
 				CoinAccount coinAccount = new CoinAccount(
