@@ -16,6 +16,8 @@ import com.project.bumawiki.domain.coin.domain.repository.PriceRepository;
 import com.project.bumawiki.domain.coin.domain.repository.TradeRepository;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 import com.project.bumawiki.global.service.FixtureGenerator;
 import com.project.bumawiki.global.service.ServiceTest;
 
@@ -56,50 +58,80 @@ class CommandCoinServiceTest extends ServiceTest {
 
 	@Nested
 	class 코인_구매하기 {
-		@Nested
-		class 구매_가격이_시세보다_높거나_같을_때 {
-			@RepeatedTest(REPEAT_COUNT)
-			void 잔고가_충분할_경우() {
-				// given
-				Price price = priceRepository.getRecentPrice();
+		@RepeatedTest(REPEAT_COUNT)
+		void 잔고가_충분하지_않을_경우() {
+			// given
+			Price price = priceRepository.getRecentPrice();
 
-				User user = FixtureGenerator.getDefaultUserBuilder().sample();
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
 
-				userRepository.save(user);
+			userRepository.save(user);
 
-				TradeWithoutTradeStatusAndCoinAccountId coinData = FixtureGenerator
-					.getRandomTradeWithoutTradeStatusAndCoinAccountId()
-					.setPostCondition(
-						javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinPrice),
-						Long.class,
-						it -> it < price.getPrice() / 100L
-					)
-					.set(javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinCount), price.getPrice() / 100000L)
-					.sample();
+			TradeWithoutTradeStatusAndCoinAccountId coinData = FixtureGenerator
+				.getRandomTradeWithoutTradeStatusAndCoinAccountId()
+				.setPostCondition(
+					javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinPrice),
+					Long.class,
+					it -> it >= price.getPrice()
+				)
+				.set(javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinCount), price.getPrice() / 10000L)
+				.sample();
 
-				CoinAccount coinAccount = new CoinAccount(
-					user.getId(),
-					CommandCoinService.FIRST_MONEY
-				);
+			CoinAccount coinAccount = new CoinAccount(
+				user.getId(),
+				FixtureGenerator.getDefaultLongArbitrary()
+					.lessOrEqual(coinData.getCoinCount() * coinData.getCoinPrice() - 1L)
+					.sample()
+			);
 
-				coinAccountRepository.save(coinAccount);
+			coinAccountRepository.save(coinAccount);
 
-				// when
-				commandCoinService.buyCoin(coinData, user);
+			// when
+			BumawikiException exception = assertThrows(
+				BumawikiException.class,
+				() -> commandCoinService.buyCoin(coinData, user)
+			);
 
-				// then
-				assertAll(
-					() -> assertThat(tradeRepository.findAll().size()).isEqualTo(1),
-					() -> assertThat(
-						coinAccount.getMoney() >= coinData.getCoinPrice() * coinData.getCoinCount()
-					).isEqualTo(true)
-				);
-			}
+			// then
+			assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.MONEY_NOT_ENOUGH);
+		}
 
-			// @RepeatedTest(REPEAT_COUNT)
-			// void 잔고가_충분하지_않을_경우() {
-			//
-			// }
+		@RepeatedTest(REPEAT_COUNT)
+		void 구매_가격이_시세보다_높거나_같을_때() {
+			// given
+			Price price = priceRepository.getRecentPrice();
+
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
+
+			userRepository.save(user);
+
+			TradeWithoutTradeStatusAndCoinAccountId coinData = FixtureGenerator
+				.getRandomTradeWithoutTradeStatusAndCoinAccountId()
+				.setPostCondition(
+					javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinPrice),
+					Long.class,
+					it -> it < price.getPrice() / 100L
+				)
+				.set(javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinCount), price.getPrice() / 100000L)
+				.sample();
+
+			CoinAccount coinAccount = new CoinAccount(
+				user.getId(),
+				CommandCoinService.FIRST_MONEY
+			);
+
+			coinAccountRepository.save(coinAccount);
+
+			// when
+			commandCoinService.buyCoin(coinData, user);
+
+			// then
+			assertAll(
+				() -> assertThat(tradeRepository.findAll().size()).isEqualTo(1),
+				() -> assertThat(
+					coinAccount.getMoney() >= coinData.getCoinPrice() * coinData.getCoinCount()
+				).isEqualTo(true)
+			);
 		}
 	}
 
