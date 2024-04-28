@@ -248,7 +248,7 @@ class CommandCoinServiceTest extends ServiceTest {
 		}
 
 		@RepeatedTest(REPEAT_COUNT)
-		void 구매_가격이_시세보다_높거나_같을_때() {
+		void 구매_가격이_시세보다_낮거나_같을_때() {
 			// given
 			Price price = priceRepository.getRecentPrice();
 
@@ -264,7 +264,7 @@ class CommandCoinServiceTest extends ServiceTest {
 					.greaterOrEqual(0L)
 					.sample();
 				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
-					.greaterOrEqual(price.getPrice())
+					.between(0L, price.getPrice())
 					.sample();
 			}
 
@@ -280,19 +280,27 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			coinAccountRepository.save(coinAccount);
 
-			Long moneyBeforeBuyCoin = coinAccount.getMoney();
+			commandCoinService.buyCoin(coinData, user);
+
+			TradeWithoutTradeStatusAndCoinAccountId coinDataToSell =
+				new TradeWithoutTradeStatusAndCoinAccountId(
+					coinPrice,
+					FixtureGenerator.getDefaultLongArbitrary()
+						.between(0L, coinAccount.getCoin())
+						.sample()
+				);
 
 			// when
-			commandCoinService.buyCoin(coinData, user);
+			commandCoinService.sellCoin(coinDataToSell, user);
 
 			// then
 			assertAll(
-				() -> assertThat(tradeRepository.findAll().size()).isEqualTo(1),
+				() -> assertThat(tradeRepository.findAll().size()).isEqualTo(2),
 				() -> assertThat(
-					moneyBeforeBuyCoin >= coinData.getCoinPrice() * coinData.getCoinCount()
-				).isEqualTo(true),
+					coinAccount.getCoin() < coinDataToSell.getCoinCount()
+				).isEqualTo(false),
 				() -> assertThat(
-					coinData.getCoinPrice() >= price.getPrice()
+					coinData.getCoinPrice() <= price.getPrice()
 				).isEqualTo(true)
 			);
 		}
