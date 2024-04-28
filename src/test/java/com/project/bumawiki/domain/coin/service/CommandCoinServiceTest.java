@@ -137,7 +137,7 @@ class CommandCoinServiceTest extends ServiceTest {
 			Long moneyBeforeBuyCoin = coinAccount.getMoney();
 
 			// when
-			commandCoinService.buyCoin(coinData, user);
+			Trade trade = commandCoinService.buyCoin(coinData, user);
 
 			// then
 			assertAll(
@@ -145,6 +145,7 @@ class CommandCoinServiceTest extends ServiceTest {
 				() -> assertThat(
 					moneyBeforeBuyCoin >= coinData.getCoinPrice() * coinData.getCoinCount()
 				).isEqualTo(true),
+				() -> assertThat(trade.getTradeStatus()).isEqualTo(TradeStatus.BOUGHT),
 				() -> assertThat(
 					coinData.getCoinPrice() >= price.getPrice()
 				).isEqualTo(true)
@@ -187,7 +188,7 @@ class CommandCoinServiceTest extends ServiceTest {
 			Long moneyBeforeBuyCoin = coinAccount.getMoney();
 
 			// when
-			commandCoinService.buyCoin(coinData, user);
+			Trade trade = commandCoinService.buyCoin(coinData, user);
 
 			// then
 			assertAll(
@@ -195,6 +196,7 @@ class CommandCoinServiceTest extends ServiceTest {
 				() -> assertThat(
 					moneyBeforeBuyCoin >= coinData.getCoinPrice() * coinData.getCoinCount()
 				).isEqualTo(true),
+				() -> assertThat(trade.getTradeStatus()).isEqualTo(TradeStatus.BUYING),
 				() -> assertThat(
 					coinData.getCoinPrice() < price.getPrice()
 				).isEqualTo(true)
@@ -267,7 +269,7 @@ class CommandCoinServiceTest extends ServiceTest {
 					.greaterOrEqual(0L)
 					.sample();
 				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
-					.between(0L, price.getPrice())
+					.between(0L, 800000L)
 					.sample();
 			}
 
@@ -294,7 +296,7 @@ class CommandCoinServiceTest extends ServiceTest {
 				);
 
 			// when
-			commandCoinService.sellCoin(coinDataToSell, user);
+			Trade trade = commandCoinService.sellCoin(coinDataToSell, user);
 
 			// then
 			assertAll(
@@ -302,6 +304,7 @@ class CommandCoinServiceTest extends ServiceTest {
 				() -> assertThat(
 					coinAccount.getCoin() < coinDataToSell.getCoinCount()
 				).isEqualTo(false),
+				() -> assertThat(trade.getTradeStatus()).isEqualTo(TradeStatus.SOLD),
 				() -> assertThat(
 					coinData.getCoinPrice() <= price.getPrice()
 				).isEqualTo(true)
