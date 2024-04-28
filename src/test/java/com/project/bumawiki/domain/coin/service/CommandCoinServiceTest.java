@@ -1,6 +1,5 @@
 package com.project.bumawiki.domain.coin.service;
 
-import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPropertySelector.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,20 +66,25 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			userRepository.save(user);
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData = FixtureGenerator
-				.getRandomTradeWithoutTradeStatusAndCoinAccountId()
-				.setPostCondition(
-					javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinPrice),
-					Long.class,
-					it -> it >= price.getPrice()
-				)
-				.set(javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinCount), price.getPrice() / 10000L)
-				.sample();
+			Long coinCount = 0L;
+			Long coinPrice = 0L;
+
+			while (coinCount * coinPrice <= 0) {
+				coinCount = FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(0L)
+					.sample();
+				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(1000000L)
+					.sample();
+			}
+
+			TradeWithoutTradeStatusAndCoinAccountId coinData =
+				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
 				FixtureGenerator.getDefaultLongArbitrary()
-					.lessOrEqual(coinData.getCoinCount() * coinData.getCoinPrice() - 1L)
+					.between(0L, coinData.getCoinCount() * coinData.getCoinPrice() - 200000L)
 					.sample()
 			);
 
@@ -105,22 +109,31 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			userRepository.save(user);
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData = FixtureGenerator
-				.getRandomTradeWithoutTradeStatusAndCoinAccountId()
-				.setPostCondition(
-					javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinPrice),
-					Long.class,
-					it -> it < price.getPrice() / 100L
-				)
-				.set(javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinCount), price.getPrice() / 100000L)
-				.sample();
+			Long coinCount = 0L;
+			Long coinPrice = 0L;
+
+			while (coinCount * coinPrice <= 0) {
+				coinCount = FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(0L)
+					.sample();
+				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(price.getPrice())
+					.sample();
+			}
+
+			TradeWithoutTradeStatusAndCoinAccountId coinData =
+				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
-				CommandCoinService.FIRST_MONEY
+				FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(coinData.getCoinCount() * coinData.getCoinPrice())
+					.sample()
 			);
 
 			coinAccountRepository.save(coinAccount);
+
+			Long moneyBeforeBuyCoin = coinAccount.getMoney();
 
 			// when
 			commandCoinService.buyCoin(coinData, user);
@@ -129,7 +142,60 @@ class CommandCoinServiceTest extends ServiceTest {
 			assertAll(
 				() -> assertThat(tradeRepository.findAll().size()).isEqualTo(1),
 				() -> assertThat(
-					coinAccount.getMoney() >= coinData.getCoinPrice() * coinData.getCoinCount()
+					moneyBeforeBuyCoin >= coinData.getCoinPrice() * coinData.getCoinCount()
+				).isEqualTo(true),
+				() -> assertThat(
+					coinData.getCoinPrice() >= price.getPrice()
+				).isEqualTo(true)
+			);
+		}
+
+		@RepeatedTest(REPEAT_COUNT)
+		void 구매_가격이_시세보다_낮을_때() {
+			// given
+			Price price = priceRepository.getRecentPrice();
+
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
+
+			userRepository.save(user);
+
+			Long coinCount = 0L;
+			Long coinPrice = 0L;
+
+			while (coinCount * coinPrice <= 0) {
+				coinCount = FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(0L)
+					.sample();
+				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
+					.between(0L, price.getPrice() - 1L)
+					.sample();
+			}
+
+			TradeWithoutTradeStatusAndCoinAccountId coinData =
+				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+
+			CoinAccount coinAccount = new CoinAccount(
+				user.getId(),
+				FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(coinData.getCoinCount() * coinData.getCoinPrice())
+					.sample()
+			);
+
+			coinAccountRepository.save(coinAccount);
+
+			Long moneyBeforeBuyCoin = coinAccount.getMoney();
+
+			// when
+			commandCoinService.buyCoin(coinData, user);
+
+			// then
+			assertAll(
+				() -> assertThat(tradeRepository.findAll().size()).isEqualTo(1),
+				() -> assertThat(
+					moneyBeforeBuyCoin >= coinData.getCoinPrice() * coinData.getCoinCount()
+				).isEqualTo(true),
+				() -> assertThat(
+					coinData.getCoinPrice() < price.getPrice()
 				).isEqualTo(true)
 			);
 		}
