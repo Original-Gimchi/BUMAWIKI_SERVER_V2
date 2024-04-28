@@ -367,4 +367,98 @@ class CommandCoinServiceTest extends ServiceTest {
 			);
 		}
 	}
+
+	@Nested
+	class 거래_취소하기 {
+		@RepeatedTest(REPEAT_COUNT)
+		void 이미_완료된_거래일_때() {
+			// given
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
+
+			userRepository.save(user);
+
+			Long coinCount = 0L;
+			Long coinPrice = 0L;
+
+			while (coinCount * coinPrice <= 0) {
+				coinCount = FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(0L)
+					.sample();
+				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(1000000L)
+					.sample();
+			}
+
+			TradeWithoutTradeStatusAndCoinAccountId coinData =
+				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+
+			CoinAccount coinAccount = new CoinAccount(
+				user.getId(),
+				FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(coinData.getCoinCount() * coinData.getCoinPrice())
+					.sample()
+			);
+
+			coinAccountRepository.save(coinAccount);
+
+			Trade trade = commandCoinService.buyCoin(coinData, user);
+
+			// when
+			BumawikiException exception = assertThrows(
+				BumawikiException.class,
+				() -> commandCoinService.cancelTrade(trade.getId(), user)
+			);
+
+			// then
+			assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.TRADE_ALREADY_FINISHED);
+		}
+
+		@RepeatedTest(REPEAT_COUNT)
+		void 다른_유저가_요청했을_때() {
+			// given
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
+
+			userRepository.save(user);
+
+			User otherUser = FixtureGenerator.getDefaultUserBuilder().sample();
+
+			userRepository.save(otherUser);
+
+			Long coinCount = 0L;
+			Long coinPrice = 0L;
+
+			while (coinCount * coinPrice <= 0) {
+				coinCount = FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(0L)
+					.sample();
+				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
+					.between(0L, 1000000L - 1L)
+					.sample();
+			}
+
+			TradeWithoutTradeStatusAndCoinAccountId coinData =
+				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+
+			CoinAccount coinAccount = new CoinAccount(
+				user.getId(),
+				FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(coinData.getCoinCount() * coinData.getCoinPrice())
+					.sample()
+			);
+
+			coinAccountRepository.save(coinAccount);
+
+			// when
+			Trade trade = commandCoinService.buyCoin(coinData, user);
+
+			// when
+			BumawikiException exception = assertThrows(
+				BumawikiException.class,
+				() -> commandCoinService.cancelTrade(trade.getId(), otherUser)
+			);
+
+			// then
+			assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.CANCEL_OTHERS_TRADE);
+		}
+	}
 }
