@@ -5,14 +5,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.project.bumawiki.domain.coin.domain.CoinAccount;
 import com.project.bumawiki.domain.coin.domain.Price;
+import com.project.bumawiki.domain.coin.domain.Trade;
 import com.project.bumawiki.domain.coin.domain.TradeWithoutTradeStatusAndCoinAccountId;
 import com.project.bumawiki.domain.coin.domain.repository.CoinAccountRepository;
 import com.project.bumawiki.domain.coin.domain.repository.PriceRepository;
 import com.project.bumawiki.domain.coin.domain.repository.TradeRepository;
+import com.project.bumawiki.domain.coin.domain.type.TradeStatus;
 import com.project.bumawiki.domain.user.domain.User;
 import com.project.bumawiki.domain.user.domain.repository.UserRepository;
 import com.project.bumawiki.global.error.exception.BumawikiException;
@@ -306,7 +309,7 @@ class CommandCoinServiceTest extends ServiceTest {
 		}
 
 		@RepeatedTest(REPEAT_COUNT)
-		void 구매_가격이_시세보다_낮을_때() {
+		void 구매_가격이_시세보다_높을_때() {
 			// given
 			Price price = priceRepository.getRecentPrice();
 
@@ -322,7 +325,7 @@ class CommandCoinServiceTest extends ServiceTest {
 					.greaterOrEqual(0L)
 					.sample();
 				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
-					.between(0L, price.getPrice() - 1L)
+					.greaterOrEqual(price.getPrice() + 200000L)
 					.sample();
 			}
 
@@ -338,19 +341,25 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			coinAccountRepository.save(coinAccount);
 
-			Long moneyBeforeBuyCoin = coinAccount.getMoney();
+			commandCoinService.buyCoin(coinData, user);
+
+			TradeWithoutTradeStatusAndCoinAccountId coinDataToSell =
+				new TradeWithoutTradeStatusAndCoinAccountId(
+					coinPrice,
+					FixtureGenerator.getDefaultLongArbitrary()
+						.between(0L, coinAccount.getCoin())
+						.sample()
+				);
 
 			// when
-			commandCoinService.buyCoin(coinData, user);
+			Trade trade = commandCoinService.sellCoin(coinDataToSell, user);
 
 			// then
 			assertAll(
-				() -> assertThat(tradeRepository.findAll().size()).isEqualTo(1),
+				() -> assertThat(tradeRepository.findAll().size()).isEqualTo(2),
+				() -> assertThat(trade.getTradeStatus()).isEqualTo(TradeStatus.SELLING),
 				() -> assertThat(
-					moneyBeforeBuyCoin >= coinData.getCoinPrice() * coinData.getCoinCount()
-				).isEqualTo(true),
-				() -> assertThat(
-					coinData.getCoinPrice() < price.getPrice()
+					coinData.getCoinPrice() > price.getPrice()
 				).isEqualTo(true)
 			);
 		}
