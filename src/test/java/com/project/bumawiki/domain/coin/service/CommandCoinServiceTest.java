@@ -202,10 +202,8 @@ class CommandCoinServiceTest extends ServiceTest {
 	@Nested
 	class 코인_판매하기 {
 		@RepeatedTest(REPEAT_COUNT)
-		void 잔고가_충분하지_않을_경우() {
+		void 코인이_충분하지_않을_경우() {
 			// given
-			Price price = priceRepository.getRecentPrice();
-
 			User user = FixtureGenerator.getDefaultUserBuilder().sample();
 
 			userRepository.save(user);
@@ -215,10 +213,10 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			while (coinCount * coinPrice <= 0) {
 				coinCount = FixtureGenerator.getDefaultLongArbitrary()
-					.greaterOrEqual(0L)
+					.between(0L, Long.MAX_VALUE)
 					.sample();
 				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
-					.greaterOrEqual(1000000L)
+					.between(0L, 1000000L)
 					.sample();
 			}
 
@@ -228,20 +226,25 @@ class CommandCoinServiceTest extends ServiceTest {
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
 				FixtureGenerator.getDefaultLongArbitrary()
-					.between(0L, coinData.getCoinCount() * coinData.getCoinPrice() - 200000L)
+					.greaterOrEqual(coinData.getCoinCount() * coinData.getCoinPrice())
 					.sample()
 			);
 
 			coinAccountRepository.save(coinAccount);
 
+			commandCoinService.buyCoin(coinData, user);
+
+			TradeWithoutTradeStatusAndCoinAccountId coinDataToSell =
+				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount + 1);
+
 			// when
 			BumawikiException exception = assertThrows(
 				BumawikiException.class,
-				() -> commandCoinService.buyCoin(coinData, user)
+				() -> commandCoinService.sellCoin(coinDataToSell, user)
 			);
 
 			// then
-			assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.MONEY_NOT_ENOUGH);
+			assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.COIN_NOT_ENOUGH);
 		}
 
 		@RepeatedTest(REPEAT_COUNT)
