@@ -371,6 +371,46 @@ class CommandCoinServiceTest extends ServiceTest {
 	@Nested
 	class 거래_취소하기 {
 		@RepeatedTest(REPEAT_COUNT)
+		void 거래_취소할_때() {
+			// given
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
+
+			userRepository.save(user);
+
+			Long coinCount = 0L;
+			Long coinPrice = 0L;
+
+			while (coinCount * coinPrice <= 0) {
+				coinCount = FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(0L)
+					.sample();
+				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
+					.between(0L, 800000L)
+					.sample();
+			}
+
+			TradeWithoutTradeStatusAndCoinAccountId coinData =
+				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+
+			CoinAccount coinAccount = new CoinAccount(
+				user.getId(),
+				FixtureGenerator.getDefaultLongArbitrary()
+					.greaterOrEqual(coinData.getCoinCount() * coinData.getCoinPrice())
+					.sample()
+			);
+
+			coinAccountRepository.save(coinAccount);
+
+			Trade trade = commandCoinService.buyCoin(coinData, user);
+
+			// when
+			commandCoinService.cancelTrade(trade.getId(), user);
+
+			// then
+			assertThat(trade.getTradeStatus()).isEqualTo(TradeStatus.CANCELLED);
+		}
+
+		@RepeatedTest(REPEAT_COUNT)
 		void 이미_완료된_거래일_때() {
 			// given
 			User user = FixtureGenerator.getDefaultUserBuilder().sample();
