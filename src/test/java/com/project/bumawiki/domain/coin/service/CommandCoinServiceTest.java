@@ -38,24 +38,45 @@ class CommandCoinServiceTest extends ServiceTest {
 	@Autowired
 	private PriceRepository priceRepository;
 
-	@RepeatedTest(REPEAT_COUNT)
-	void 코인_계정_생성하기() {
-		// given
-		User user = FixtureGenerator.getDefaultUserBuilder().sample();
+	@Nested
+	class 코인_계정_생성하기 {
+		@RepeatedTest(REPEAT_COUNT)
+		void 코인_계정_생성할_때() {
+			// given
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
 
-		userRepository.save(user);
+			userRepository.save(user);
 
-		// when
-		commandCoinService.createCoinAccount(user);
+			// when
+			commandCoinService.createCoinAccount(user);
 
-		// then
-		assertAll(
-			() -> {
-				assertThat(coinAccountRepository.findByUserId(user.getId()).isPresent()).isEqualTo(true);
-				assertThat(coinAccountRepository.findByUserId(user.getId()).get().getUserId()).isEqualTo(user.getId());
-			}
-		);
-		// 이미존재하는경우 ㄱㄱ
+			// then
+			assertAll(
+				() -> {
+					assertThat(coinAccountRepository.findByUserId(user.getId()).isPresent()).isEqualTo(true);
+					assertThat(coinAccountRepository.findByUserId(user.getId()).get().getUserId()).isEqualTo(user.getId());
+				}
+			);
+		}
+
+		@RepeatedTest(REPEAT_COUNT)
+		void 이미_계정이_존재할_때() {
+			// given
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
+
+			userRepository.save(user);
+
+			commandCoinService.createCoinAccount(user);
+
+			// when
+			BumawikiException exception = assertThrows(
+				BumawikiException.class,
+				() -> commandCoinService.createCoinAccount(user)
+			);
+
+			// then
+			assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.ALREADY_CREATED);
+		}
 	}
 
 	@Nested
