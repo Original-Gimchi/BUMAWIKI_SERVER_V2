@@ -48,6 +48,7 @@ jwt:
 bsm:
   client-id: ${BSM_CLIENT_ID}
   secret-key: ${BSM_SECRET_KEY}
+  redirect-url: ${BSM_REDIRECT_URL}
 
 #S3
 aws:

@@ -35,14 +35,18 @@ decorator:
     p6spy:
       enable-logging: true
 
-jwt:
-  secret: ${SECRET}
-  accessExp: ${ACCESS_EXP}
-  refreshExp: ${REFRESH_EXP}
+auth:
+  jwt:
+    header: ${HEADER}
+    secret: ${SECRET}
+    accessExp: ${ACCESS_EXP}
+    refreshExp: ${REFRESH_EXP}
+    prefix: ${PREFIXES}
 
 bsm:
   client-id: ${BSM_CLIENT_ID}
   secret-key: ${BSM_SECRET_KEY}
+  redirect-url: ${BSM_REDIRECT_URL}
 
 file:
   path: ${SAVING_URL}
