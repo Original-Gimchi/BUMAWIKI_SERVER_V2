@@ -93,22 +93,20 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			while (coinCount * coinPrice <= 0) {
 				coinCount = FixtureGenerator.getDefaultLongArbitrary()
-					.greaterOrEqual(0L)
+					.greaterOrEqual(1L)
 					.sample();
 				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
-					.greaterOrEqual(1000000L)
+					.greaterOrEqual(1200000L)
 					.sample();
 			}
 
 			TradeWithoutTradeStatusAndCoinAccountId coinData =
 				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
 
-			CoinAccount coinAccount = new CoinAccount(
-				user.getId(),
-				FixtureGenerator.getDefaultLongArbitrary()
-					.between(0L, coinData.getCoinCount() * coinData.getCoinPrice() - 200000L)
-					.sample()
-			);
+			System.out.println(coinData.getCoinCount());
+			System.out.println(coinData.getCoinPrice());
+
+			CoinAccount coinAccount = new CoinAccount(user.getId(), 0L);
 
 			coinAccountRepository.save(coinAccount);
 
@@ -139,7 +137,7 @@ class CommandCoinServiceTest extends ServiceTest {
 					.greaterOrEqual(0L)
 					.sample();
 				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
-					.greaterOrEqual(price.getPrice())
+					.greaterOrEqual(1200000L)
 					.sample();
 			}
 
@@ -190,7 +188,7 @@ class CommandCoinServiceTest extends ServiceTest {
 					.greaterOrEqual(0L)
 					.sample();
 				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
-					.between(0L, price.getPrice() - 1L)
+					.between(0L, 800000L)
 					.sample();
 			}
 
@@ -446,7 +444,7 @@ class CommandCoinServiceTest extends ServiceTest {
 					.greaterOrEqual(0L)
 					.sample();
 				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
-					.greaterOrEqual(1000000L)
+					.greaterOrEqual(1200000L)
 					.sample();
 			}
 
@@ -493,7 +491,7 @@ class CommandCoinServiceTest extends ServiceTest {
 					.greaterOrEqual(0L)
 					.sample();
 				coinPrice = FixtureGenerator.getDefaultLongArbitrary()
-					.between(0L, 1000000L - 1L)
+					.between(0L, 800000L)
 					.sample();
 			}
 
