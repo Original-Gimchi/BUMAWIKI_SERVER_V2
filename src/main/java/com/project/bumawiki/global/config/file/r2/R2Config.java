@@ -1,4 +1,4 @@
-package com.project.bumawiki.global.config.s3;
+package com.project.bumawiki.global.config.file.r2;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
-class S3Config {
+class R2Config {
 
 	@Value("${aws.s3.access-key}")
 	private String accessKey;

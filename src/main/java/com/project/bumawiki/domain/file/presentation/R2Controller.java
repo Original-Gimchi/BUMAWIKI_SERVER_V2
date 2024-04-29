@@ -1,4 +1,4 @@
-package com.project.bumawiki.global.s3.controller;
+package com.project.bumawiki.domain.file.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,22 +8,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.project.bumawiki.global.s3.controller.dto.ImageResponse;
-import com.project.bumawiki.global.s3.service.CommandImageService;
+import com.project.bumawiki.domain.file.presentation.dto.R2FileResponseDto;
+import com.project.bumawiki.domain.file.service.CommandFileService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/s3")
-public class S3Controller {
-	private final CommandImageService commandImageService;
+public class R2Controller {
+	private final CommandFileService commandFileService;
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ImageResponse upload(@RequestPart("file") MultipartFile file) {
-		return ImageResponse.from(
-			commandImageService.uploadImage(file)
+	public R2FileResponseDto upload(@RequestPart("file") MultipartFile file) {
+		return R2FileResponseDto.from(
+			commandFileService.uploadFile(file)
 		);
 	}
 }

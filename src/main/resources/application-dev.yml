@@ -35,20 +35,16 @@ decorator:
     p6spy:
       enable-logging: true
 
-auth:
-  jwt:
-    header: ${HEADER}
-    secret: ${SECRET}
-    accessExp: ${ACCESS_EXP}
-    refreshExp: ${REFRESH_EXP}
-    prefix: ${PREFIXES}
+jwt:
+  secret: ${SECRET}
+  accessExp: ${ACCESS_EXP}
+  refreshExp: ${REFRESH_EXP}
 
 bsm:
   client-id: ${BSM_CLIENT_ID}
   secret-key: ${BSM_SECRET_KEY}
-  redirect-url: ${BSM_REDIRECT_URL}
 
-image:
+file:
   path: ${SAVING_URL}
 
 #S3

@@ -63,5 +63,5 @@ aws:
     end-point-url: ${S3_ENDPOINT_URL}
     read-url: ${S3_READ_URL}
 
-image:
+file:
   path: ${SAVING_URL}

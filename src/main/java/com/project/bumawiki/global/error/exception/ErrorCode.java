@@ -48,9 +48,9 @@ public enum ErrorCode {
 	INTERNAL_SERVER_ERROR(500, "SERVER-500-1", "Internal Server Error"),
 
 	//Image,
-	NO_IMAGE(400, "IMG-400-1", "이미지가 없습니다."),
 	IMAGE_NOT_FOUND_EXCEPTION(404, "IMG-404-1", "이미지를 조회할 수 없습니다."),
 	S3_SAVE_EXCEPTION(500, "IMG-500-1", "S3 Save Exception"),
+	MALFORMED_URL(500, "IMG-500-2", "URL 형식이 올바르지 않습니다."),
 
 	//coin,
 	MONEY_NOT_ENOUGH(400, "COIN-400-1", "돈이 충분하지 않습니다."),
