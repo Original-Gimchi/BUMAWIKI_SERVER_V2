@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/s3")
+@RequestMapping("/api/r2")
 public class R2Controller {
 	private final CommandFileService commandFileService;
 
