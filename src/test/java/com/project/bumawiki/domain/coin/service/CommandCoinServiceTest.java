@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.project.bumawiki.domain.coin.domain.CoinAccount;
@@ -56,6 +55,7 @@ class CommandCoinServiceTest extends ServiceTest {
 				assertThat(coinAccountRepository.findByUserId(user.getId()).get().getUserId()).isEqualTo(user.getId());
 			}
 		);
+		// 이미존재하는경우 ㄱㄱ
 	}
 
 	@Nested
@@ -499,6 +499,65 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			// then
 			assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.CANCEL_OTHERS_TRADE);
+		}
+	}
+
+	@Nested
+	class 일일_보상_받기 {
+		@RepeatedTest(REPEAT_COUNT)
+		void 일일_보상_받을_때() {
+			// given
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
+
+			userRepository.save(user);
+
+			CoinAccount coinAccount = new CoinAccount(
+				user.getId(),
+				CommandCoinService.FIRST_MONEY
+			);
+
+			coinAccountRepository.save(coinAccount);
+
+			// when
+			commandCoinService.dailyCheck(user);
+
+			CoinAccount updatedCoinAccount = coinAccountRepository.getByUserId(user.getId());
+
+			// then
+			assertAll(
+				() -> assertThat(
+					updatedCoinAccount.wasRewardedToday()
+				).isTrue(),
+				() -> assertThat(
+					updatedCoinAccount.getMoney() - CommandCoinService.FIRST_MONEY
+				).isBetween(50000L, 200000L)
+			);
+		}
+
+		@RepeatedTest(REPEAT_COUNT)
+		void 이미_보상을_받았을_때() {
+			// given
+			User user = FixtureGenerator.getDefaultUserBuilder().sample();
+
+			userRepository.save(user);
+
+			CoinAccount coinAccount = new CoinAccount(
+				user.getId(),
+				CommandCoinService.FIRST_MONEY
+			);
+
+			coinAccountRepository.save(coinAccount);
+
+			commandCoinService.dailyCheck(user);
+
+			// when
+			BumawikiException exception = assertThrows(
+				BumawikiException.class,
+				() -> commandCoinService.dailyCheck(user)
+			);
+
+			// then
+			assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.ALREADY_AWARDED);
 		}
 	}
 }
