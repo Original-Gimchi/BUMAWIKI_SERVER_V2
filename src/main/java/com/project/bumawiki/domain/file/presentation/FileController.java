@@ -30,7 +30,7 @@ public class FileController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public R2FileResponseDto upload(@RequestPart("file") MultipartFile file) {
-		return R2FileResponseDto.from(
+		return new R2FileResponseDto(
 			commandFileService.uploadFile(file)
 		);
 	}
