@@ -18,6 +18,7 @@ import com.project.bumawiki.domain.coin.implementation.PriceCreator;
 import com.project.bumawiki.domain.coin.implementation.PriceReader;
 import com.project.bumawiki.domain.coin.implementation.TradeCreator;
 import com.project.bumawiki.domain.coin.implementation.TradeReader;
+import com.project.bumawiki.domain.coin.implementation.TradeUpdater;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,7 @@ public class PriceScheduler {
 	private final PriceCreator priceCreator;
 	private final TradeReader tradeReader;
 	private final TradeCreator tradeCreator;
+	private final TradeUpdater tradeUpdater;
 	private final CoinAccountReader coinAccountReader;
 	private final CoinAccountCreator coinAccountCreator;
 
@@ -79,7 +81,7 @@ public class PriceScheduler {
 				CoinAccount tradingAccount = coinAccountReader.getById(sellingTrade.getCoinAccountId());
 
 				tradingAccount.sellCoin(sellingTrade.getCoinPrice(), sellingTrade.getCoinCount());
-				sellingTrade.updateTradeStatus(TradeStatus.SOLD);
+				tradeUpdater.updateTradeStatus(sellingTrade, TradeStatus.SOLD);
 				tradeCreator.create(sellingTrade);
 			}
 		}
@@ -93,7 +95,7 @@ public class PriceScheduler {
 				CoinAccount tradingAccount = coinAccountReader.getById(buyingTrade.getCoinAccountId());
 
 				tradingAccount.buyCoin(buyingTrade.getCoinPrice(), buyingTrade.getCoinCount());
-				buyingTrade.updateTradeStatus(TradeStatus.BOUGHT);
+				tradeUpdater.updateTradeStatus(buyingTrade, TradeStatus.BOUGHT);
 				tradeCreator.create(buyingTrade);
 			}
 		}

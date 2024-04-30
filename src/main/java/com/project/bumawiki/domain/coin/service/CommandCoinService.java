@@ -18,6 +18,7 @@ import com.project.bumawiki.domain.coin.implementation.CoinAccountValidator;
 import com.project.bumawiki.domain.coin.implementation.PriceReader;
 import com.project.bumawiki.domain.coin.implementation.TradeCreator;
 import com.project.bumawiki.domain.coin.implementation.TradeReader;
+import com.project.bumawiki.domain.coin.implementation.TradeUpdater;
 import com.project.bumawiki.domain.coin.implementation.TradeValidator;
 import com.project.bumawiki.domain.user.domain.User;
 
@@ -34,6 +35,7 @@ public class CommandCoinService {
 	private final PriceReader priceReader;
 	private final TradeReader tradeReader;
 	private final TradeCreator tradeCreator;
+	private final TradeUpdater tradeUpdater;
 	private final TradeValidator tradeValidator;
 
 	public CoinAccount createCoinAccount(User user) {
@@ -63,12 +65,12 @@ public class CommandCoinService {
 	}
 
 	private void buyLater(Trade trade) {
-		trade.updateTradeStatus(TradeStatus.BUYING);
+		tradeUpdater.updateTradeStatus(trade, TradeStatus.BUYING);
 	}
 
 	private void buyNow(Trade trade, CoinAccount coinAccount) {
 		coinAccount.buyCoin(trade.getCoinPrice(), trade.getCoinCount());
-		trade.updateTradeStatus(TradeStatus.BOUGHT);
+		tradeUpdater.updateTradeStatus(trade, TradeStatus.BOUGHT);
 	}
 
 	public Trade sellCoin(TradeWithoutTradeStatusAndCoinAccountId coinData, User user) {
@@ -87,12 +89,12 @@ public class CommandCoinService {
 	}
 
 	private void sellLater(Trade trade) {
-		trade.updateTradeStatus(TradeStatus.SELLING);
+		tradeUpdater.updateTradeStatus(trade, TradeStatus.SELLING);
 	}
 
 	private void sellNow(Trade trade, CoinAccount coinAccount) {
 		coinAccount.sellCoin(trade.getCoinPrice(), trade.getCoinCount());
-		trade.updateTradeStatus(TradeStatus.SOLD);
+		tradeUpdater.updateTradeStatus(trade, TradeStatus.SOLD);
 	}
 
 	public void cancelTrade(Long tradeId, User user) {
