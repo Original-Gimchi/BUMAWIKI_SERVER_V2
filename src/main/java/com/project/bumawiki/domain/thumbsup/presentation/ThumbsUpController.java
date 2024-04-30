@@ -34,7 +34,7 @@ public class ThumbsUpController {
 	private final QueryAuthService queryAuthService;
 
 	@LoginRequired
-	@PostMapping("/create")
+	@PostMapping
 	public void createLike(@RequestBody ThumbsUpRequestDto thumbsUpRequestDto) {
 		commandThumbsUpService.createThumbsUp(queryAuthService.getCurrentUser(), thumbsUpRequestDto.docsId());
 	}
