@@ -19,9 +19,9 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
 
 	default Price getRecentPrice() {
 		return findTopOrderByStartedTime()
-			.orElse(save(
-				new Price(1000000L)
-			));
+			.orElseGet(() ->
+				save(new Price(1000000L))
+			);
 	}
 
 	@Query("select p from Price p where p.startedTime >= :twoWeeksAgo order by p.startedTime asc")
