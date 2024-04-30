@@ -28,7 +28,9 @@ class CommandUserServiceTest extends ServiceTest {
 	void 유저_권한_업데이트() {
 		// given
 		Authority authority = Arbitraries.of(Authority.class).sample();
+		// 위와 다른 권한을 랜덤으로 선택
 		Authority otherAuthority = Arbitraries.of(Authority.class).filter(it -> it != authority).sample();
+
 		User user = FixtureGenerator.getDefaultUserBuilder()
 			.set(javaGetter(User::getAuthority), authority)
 			.sample();
