@@ -1,10 +1,10 @@
 package com.project.bumawiki.domain.thumbsup.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,9 +85,9 @@ public class QueryThumbsUpServiceTest extends ServiceTest {
 			thumbsUpRepository.save(new ThumbsUp(user, docs));
 			boolean shouldTrue = queryThumbsUpService.checkUserLikeThisDocs(docs.getId(), user);
 			//then
-			Assertions.assertAll(
-				() -> Assertions.assertFalse(shouldFalse),
-				() -> Assertions.assertTrue(shouldTrue)
+			assertAll(
+				() -> assertFalse(shouldFalse),
+				() -> assertTrue(shouldTrue)
 			);
 		}
 
@@ -99,7 +99,7 @@ public class QueryThumbsUpServiceTest extends ServiceTest {
 			userRepository.save(user);
 
 			//when, then
-			BumawikiException bumawikiException = Assertions.assertThrows(BumawikiException.class,
+			BumawikiException bumawikiException = assertThrows(BumawikiException.class,
 				() -> queryThumbsUpService.checkUserLikeThisDocs(docsId, user));
 
 			assertThat(bumawikiException.getErrorCode()).isEqualTo(ErrorCode.DOCS_NOT_FOUND);
