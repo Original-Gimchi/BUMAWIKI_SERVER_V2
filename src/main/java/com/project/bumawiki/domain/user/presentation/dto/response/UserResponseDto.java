@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.user.presentation.dto;
+package com.project.bumawiki.domain.user.presentation.dto.response;
 
 import java.util.List;
 

@@ -15,8 +15,8 @@ import com.project.bumawiki.domain.auth.annotation.LoginRequired;
 import com.project.bumawiki.domain.auth.service.QueryAuthService;
 import com.project.bumawiki.domain.docs.service.QueryDocsService;
 import com.project.bumawiki.domain.user.domain.User;
-import com.project.bumawiki.domain.user.presentation.dto.UserAuthorityRequestDto;
-import com.project.bumawiki.domain.user.presentation.dto.UserResponseDto;
+import com.project.bumawiki.domain.user.presentation.dto.request.UserAuthorityRequestDto;
+import com.project.bumawiki.domain.user.presentation.dto.response.UserResponseDto;
 import com.project.bumawiki.domain.user.service.CommandUserService;
 import com.project.bumawiki.domain.user.service.QueryUserService;
 
