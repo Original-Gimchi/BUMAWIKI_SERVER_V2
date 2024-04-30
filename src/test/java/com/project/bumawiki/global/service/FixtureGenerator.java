@@ -8,7 +8,6 @@ import net.jqwik.api.Arbitraries;
 import net.jqwik.api.arbitraries.LongArbitrary;
 import net.jqwik.api.arbitraries.StringArbitrary;
 
-import com.project.bumawiki.domain.coin.domain.TradeWithoutTradeStatusAndCoinAccountId;
 import com.project.bumawiki.domain.docs.domain.Docs;
 import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.thumbsup.domain.ThumbsUp;
@@ -61,14 +60,5 @@ public class FixtureGenerator {
 
 	public static LongArbitrary getDefaultLongArbitrary() {
 		return Arbitraries.longs();
-	}
-
-	public static ArbitraryBuilder<TradeWithoutTradeStatusAndCoinAccountId> getRandomTradeWithoutTradeStatusAndCoinAccountId() {
-		return fixtureGenerator.giveMeBuilder(TradeWithoutTradeStatusAndCoinAccountId.class)
-			.setPostCondition(
-				javaGetter(TradeWithoutTradeStatusAndCoinAccountId::getCoinCount),
-				Long.class,
-				it -> it > 0
-			);
 	}
 }
