@@ -21,8 +21,4 @@ public class AuthReader {
 	public User getCurrentUser() {
 		return authRepository.getCurrentUser();
 	}
-
-	public User getNullableCurrentUser() {
-		return authRepository.getNullableCurrentUser();
-	}
 }

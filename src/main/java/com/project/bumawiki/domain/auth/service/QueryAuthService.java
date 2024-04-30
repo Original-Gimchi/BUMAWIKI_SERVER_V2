@@ -15,4 +15,8 @@ public class QueryAuthService {
 	public User getCurrentUser() {
 		return authRepository.getCurrentUser();
 	}
+
+	public User getNullableCurrentUser() {
+		return authRepository.getNullableCurrentUser();
+	}
 }

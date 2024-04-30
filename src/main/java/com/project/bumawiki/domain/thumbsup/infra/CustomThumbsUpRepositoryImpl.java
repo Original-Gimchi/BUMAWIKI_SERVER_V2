@@ -1,14 +1,14 @@
-package com.project.bumawiki.domain.thumbsup.domain.repository;
+package com.project.bumawiki.domain.thumbsup.infra;
 
 import static com.project.bumawiki.domain.docs.domain.QDocs.*;
 import static com.project.bumawiki.domain.thumbsup.domain.QThumbsUp.*;
-import static com.querydsl.core.types.Projections.*;
 
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.project.bumawiki.domain.thumbsup.presentation.dto.ThumbsUpResponseDto;
+import com.project.bumawiki.domain.docs.domain.Docs;
+import com.project.bumawiki.domain.thumbsup.domain.repository.CustomThumbsUpRepository;
 import com.project.bumawiki.domain.user.domain.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -21,23 +21,13 @@ public class CustomThumbsUpRepositoryImpl implements CustomThumbsUpRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<ThumbsUpResponseDto> getUserThumbsUp(User user) {
+	public List<Docs> getUserThumbsUp(User user) {
 		return jpaQueryFactory
-			.select(constructor(ThumbsUpResponseDto.class, docs))
+			.select(docs)
 			.from(thumbsUp)
 			.leftJoin(thumbsUp.docs, docs)
 			.where(thumbsUp.user.eq(user))
 			.distinct()
 			.fetch();
-	}
-
-	@Override
-	public Long countThumbsUpByTitle(String title) {
-		return jpaQueryFactory
-			.select(thumbsUp.count())
-			.from(docs)
-			.join(docs, thumbsUp.docs)
-			.where(docs.title.eq(title))
-			.fetchOne();
 	}
 }
