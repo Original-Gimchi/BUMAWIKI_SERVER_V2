@@ -4,6 +4,7 @@ import static com.project.bumawiki.global.util.RandomUtil.*;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -76,29 +77,32 @@ public class PriceScheduler {
 	private void processSellingTrade(Price newPrice) {
 		List<Trade> sellingTrades = tradeReader.findAllByTradeStatus(TradeStatus.SELLING);
 
-		for (Trade sellingTrade : sellingTrades) {
-			if (sellingTrade.getCoinPrice() <= newPrice.getPrice()) {
-				CoinAccount tradingAccount = coinAccountReader.getById(sellingTrade.getCoinAccountId());
-
-				tradingAccount.sellCoin(sellingTrade.getCoinPrice(), sellingTrade.getCoinCount());
-				tradeUpdater.updateTradeStatus(sellingTrade, TradeStatus.SOLD);
-				tradeCreator.create(sellingTrade);
-			}
-		}
+		processTrade(
+			sellingTrades,
+			TradeStatus.SOLD,
+			(Trade trade) -> trade.getCoinPrice() <= newPrice.getPrice()
+		);
 	}
 
 	private void processBuyingTrade(Price newPrice) {
 		List<Trade> buyingTrades = tradeReader.findAllByTradeStatus(TradeStatus.BUYING);
 
-		for (Trade buyingTrade : buyingTrades) {
-			if (buyingTrade.getCoinPrice() >= newPrice.getPrice()) {
-				CoinAccount tradingAccount = coinAccountReader.getById(buyingTrade.getCoinAccountId());
+		processTrade(
+			buyingTrades,
+			TradeStatus.BOUGHT,
+			(Trade trade) -> trade.getCoinPrice() >= newPrice.getPrice()
+		);
+	}
 
-				tradingAccount.buyCoin(buyingTrade.getCoinPrice(), buyingTrade.getCoinCount());
-				tradeUpdater.updateTradeStatus(buyingTrade, TradeStatus.BOUGHT);
-				tradeCreator.create(buyingTrade);
+	private void processTrade(List<Trade> trades, TradeStatus tradeStatus, Predicate<Trade> p) {
+		for (Trade trade : trades) {
+			if (p.test(trade)) {
+				CoinAccount tradingAccount = coinAccountReader.getById(trade.getCoinAccountId());
+
+				tradingAccount.buyCoin(trade.getCoinPrice(), trade.getCoinCount());
+				tradeUpdater.updateTradeStatus(trade, tradeStatus);
+				tradeCreator.create(trade);
 			}
 		}
 	}
-
 }
