@@ -26,8 +26,8 @@ public class CommandAuthService {
 	private final UserCreator userCreator;
 	private final UserUpdater userUpdater;
 
-	public Token login(String authId) {
-		User unknownUser = bsmLoginHandler.getUserByAuthId(authId);
+	public Token login(String authCode) {
+		User unknownUser = bsmLoginHandler.getUserByAuthCode(authCode);
 		User user = userReader.getNullableUserByEmail(unknownUser.getEmail());
 
 		if (user == null) {

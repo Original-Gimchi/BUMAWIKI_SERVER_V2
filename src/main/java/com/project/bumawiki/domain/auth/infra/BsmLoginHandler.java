@@ -20,9 +20,9 @@ import lombok.RequiredArgsConstructor;
 public class BsmLoginHandler {
 	private final BsmOauth bsmOauth;
 
-	public User getUserByAuthId(String authId) {
+	public User getUserByAuthCode(String authCode) {
 		try {
-			String token = bsmOauth.getToken(authId);
+			String token = bsmOauth.getToken(authCode);
 			BsmResourceResponse response = bsmOauth.getResource(token);
 			return createUnknownUser(response);
 		} catch (BsmAuthCodeNotFoundException | BsmAuthTokenNotFoundException e) {

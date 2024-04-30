@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.auth.presentation.dto;
+package com.project.bumawiki.domain.auth.presentation.dto.response;
 
 import com.project.bumawiki.domain.auth.domain.Token;
 
