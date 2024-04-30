@@ -10,6 +10,9 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
+import net.jqwik.api.Arbitraries;
+import net.jqwik.api.Arbitrary;
+
 import com.project.bumawiki.domain.coin.domain.CoinAccount;
 import com.project.bumawiki.domain.coin.domain.Price;
 import com.project.bumawiki.domain.coin.domain.Trade;
@@ -117,11 +120,10 @@ class QueryCoinServiceTest extends ServiceTest {
 	@RepeatedTest(REPEAT_COUNT)
 	void 기간_별로_코인_가격_조회하기() {
 		// given
-		String[] periods = {"full", "halfMonth", "week", "day", "halfDay", "threeHours"};
-		long index = FixtureGenerator.getDefaultLongArbitrary().between(0, 5).sample();
+		Arbitrary<String> periods = Arbitraries.of("full", "halfMonth", "week", "day", "halfDay", "threeHours");
 
 		// when
-		List<Price> prices = queryCoinService.getPriceByPeriod(periods[Long.valueOf(index).intValue()]);
+		List<Price> prices = queryCoinService.getPriceByPeriod(periods.sample());
 
 		// then
 		assertAll(
