@@ -22,9 +22,6 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
 			.orElse(save(
 				new Price(1000000L)
 			));
-			// .orElseThrow(
-			// 	PriceNotFoundException::new
-			// );
 	}
 
 	@Query("select p from Price p where p.startedTime >= :twoWeeksAgo order by p.startedTime asc")

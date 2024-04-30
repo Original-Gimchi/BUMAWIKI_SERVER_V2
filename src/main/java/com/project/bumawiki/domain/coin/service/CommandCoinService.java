@@ -114,7 +114,7 @@ public class CommandCoinService {
 		long max = 200000;
 
 		SecureRandom random = getRandomInstance();
-		long randomNumber = (random.nextLong(max - min + 1) + min);
+		long randomNumber = random.nextLong(max - min + 1) + min;
 		randomNumber -= randomNumber % 10000;
 
 		CoinAccount account = coinAccountReader.getByUserId(user.getId());

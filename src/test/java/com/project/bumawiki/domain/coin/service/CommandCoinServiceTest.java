@@ -53,8 +53,9 @@ class CommandCoinServiceTest extends ServiceTest {
 			// then
 			assertAll(
 				() -> {
-					assertThat(coinAccountRepository.findByUserId(user.getId()).isPresent()).isEqualTo(true);
-					assertThat(coinAccountRepository.findByUserId(user.getId()).get().getUserId()).isEqualTo(user.getId());
+					assertTrue(coinAccountRepository.findByUserId(user.getId()).isPresent());
+					assertThat(coinAccountRepository.findByUserId(user.getId()).get().getUserId())
+						.isEqualTo(user.getId());
 				}
 			);
 		}

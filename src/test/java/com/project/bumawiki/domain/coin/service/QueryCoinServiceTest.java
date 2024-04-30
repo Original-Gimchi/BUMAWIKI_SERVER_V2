@@ -66,7 +66,7 @@ class QueryCoinServiceTest extends ServiceTest {
 		}
 
 		@RepeatedTest(REPEAT_COUNT)
-		void 코인_저장이_안되어있을때() {
+		void 코인_계정이_존재하지_않을_때() {
 			User user = FixtureGenerator.getDefaultUserBuilder().sample();
 
 			userRepository.save(user);
