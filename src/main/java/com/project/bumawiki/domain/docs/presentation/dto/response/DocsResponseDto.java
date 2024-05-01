@@ -8,7 +8,7 @@ import com.project.bumawiki.domain.docs.domain.VersionDocs;
 import com.project.bumawiki.domain.docs.domain.type.DocsType;
 import com.project.bumawiki.domain.docs.util.DocsUtil;
 import com.project.bumawiki.domain.user.domain.User;
-import com.project.bumawiki.domain.user.presentation.dto.SimpleUserDto;
+import com.project.bumawiki.domain.user.presentation.dto.response.SimpleUserResponseDto;
 
 public record DocsResponseDto(
 	Long id,
@@ -18,7 +18,7 @@ public record DocsResponseDto(
 	LocalDateTime lastModifiedAt,
 	int enroll,
 	boolean isDocsDetail,
-	List<SimpleUserDto> contributors,
+	List<SimpleUserResponseDto> contributors,
 	int version,
 	String thumbnail
 ) {
@@ -33,7 +33,7 @@ public record DocsResponseDto(
 			docs.getEnroll(),
 			true,
 			contributors.stream()
-				.map(SimpleUserDto::new)
+				.map(SimpleUserResponseDto::new)
 				.toList(),
 			versionDocs.getVersion(),
 			DocsUtil.getThumbnail(versionDocs.getContents())
