@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.project.bumawiki.domain.coin.domain.CoinAccount;
 import com.project.bumawiki.domain.coin.domain.Price;
 import com.project.bumawiki.domain.coin.domain.Trade;
-import com.project.bumawiki.domain.coin.domain.TradeWithoutTradeStatusAndCoinAccountId;
+import com.project.bumawiki.domain.coin.domain.TradeVo;
 import com.project.bumawiki.domain.coin.domain.type.TradeStatus;
 import com.project.bumawiki.domain.coin.implementation.CoinAccountCreator;
 import com.project.bumawiki.domain.coin.implementation.CoinAccountReader;
@@ -49,7 +49,7 @@ public class CommandCoinService {
 		return coinAccountCreator.create(coinAccount);
 	}
 
-	public Trade buyCoin(TradeWithoutTradeStatusAndCoinAccountId coinData, User user) {
+	public Trade buyCoin(TradeVo coinData, User user) {
 		CoinAccount coinAccount = coinAccountReader.getByUserId(user.getId());
 		Price nowPrice = priceReader.getRecentPrice();
 
@@ -73,7 +73,7 @@ public class CommandCoinService {
 		tradeUpdater.updateTradeStatus(trade, TradeStatus.BOUGHT);
 	}
 
-	public Trade sellCoin(TradeWithoutTradeStatusAndCoinAccountId coinData, User user) {
+	public Trade sellCoin(TradeVo coinData, User user) {
 		CoinAccount coinAccount = coinAccountReader.getByUserId(user.getId());
 		Price nowPrice = priceReader.getRecentPrice();
 

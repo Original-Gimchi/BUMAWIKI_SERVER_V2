@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.project.bumawiki.domain.coin.domain.CoinAccount;
 import com.project.bumawiki.domain.coin.domain.Price;
 import com.project.bumawiki.domain.coin.domain.Trade;
-import com.project.bumawiki.domain.coin.domain.TradeWithoutTradeStatusAndCoinAccountId;
+import com.project.bumawiki.domain.coin.domain.TradeVo;
 import com.project.bumawiki.domain.coin.domain.repository.CoinAccountRepository;
 import com.project.bumawiki.domain.coin.domain.repository.PriceRepository;
 import com.project.bumawiki.domain.coin.domain.repository.TradeRepository;
@@ -101,8 +101,8 @@ class CommandCoinServiceTest extends ServiceTest {
 					.sample();
 			}
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+			TradeVo coinData =
+				new TradeVo(coinPrice, coinCount);
 
 			System.out.println(coinData.getCoinCount());
 			System.out.println(coinData.getCoinPrice());
@@ -142,8 +142,8 @@ class CommandCoinServiceTest extends ServiceTest {
 					.sample();
 			}
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+			TradeVo coinData =
+				new TradeVo(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
@@ -193,8 +193,8 @@ class CommandCoinServiceTest extends ServiceTest {
 					.sample();
 			}
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+			TradeVo coinData =
+				new TradeVo(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
@@ -245,8 +245,8 @@ class CommandCoinServiceTest extends ServiceTest {
 					.sample();
 			}
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+			TradeVo coinData =
+				new TradeVo(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
@@ -259,8 +259,8 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			commandCoinService.buyCoin(coinData, user);
 
-			TradeWithoutTradeStatusAndCoinAccountId coinDataToSell =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount + 1);
+			TradeVo coinDataToSell =
+				new TradeVo(coinPrice, coinCount + 1);
 
 			// when
 			BumawikiException exception = assertThrows(
@@ -293,8 +293,8 @@ class CommandCoinServiceTest extends ServiceTest {
 					.sample();
 			}
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+			TradeVo coinData =
+				new TradeVo(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
@@ -307,8 +307,8 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			commandCoinService.buyCoin(coinData, user);
 
-			TradeWithoutTradeStatusAndCoinAccountId coinDataToSell =
-				new TradeWithoutTradeStatusAndCoinAccountId(
+			TradeVo coinDataToSell =
+				new TradeVo(
 					coinPrice,
 					FixtureGenerator.getDefaultLongArbitrary()
 						.between(0L, coinAccount.getCoin())
@@ -352,8 +352,8 @@ class CommandCoinServiceTest extends ServiceTest {
 					.sample();
 			}
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+			TradeVo coinData =
+				new TradeVo(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
@@ -366,8 +366,8 @@ class CommandCoinServiceTest extends ServiceTest {
 
 			commandCoinService.buyCoin(coinData, user);
 
-			TradeWithoutTradeStatusAndCoinAccountId coinDataToSell =
-				new TradeWithoutTradeStatusAndCoinAccountId(
+			TradeVo coinDataToSell =
+				new TradeVo(
 					coinPrice,
 					FixtureGenerator.getDefaultLongArbitrary()
 						.between(0L, coinAccount.getCoin())
@@ -409,8 +409,8 @@ class CommandCoinServiceTest extends ServiceTest {
 					.sample();
 			}
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+			TradeVo coinData =
+				new TradeVo(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
@@ -449,8 +449,8 @@ class CommandCoinServiceTest extends ServiceTest {
 					.sample();
 			}
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+			TradeVo coinData =
+				new TradeVo(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),
@@ -496,8 +496,8 @@ class CommandCoinServiceTest extends ServiceTest {
 					.sample();
 			}
 
-			TradeWithoutTradeStatusAndCoinAccountId coinData =
-				new TradeWithoutTradeStatusAndCoinAccountId(coinPrice, coinCount);
+			TradeVo coinData =
+				new TradeVo(coinPrice, coinCount);
 
 			CoinAccount coinAccount = new CoinAccount(
 				user.getId(),

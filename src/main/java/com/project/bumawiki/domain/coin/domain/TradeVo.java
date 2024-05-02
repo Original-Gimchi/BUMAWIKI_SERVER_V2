@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class TradeWithoutTradeStatusAndCoinAccountId {
+public class TradeVo {
 	@NotNull
 	@Positive
 	private Long coinPrice;

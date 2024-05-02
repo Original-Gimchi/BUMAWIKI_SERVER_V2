@@ -16,7 +16,7 @@ import net.jqwik.api.Arbitrary;
 import com.project.bumawiki.domain.coin.domain.CoinAccount;
 import com.project.bumawiki.domain.coin.domain.Price;
 import com.project.bumawiki.domain.coin.domain.Trade;
-import com.project.bumawiki.domain.coin.domain.TradeWithoutTradeStatusAndCoinAccountId;
+import com.project.bumawiki.domain.coin.domain.TradeVo;
 import com.project.bumawiki.domain.coin.domain.repository.CoinAccountRepository;
 import com.project.bumawiki.domain.coin.domain.repository.TradeRepository;
 import com.project.bumawiki.domain.coin.domain.type.TradeStatus;
@@ -96,8 +96,8 @@ class QueryCoinServiceTest extends ServiceTest {
 
 		coinAccountRepository.save(coinAccount);
 
-		TradeWithoutTradeStatusAndCoinAccountId coinData =
-			new TradeWithoutTradeStatusAndCoinAccountId(1000000L, 3L);
+		TradeVo coinData =
+			new TradeVo(1000000L, 3L);
 
 		Trade trade = coinData.toTrade(coinAccount);
 

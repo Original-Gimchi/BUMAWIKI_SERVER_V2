@@ -1,6 +1,6 @@
 package com.project.bumawiki.domain.coin.presentation.dto;
 
-import com.project.bumawiki.domain.coin.domain.TradeWithoutTradeStatusAndCoinAccountId;
+import com.project.bumawiki.domain.coin.domain.TradeVo;
 
 import jakarta.validation.constraints.Positive;
 
@@ -8,8 +8,8 @@ public record TradeRequest(
 	@Positive Long coinPrice,
 	@Positive Long coinCount
 ) {
-	public TradeWithoutTradeStatusAndCoinAccountId toEntity() {
-		return new TradeWithoutTradeStatusAndCoinAccountId(
+	public TradeVo toEntity() {
+		return new TradeVo(
 			coinPrice,
 			coinCount
 		);
