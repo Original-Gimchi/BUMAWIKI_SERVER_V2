@@ -48,7 +48,7 @@ bsm:
   secret-key: ${BSM_SECRET_KEY}
   redirect-url: ${BSM_REDIRECT_URL}
 
-image:
+file:
   path: ${SAVING_URL}
 
 #S3

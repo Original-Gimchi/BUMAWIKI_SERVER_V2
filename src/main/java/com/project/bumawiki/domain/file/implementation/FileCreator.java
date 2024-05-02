@@ -1,23 +1,26 @@
-package com.project.bumawiki.global.s3.implement;
+package com.project.bumawiki.domain.file.implementation;
 
 import java.io.IOException;
 import java.util.UUID;
 
-import org.springframework.stereotype.Service;
+import com.project.bumawiki.global.annotation.Implementation;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+
+import com.project.bumawiki.global.error.exception.ErrorCode;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.project.bumawiki.global.config.s3.S3Bucket;
-import com.project.bumawiki.global.s3.exception.S3SaveException;
+import com.project.bumawiki.global.config.file.r2.R2Bucket;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Implementation
 @RequiredArgsConstructor
-public class ImageCreator {
-	private final S3Bucket s3Bucket;
+public class FileCreator {
+	private final R2Bucket r2Bucket;
 	private final AmazonS3 amazonS3;
 
 	public String create(MultipartFile multipartFile) {
@@ -25,7 +28,7 @@ public class ImageCreator {
 
 		try {
 			PutObjectRequest request = new PutObjectRequest(
-				s3Bucket.getS3Bucket(),
+				r2Bucket.getS3Bucket(),
 				fileName,
 				multipartFile.getInputStream(),
 				getMetadata(multipartFile)
@@ -33,10 +36,10 @@ public class ImageCreator {
 
 			amazonS3.putObject(request);
 		} catch (IOException e) {
-			throw new S3SaveException();
+			throw new BumawikiException(ErrorCode.S3_SAVE_EXCEPTION);
 		}
 
-		return s3Bucket.getReadUrl() + fileName;
+		return r2Bucket.getReadUrl() + fileName;
 	}
 
 	private String createFileName(MultipartFile multipartFile) {
