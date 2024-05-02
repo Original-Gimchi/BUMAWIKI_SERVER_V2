@@ -155,8 +155,21 @@ class QueryCoinServiceTest extends ServiceTest {
 		List<RankingResponse> rankingResponses =
 			queryCoinService.getRanking(PageRequest.of(0, 10));
 
+		List<RankingResponse> toComparedRankingResponse =
+			coinAccountRepository.getRanking(PageRequest.of(0, 10), 1000000L)
+				.stream()
+				.map(ranking -> new RankingResponse(
+					ranking,
+					1000000L,
+					userRepository.findById(ranking.getUserId()).get()
+				))
+				.toList();
+
 		// then
-		assertThat(rankingResponses.size()).isEqualTo(10);
+		assertAll(
+			() -> assertThat(rankingResponses.size()).isEqualTo(10),
+			() -> assertTrue(toComparedRankingResponse.containsAll(rankingResponses))
+		);
 	}
 
 	@RepeatedTest(REPEAT_COUNT)
