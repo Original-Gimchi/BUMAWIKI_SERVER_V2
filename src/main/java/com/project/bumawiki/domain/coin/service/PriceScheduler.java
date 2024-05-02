@@ -20,6 +20,8 @@ import com.project.bumawiki.domain.coin.implementation.PriceReader;
 import com.project.bumawiki.domain.coin.implementation.TradeCreator;
 import com.project.bumawiki.domain.coin.implementation.TradeReader;
 import com.project.bumawiki.domain.coin.implementation.TradeUpdater;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +44,10 @@ public class PriceScheduler {
 		long min = Math.max(recentPrice.getPrice() - CHANGE_MONEY_RANGE, 0L);
 
 		SecureRandom random = getRandomInstance();
-		long randomPrice = random.nextLong(max - min + 1L) + min;
+		long randomPrice = random
+			.longs(min, max)
+			.findFirst()
+			.orElseThrow(() -> new BumawikiException(ErrorCode.INTERNAL_SERVER_ERROR));
 		Price newPrice;
 		if (randomPrice == 0) {
 			restartCoin();
