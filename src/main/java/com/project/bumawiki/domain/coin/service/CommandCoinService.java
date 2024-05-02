@@ -21,6 +21,8 @@ import com.project.bumawiki.domain.coin.implementation.TradeReader;
 import com.project.bumawiki.domain.coin.implementation.TradeUpdater;
 import com.project.bumawiki.domain.coin.implementation.TradeValidator;
 import com.project.bumawiki.domain.user.domain.User;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -110,12 +112,7 @@ public class CommandCoinService {
 	}
 
 	public Long dailyCheck(User user) {
-		long min = 50000;
-		long max = 200000;
-
-		SecureRandom random = getRandomInstance();
-		long randomNumber = random.nextLong(max - min + 1) + min;
-		randomNumber -= randomNumber % 10000;
+		long randomNumber = getRandomNumber();
 
 		CoinAccount account = coinAccountReader.getByUserId(user.getId());
 
@@ -123,6 +120,21 @@ public class CommandCoinService {
 
 		account.addMoney(randomNumber);
 		account.updateLastRewardedTimeNow();
+
+		return randomNumber;
+	}
+
+	private long getRandomNumber() {
+		long min = 50000;
+		long max = 200000;
+
+		SecureRandom random = getRandomInstance();
+
+		long randomNumber = random
+			.longs(min, max)
+			.findFirst()
+			.orElseThrow(() -> new BumawikiException(ErrorCode.INTERNAL_SERVER_ERROR));
+		randomNumber -= randomNumber % 10000;
 
 		return randomNumber;
 	}
