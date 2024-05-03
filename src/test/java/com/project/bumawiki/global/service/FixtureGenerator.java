@@ -5,6 +5,7 @@ import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPrope
 import java.util.Collections;
 
 import net.jqwik.api.Arbitraries;
+import net.jqwik.api.arbitraries.LongArbitrary;
 import net.jqwik.api.arbitraries.StringArbitrary;
 
 import com.project.bumawiki.domain.docs.domain.Docs;
@@ -54,5 +55,9 @@ public class FixtureGenerator {
 		return Arbitraries.strings()
 			.ascii()
 			.ofMinLength(1);
+	}
+
+	public static LongArbitrary getDefaultLongArbitrary() {
+		return Arbitraries.longs();
 	}
 }

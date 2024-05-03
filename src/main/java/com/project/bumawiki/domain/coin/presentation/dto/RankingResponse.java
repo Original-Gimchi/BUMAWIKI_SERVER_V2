@@ -1,4 +1,4 @@
-package com.project.bumawiki.domain.coin.controller.dto;
+package com.project.bumawiki.domain.coin.presentation.dto;
 
 import com.project.bumawiki.domain.coin.domain.CoinAccount;
 import com.project.bumawiki.domain.user.domain.User;

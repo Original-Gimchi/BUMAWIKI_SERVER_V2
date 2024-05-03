@@ -2,8 +2,8 @@ package com.project.bumawiki.domain.coin.domain;
 
 import java.time.LocalDateTime;
 
-import com.project.bumawiki.domain.coin.exception.CoinNotEnoughException;
-import com.project.bumawiki.domain.coin.exception.MoneyNotEnoughException;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,7 +37,7 @@ public class CoinAccount {
 
 	public void buyCoin(Long coinPrice, Long coinCount) {
 		if (this.money < coinPrice * coinCount) {
-			throw new MoneyNotEnoughException();
+			throw new BumawikiException(ErrorCode.MONEY_NOT_ENOUGH);
 		}
 		this.money -= coinPrice * coinCount;
 		this.coin += coinCount;
@@ -45,7 +45,7 @@ public class CoinAccount {
 
 	public void sellCoin(Long coinPrice, Long coinCount) {
 		if (this.coin < coinCount) {
-			throw new CoinNotEnoughException();
+			throw new BumawikiException(ErrorCode.COIN_NOT_ENOUGH);
 		}
 		this.coin -= coinCount;
 		this.money += coinPrice * coinCount;

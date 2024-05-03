@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.project.bumawiki.domain.coin.domain.CoinAccount;
-import com.project.bumawiki.domain.coin.exception.CoinAccountNotFoundException;
+import com.project.bumawiki.global.error.exception.BumawikiException;
+import com.project.bumawiki.global.error.exception.ErrorCode;
 
 public interface CoinAccountRepository extends JpaRepository<CoinAccount, Long> {
 	Optional<CoinAccount> findByUserId(Long userId);
@@ -17,12 +18,12 @@ public interface CoinAccountRepository extends JpaRepository<CoinAccount, Long> 
 
 	default CoinAccount getByUserId(Long userId) {
 		return findByUserId(userId)
-			.orElseThrow(CoinAccountNotFoundException::new);
+			.orElseThrow(() -> new BumawikiException(ErrorCode.COIN_ACCOUNT_NOT_FOUND_EXCEPTION));
 	}
 
 	default CoinAccount getById(Long id) {
 		return findById(id)
-			.orElseThrow(CoinAccountNotFoundException::new);
+			.orElseThrow(() -> new BumawikiException(ErrorCode.COIN_ACCOUNT_NOT_FOUND_EXCEPTION));
 	}
 
 	@Query(value = "select c from CoinAccount c where c.coin > 0")
