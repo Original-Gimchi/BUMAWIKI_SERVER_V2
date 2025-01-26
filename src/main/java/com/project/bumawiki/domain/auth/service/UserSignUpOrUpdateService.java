@@ -6,10 +6,10 @@ import com.project.bumawiki.domain.user.domain.repository.UserRepository;
 import com.project.bumawiki.domain.user.exception.UserNotLoginException;
 import com.project.bumawiki.global.annotation.ServiceWithTransactionalReadOnly;
 import leehj050211.bsmOauth.BsmOauth;
-import leehj050211.bsmOauth.dto.response.BsmResourceResponse;
-import leehj050211.bsmOauth.exceptions.BsmAuthCodeNotFoundException;
-import leehj050211.bsmOauth.exceptions.BsmAuthInvalidClientException;
-import leehj050211.bsmOauth.exceptions.BsmAuthTokenNotFoundException;
+import leehj050211.bsmOauth.dto.resource.BsmUserResource;
+import leehj050211.bsmOauth.exception.BsmOAuthCodeNotFoundException;
+import leehj050211.bsmOauth.exception.BsmOAuthInvalidClientException;
+import leehj050211.bsmOauth.exception.BsmOAuthTokenNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,20 +25,20 @@ public class UserSignUpOrUpdateService {
     @Transactional
     public User execute(String authId) throws IOException {
         String token;
-        BsmResourceResponse resource;
+        BsmUserResource resource;
         try {
             token = bsmOauth.getToken(authId);
             resource = bsmOauth.getResource(token);
-        }catch(BsmAuthCodeNotFoundException | BsmAuthTokenNotFoundException e){
+        }catch(BsmOAuthCodeNotFoundException | BsmOAuthTokenNotFoundException e){
             throw UserNotLoginException.EXCEPTION;
-        }catch(BsmAuthInvalidClientException e){
+        }catch(BsmOAuthInvalidClientException e){
             throw UserNotLoginException.EXCEPTION;
         }
         return updateOrSignUp(resource);
     }
 
     @Transactional
-    protected User updateOrSignUp(BsmResourceResponse resource) {
+    protected User updateOrSignUp(BsmUserResource resource) {
         Optional<User> user = userRepository.findByEmail(resource.getEmail());
         if(user.isEmpty()){
             return saveUser(resource);
@@ -48,7 +48,7 @@ public class UserSignUpOrUpdateService {
     }
 
     @Transactional
-    protected User saveUser(final BsmResourceResponse resource) {
+    protected User saveUser(final BsmUserResource resource) {
         return userRepository.save(
                 User.builder()
                         .email(resource.getEmail())

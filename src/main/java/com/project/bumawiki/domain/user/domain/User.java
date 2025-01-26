@@ -21,7 +21,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import leehj050211.bsmOauth.dto.response.BsmResourceResponse;
+import leehj050211.bsmOauth.dto.resource.BsmUserResource;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -94,7 +94,7 @@ public class User {
 			.collect(Collectors.toList());
 	}
 
-	public User update(BsmResourceResponse resource) {
+	public User update(BsmUserResource resource) {
 		this.email = resource.getEmail();
 		this.name = resource.getStudent().getName();
 		this.enroll = resource.getStudent().getEnrolledAt();
